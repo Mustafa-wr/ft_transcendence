@@ -12,8 +12,11 @@ RUN pip install -r requirements.txt
 
 RUN pip install django-crispy-forms
 
-RUN pip install django-crispy-bootstrap
+RUN pip install crispy-bootstrap4
 
+RUN python manage.py makemigrations
+
+RUN python manage.py migrate
 
 COPY . /code/
 
