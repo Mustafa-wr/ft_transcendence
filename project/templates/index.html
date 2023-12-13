@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>OAuth Authorization</title>
+  </head>
+  <body>
+    <h1>OAuth Authorization</h1>
+    <button class="auto-btn"">Authorize</button>
+    <!-- Вывод информации о пользователе -->
+    {% if user_info %}
+    <h2>User Info</h2>
+    <pre>{{ user_info | safe }}</pre>
+    {% endif %}
+    <script src="./static/app.js"></script>
+  </body>
+</html>

@@ -1,23 +1,28 @@
-
 FROM python:3.9
 
+RUN mkdir /code
 WORKDIR /code
-
 
 COPY requirements.txt /code/
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt \
+    && pip install django-crispy-forms \
+    && pip install crispy-bootstrap4 \
+    && pip install requests \
+    && pip install psycopg2-binary \
+    && pip install django-cors-headers
 
-RUN pip install -r requirements.txt
+# Copy the migrate.sh script into the container
+COPY migrate.sh /code/migrate.sh
 
-RUN pip install django-crispy-forms
+# Make the script executable
+RUN chmod +x /code/migrate.sh
 
-RUN pip install crispy-bootstrap4
+# Run migrations before starting the server
+# RUN /code/migrate.sh
 
-RUN python manage.py makemigrations
-
-RUN python manage.py migrate
-
+# Copy the rest of your project files
 COPY . /code/
 
-cmd ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["bash", "migrate.sh"]
