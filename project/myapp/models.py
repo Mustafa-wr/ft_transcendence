@@ -14,8 +14,8 @@ class user_data(models.Model):
     loses = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.name
-    
+        return self.login
+
 class RegistrationForm(UserCreationForm):
 	email = forms.EmailField(required=True)
 
