@@ -1,0 +1,6 @@
+-----> cmds for database..
+psql -U myuser -d mydb
+SELECT * FROM myapp_user_data;
+
+-----> cmds for docker..
+docker system prune --all --force
