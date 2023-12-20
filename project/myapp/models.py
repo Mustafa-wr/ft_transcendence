@@ -1,3 +1,4 @@
+from django.apps import AppConfig
 from django.db import models
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -27,3 +28,9 @@ class RegistrationForm(UserCreationForm):
 			'password1',
 			'password2',
 		)
+
+
+
+class PongSpaConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'myapp'

@@ -11,7 +11,8 @@ RUN pip install --upgrade pip \
     && pip install crispy-bootstrap4 \
     && pip install requests \
     && pip install psycopg2-binary \
-    && pip install django-cors-headers
+    && pip install django-cors-headers \
+	&& pip install django-debug-toolbar
 
 # Copy the migrate.sh script into the container
 COPY migrate.sh /code/migrate.sh
