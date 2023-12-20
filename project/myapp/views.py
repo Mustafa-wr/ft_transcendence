@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.template import loader
 from .models import RegistrationForm
 
 # Create your views here.
@@ -32,3 +34,28 @@ def authorize(request):
     authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
     
     return redirect(authorization_url)
+
+
+def login(request):
+  return render(request, 'login.html')
+
+def home(request):
+  return render(request, 'home.html')
+
+def game(request):
+  return render(request, 'game.html')
+
+def edit(request):
+  return render(request, 'edit.html')
+
+def stats(request):
+  return render(request, 'stats.html')
+
+def friends(request):
+  return render(request, 'friends.html')
+
+def logout(request):
+  language_code = request.GET.get('language', 'en')  # Default to English
+  print(f"Detected language code: {language_code}")
+  return render(request, 'logout.html')
+

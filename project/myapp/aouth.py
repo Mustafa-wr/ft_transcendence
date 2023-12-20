@@ -43,7 +43,7 @@ def callback(request):
                     email = user_info.get('email'),
                     # image_link = data["image"]["link"]
                 ).save()
-                return render(request, 'user_info.html', {'user_info': user_info})
+                return render(request, 'home.html', {'user_info': user_info})
             else:
                 return render(request, 'error.html', {'error': 'Access token not found in the response'})
         except requests.exceptions.RequestException as e:

@@ -15,12 +15,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from myapp.views import index
+from myapp.views import home
 from myapp.views import game
 from myapp.views import base
 from myapp.views import authorize
 from myapp.aouth import callback
+import debug_toolbar
 
 
 
@@ -28,10 +30,11 @@ from myapp.aouth import callback
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index),
+    path('', include('myapp.urls')),
     path('game/', game),
     path('base/', base),
     path('authorize/', authorize, name='authorize'),
     path('callback/', callback, name='callback'),
+	path('debug/', include('debug_toolbar.urls')),
 
 ]
