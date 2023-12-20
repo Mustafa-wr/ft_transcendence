@@ -36,6 +36,7 @@ def callback(request):
                 user_response = requests.get(user_info_url, headers=headers)
                 user_response.raise_for_status()
                 user_info = user_response.json()
+                request.session['user_info'] = user_info
                 # storing data of usere in object
                 user_data.objects.create(
                     login = user_info.get('login'),

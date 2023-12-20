@@ -40,7 +40,8 @@ def login(request):
   return render(request, 'login.html')
 
 def home(request):
-  return render(request, 'home.html')
+  user_info = request.session.get('user_info')
+  return render(request, 'home.html', {'user_info': user_info})
 
 def game(request):
   return render(request, 'game.html')
