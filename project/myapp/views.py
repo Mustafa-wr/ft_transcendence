@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template import loader
 from .models import RegistrationForm
+from .models import Match
 
 # Create your views here.
 
@@ -30,11 +31,10 @@ def game(request):
 def authorize(request):
     client_id = "client_id=u-s4t2ud-8156fc58fc2005216ad58258e48c1a311ceb0c4b4bd45451aba59272720501f4"
     redirect_uri = "http://127.0.0.1:8000/callback"
-    
-    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
-    
-    return redirect(authorization_url)
 
+    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
+
+    return redirect(authorization_url)
 
 def login(request):
   return render(request, 'login.html')
@@ -49,7 +49,8 @@ def edit(request):
   return render(request, 'edit.html')
 
 def stats(request):
-  return render(request, 'stats.html')
+	matches = Match.objects.all().select_related('winner_user', 'loser_user')
+	return render(request, 'stats.html', {'matches': matches})
 
 def friends(request):
   return render(request, 'friends.html')

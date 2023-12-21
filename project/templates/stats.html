@@ -3,6 +3,17 @@
 
 {% block content %}
 <div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
-    <p>Stats and Match History</p> 
-</div>    
+	<h3>Match History</h3>
+		<ul>
+			{% for match in matches %}
+				<li>
+					Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
+					Winner: {{ match.winner_user.username }} (Score: {{ match.winner_score }})<br>
+					Loser: {{ match.loser_user.username }} (Score: {{ match.loser_score }})
+				</li>
+			{% empty %}
+				<li>No matches found.</li>
+			{% endfor %}
+		</ul>
+</div>
 {% endblock %}
