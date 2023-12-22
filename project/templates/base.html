@@ -1,49 +1,3 @@
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-	<title>{% block title %}my site{% endblock title %}</title>
-</head>
-<body>
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<div class="container-fluid">
-			<div>
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link" href="/home">
-							home
-						</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/post">
-							post
-						</a>
-					</li>
-				</ul>
-			</div>
-			<div>
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link" href="/login">
-							login
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</nav>
-	<div class="container-fluid">
-		{% block content %}
-		{% endblock content %}	 
-	</div>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-	
-</body>
-</html> {% endcomment %}
-
 {% load static i18n %}
 
 <!DOCTYPE html>
@@ -59,13 +13,6 @@
         .selector-for-some-widget {
             box-sizing: content-box;
         }
-        .nav-link {
-            color: aqua;
-            text-decoration: none;
-            font-weight: none;
-            font-size: x-large;
-            font-family: monospace;
-        }
         .navbar {
             height: 56px;
         }
@@ -76,55 +23,39 @@
     </style>
 </head>
 
-<body class="bg-dark">
-    <div class="container">
+<body class="bg-black">
+    <div class="container-fluid p-0 m-0">
         <!-- Top Navigation Bar -->
-        <nav class="navbar bg-dark navbar-dark navbar-expand-md">
-            <div class="container p-0 m-0">
-                <!-- Logo of Navbar -->
-                <div class="navbar-brand"><img src="{% static 'logo_name.png' %}" alt="Logo" class="w-75"></div>
-                <!-- Button for mobile size -->
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>                    
-                <!-- Info of user on navbar -->
-                <div class="navbar-nav ms-auto order-md-last">
-                    <li class="nav-item">
-                        <span class="navbar-text small">username</span>
-                        <span class="nav-item"><img src="{% static 'avatar_icon.jpg' %}" alt="avatar" class="rounded-pill"></span>
-                    </li>
-                </div>
-                <!-- Navlinks -->
-                <div class="collapse navbar-collapse bg-dark" id="collapsibleNavbar">
-                    <ul class="navbar-nav">
-                        <li class="nav-item px-3"><a class="nav-link" href="../home">Home</a></li>
-                        <li class="nav-item px-3"><a class="nav-link" href="../game">Game</a></li>
-                        <!-- Profile dropdown -->
-                        <li class="nav-item px-3 dropdown">
-                            <a class="nav-link" href="#" id="navbarProfileDropdown" type="button" data-bs-toggle="dropdown">Profile</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" href="{% url 'edit' %}">Edit Profile</a></li>
-                                <li><a class="dropdown-item" href="{% url 'friends' %}">Friends</a></li>
-                                <li><a class="dropdown-item" href="{% url 'stats' %}">Stats</a></li>
-                            </ul>
-                        </li>
-                        <!-- Settings dropdown -->
-                        <li class="nav-item px-3 dropdown">
-                            <a class="nav-link" href="#" id="navbarSettingsDropdown" type="button" data-bs-toggle="dropdown">Settings</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" href="?language=en">English</a></li>
-                                <li><a class="dropdown-item" href="?language=pt">Portuguese</a></li>
-                                <li><a class="dropdown-item" href="?language=ru">Russian</a></li>
-                                <div class="dropdown-divider"></div>
-                                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
-                            </ul>
-                        </li>
+        <nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
+            <!-- Logo and Home -->
+            <div class="nav-item navbar-brand px-3"><a class="nav-link" href="{% url 'home' %}"><img src="{% static 'logo_name.png' %}" alt="Logo" class="w-75"></a>
+            </div>      
+            <!-- Info of user on navbar -->
+            <div class="nav-item px-3 dropdown ms-auto">
+                <a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
+                    <span class="navbar-text small">username</span>
+                    <img src="{% static 'avatar_icon.jpg' %}" alt="avatar" class="rounded-pill">
+                </a>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
+                        <li><a class="dropdown-item" href="{% url 'edit' %}">Edit Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'friends' %}">Friends</a></li>
+                        <li><a class="dropdown-item" href="{% url 'stats' %}">Stats</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
                     </ul>
-                </div>
+            </div>
+            <!-- Languages dropdown -->
+            <div class="nav-item dropdown">
+                <a class="nav-link" href="#" id="languagesDropdown" type="button" data-bs-toggle="dropdown"><img src="{% static 'language_icon.png' %}" alt="languages" class="w-50"></a>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
+                        <li><a class="dropdown-item" href="?language=en">English</a></li>
+                        <li><a class="dropdown-item" href="?language=pt">Portuguese</a></li>
+                        <li><a class="dropdown-item" href="?language=ru">Russian</a></li>
+                    </ul>
             </div>
         </nav>
         <!-- Page Content -->
-        <div class="container p-0 m-0" id="contents">
+        <div class="container-fluid p-0 m-0" id="contents">
             {% block content %}{% endblock %} 
         </div>
     </div>
