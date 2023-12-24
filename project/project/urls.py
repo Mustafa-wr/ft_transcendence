@@ -22,10 +22,8 @@ from myapp.views import game
 from myapp.views import base
 from myapp.views import authorize
 from myapp.aouth import callback
+from django.conf.urls.i18n import i18n_patterns
 import debug_toolbar
-
-
-
 
 
 urlpatterns = [
@@ -35,6 +33,12 @@ urlpatterns = [
     path('base/', base),
     path('authorize/', authorize, name='authorize'),
     path('callback/', callback, name='callback'),
-	path('debug/', include('debug_toolbar.urls')),
-
+    path('i18n/', include('django.conf.urls.i18n')),
+    path('debug/', include('debug_toolbar.urls')),
 ]
+
+urlpatterns += i18n_patterns (
+   path('', include('myapp.urls')),
+)
+
+

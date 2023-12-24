@@ -34,23 +34,27 @@
             <div class="nav-item px-3 dropdown ms-auto">
                 <a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
                     <span class="navbar-text small">username</span>
-                    <img src="{% static 'avatar_icon.jpg' %}" alt="avatar" class="rounded-pill">
+                    <img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
                 </a>
                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
-                        <li><a class="dropdown-item" href="{% url 'edit' %}">Edit Profile</a></li>
-                        <li><a class="dropdown-item" href="{% url 'friends' %}">Friends</a></li>
-                        <li><a class="dropdown-item" href="{% url 'stats' %}">Stats</a></li>
+                        <li><a class="dropdown-item" href="{% url 'edit' %}">{% trans "Edit Profile" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'friends' %}">{% trans "Friends" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'stats' %}">{% trans "Stats" %}</a></li>
                         <li class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
                     </ul>
             </div>
             <!-- Languages dropdown -->
             <div class="nav-item dropdown">
                 <a class="nav-link" href="#" id="languagesDropdown" type="button" data-bs-toggle="dropdown"><img src="{% static 'language_icon.png' %}" alt="languages" class="w-50"></a>
-                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
-                        <li><a class="dropdown-item" href="?language=en">English</a></li>
-                        <li><a class="dropdown-item" href="?language=pt">Portuguese</a></li>
-                        <li><a class="dropdown-item" href="?language=ru">Russian</a></li>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end" aria-labelledby="languagesDropdown">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}
+                            </a></li>
+                        {% endfor %}
                     </ul>
             </div>
         </nav>

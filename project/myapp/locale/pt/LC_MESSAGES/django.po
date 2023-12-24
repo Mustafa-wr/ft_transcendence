@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-24 02:50+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\myapp\templates\base.html:40
+msgid "Edit Profile"
+msgstr "Alterar Perfil"
+
+#: .\myapp\templates\base.html:41
+msgid "Friends"
+msgstr "Amigos"
+
+#: .\myapp\templates\base.html:42
+msgid "Stats"
+msgstr "Estatísticas"
+
+#: .\myapp\templates\base.html:44
+msgid "Logout"
+msgstr "Sair"
+
+#: .\myapp\templates\friends.html:7 .\myapp\templates\friends.html:42
+msgid "List of Friends"
+msgstr "Lista de Amigos"
+
+#: .\myapp\templates\friends.html:14 .\myapp\templates\friends.html:47
+msgid "USER"
+msgstr "USUÁRIO"
+
+#: .\myapp\templates\friends.html:15 .\myapp\templates\friends.html:48
+msgid "STATUS"
+msgstr "STATUS"
+
+#: .\myapp\templates\friends.html:30
+msgid "No friends!"
+msgstr "Nenhum amigo!"
+
+#: .\myapp\templates\home.html:7
+msgid "The Game"
+msgstr "O Jogo"
+
+#: .\myapp\templates\home.html:8
+msgid "Pong is a 2D game simulating table tennis."
+msgstr "Pong é um jogo 2D que simula tênis de mesa."
+
+#: .\myapp\templates\home.html:9
+msgid "Players control paddles to hit the ball back and forth."
+msgstr "Os jogadores controlam as raquetes para rebater a bola."
+
+#: .\myapp\templates\home.html:10
+msgid "Points are earned when one fails to return the ball to the other side."
+msgstr "Pontos são ganhos quando alguém não consegue devolver a bola para o outro lado."
+
+#: .\myapp\templates\home.html:11
+msgid "The goal is to reach 11 points before the opponent."
+msgstr "O objetivo é chegar aos 11 pontos antes do adversário."
+
+#: .\myapp\templates\home.html:15
+msgid "Ready to play Pong?"
+msgstr "Pronto para jogar Pong?"
+
+#: .\myapp\templates\home.html:16
+msgid "Play vs Computer"
+msgstr "Jogar vs Computador"
+
+#: .\myapp\templates\home.html:17
+msgid "Play Tournment"
+msgstr "Jogar Torneio"
+
+#: .\myapp\templates\home.html:18
+msgid "Play vs Online Player"
+msgstr "Jogar vs Jogador Online"
+
+#: .\myapp\templates\logout.html:6
+msgid "Are you sure you want to logout?"
+msgstr "Tem certeza que deseja sair?"
+
+#: .\myapp\templates\logout.html:7
+msgid "Yes, logout"
+msgstr "Sim, sair"
+
+#: .\myapp\templates\logout.html:8
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: .\project\settings.py:115
+msgid "English"
+msgstr "Inglês"
+
+#: .\project\settings.py:116
+msgid "Portuguese"
+msgstr "Português"
+
+#: .\project\settings.py:117
+msgid "Russian"
+msgstr "Russo"
+
+#~ msgid "REMOVE"
+#~ msgstr "REMOVER"

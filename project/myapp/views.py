@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import RegistrationForm
 from .models import Match
+from django.utils.translation import gettext as _
+from django.utils.translation import get_language, activate, gettext
 
-# Create your views here.
 
 def base(request):
 	return render(request, 'base.html')
@@ -42,9 +43,6 @@ def login(request):
 def home(request):
   return render(request, 'home.html')
 
-def game(request):
-  return render(request, 'game.html')
-
 def edit(request):
   return render(request, 'edit.html')
 
@@ -56,7 +54,19 @@ def friends(request):
   return render(request, 'friends.html')
 
 def logout(request):
-  language_code = request.GET.get('language', 'en')  # Default to English
-  print(f"Detected language code: {language_code}")
   return render(request, 'logout.html')
+
+def switch_language(request, language):
+    activate(language)
+    old_path = request.META.get('HTTP_REFERER', None)
+    if old_path:
+    # Split the URL by '/'
+      path_parts = old_path.split('/')
+    # Take the last part of the URL
+      last_part = path_parts[-1]
+    # Now, last_part contains the last part of the URL
+      print(f"ultima parte-> {last_part}")
+    if last_part:  
+      return redirect(last_part)  
+    return redirect('home')
 

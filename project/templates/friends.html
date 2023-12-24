@@ -1,8 +1,65 @@
+<!-- Using the database -->
 {% extends 'base.html' %}
 {% load static i18n %}
 
 {% block content %}
-<div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
-    <p>List of Friends</p> 
-</div>    
+<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;">
+    <h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
+    <br>
+
+    {% if friends_exist %}
+        <table class="table table-responsive table-dark rounded-4 overflow-hidden">
+            <thead class="border-bottom-0 table-secondary">
+                <tr>
+                    <th scope="col">{% trans "USER" %}</th>
+                    <th scope="col">{% trans "STATUS" %}</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for friend in friends %}
+                    <tr>
+                        <th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.nickname }}</th>
+                        <td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
+                        <td><img src="{% static 'delete_red.png' %}"></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{% trans "No friends!" %}</p>
+    {% endif %}
+
+</div>
 {% endblock %}
+
+
+
+<!-- Using dummy friends to check table -->
+
+    <!-- <table class="table table-responsive table-dark rounded-4 overflow-hidden">
+        <thead class="border-bottom-0 table-secondary">
+          <tr>
+            <th scope="col" >{% trans "USER" %}</th>
+            <th scope="col">{% trans "STATUS" %}</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="border-bottom-1" style="font-weight: normal;">username1</th>
+            <td><img src="{%static 'online.png' %}"></td>
+            <td><img src="{% static 'delete_red.png' %}"></td>
+          </tr>
+          <tr>
+            <th scope="row" style="font-weight: normal;">friend2</th>
+            <td><img src="{%static 'offline.png' %}"></td>
+            <td><img src="{% static 'delete_red.png' %}"></td>
+          </tr>
+          <tr>
+            <th scope="row" style="font-weight: normal;">lastfriend</th>
+            <td><img src="{%static 'online.png' %}"></td>
+            <td><img src="{% static 'delete_red.png' %}"></td>
+          </tr>
+        </tbody>
+    </table> -->
