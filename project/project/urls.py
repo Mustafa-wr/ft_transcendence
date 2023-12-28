@@ -33,12 +33,12 @@ urlpatterns = [
     path('base/', base),
     path('authorize/', authorize, name='authorize'),
     path('callback/', callback, name='callback'),
-    path('i18n/', include('django.conf.urls.i18n')),
+    # path('i18n/', include('django.conf.urls.i18n')),
     path('debug/', include('debug_toolbar.urls')),
 ]
 
-urlpatterns += i18n_patterns (
-   path('', include('myapp.urls')),
-)
+# urlpatterns += i18n_patterns (
+#    path('', include('myapp.urls')),
+# )
 
 
