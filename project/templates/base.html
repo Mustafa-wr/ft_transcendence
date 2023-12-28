@@ -51,10 +51,10 @@
                         {% get_current_language as LANGUAGE_CODE %}
                         {% get_available_languages as LANGUAGES %}
                         {% get_language_info_list for LANGUAGES as languages %}
-                        {% for language in languages %}
-                            <li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}
+                        {% comment %} {% for language in languages %}
+                            <li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}       ------>mustafa has commented this line
                             </a></li>
-                        {% endfor %}
+                        {% endfor %} {% endcomment %}
                     </ul>
             </div>
         </nav>

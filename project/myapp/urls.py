@@ -1,7 +1,7 @@
 from django.urls import include, path
 from . import views
 from django.conf.urls.i18n import i18n_patterns
-from .views import switch_language
+# from .views import switch_language     mustafa has commented this line
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -13,7 +13,7 @@ urlpatterns = [
     path('profile/stats', views.stats, name='stats'),
     path('profile/friends', views.friends, name='friends'),
     path('logout/', views.logout, name='logout'),
-    path('<language>', switch_language, name='switch_language'),
+    # path('<language>', switch_language, name='switch_language'),    mustafa has commented this line
 ]
 
 

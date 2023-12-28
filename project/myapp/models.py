@@ -40,7 +40,7 @@ class User(models.Model):
 	email = models.EmailField(max_length=100, default='None')
 	image_link = models.CharField(max_length=150, default='None')
 	current_status = models.CharField(max_length=10, default="Offline")
-	preferred_language = models.CharField(max_length=20, default="English")
+	# preferred_language = models.CharField(max_length=20, default="English")    ->>>>> mustafa has commented this line
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 

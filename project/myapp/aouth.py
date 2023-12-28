@@ -36,6 +36,7 @@ def callback(request):
                 user_response = requests.get(user_info_url, headers=headers)
                 user_response.raise_for_status()
                 user_info = user_response.json()
+                request.session['user_info'] = user_info
                 # storing data of usere in object
                 user_data.objects.create(
                     login = user_info.get('login'),
@@ -43,7 +44,7 @@ def callback(request):
                     email = user_info.get('email'),
                     # image_link = data["image"]["link"]
                 ).save()
-                return render(request, 'user_info.html', {'user_info': user_info})
+                return render(request, 'home.html', {'user_info': user_info})
             else:
                 return render(request, 'error.html', {'error': 'Access token not found in the response'})
         except requests.exceptions.RequestException as e:
