@@ -56,50 +56,21 @@ def friends(request):
 def logout(request):
   return render(request, 'logout.html')
 
-# def switch_language(request, language):
-#     activate(language)
-#     old_path = request.META.get('HTTP_REFERER', None)
-#     last_part = None
-#     # try:
-#     if old_path:
-# 	# Split the URL by '/'
-#         path_parts = old_path.split('/')
-# 	# Take the last part of the URL
-#         last_part = path_parts[-1]
-# 	#   print(path_parts)
-#     print(f"am heeree{last_part}")
-# 	# Now, last_part contains the last part of the URL
-#     print(f"ultima parte-> {last_part}")
-#     if last_part:
-# 	    return redirect(last_part)
-#     return redirect('home')
-
-
-
-
-    # except Exception as e:
-    #     return HttpResponseServerError(f"An error occurred: {e}")
-
-# from django.http import Http404
-
-# def switch_language(request, language):
-#     try:
-#         activate(language)
-#         old_path = request.META.get('HTTP_REFERER', None)
-#         last_part = None
-        
-#         if old_path:
-#             path_parts = old_path.split('/')
-#             last_part = path_parts[-1]
-        
-#         print(f"am heeree{last_part}")
-#         print(f"ultima parte-> {last_part}")
-        
-#         if last_part:
-#             return redirect(last_part)
-#         return redirect('home')
-    
-#     except Exception as e:
-#         # Handle the exception here
-#         print(f"An error occurred: {str(e)}")
-#         raise Http404("Page not found")
+def switch_language(request, language):
+  activate(language)
+  old_path = request.META.get('HTTP_REFERER', None)
+  print(f"ultimo url-> {old_path}")
+  last_part = None
+  # try:
+  if old_path:
+    # Split the URL by '/'
+    path_parts = old_path.split('/')
+    # Take the last part of the URL
+    last_part = path_parts[-1]
+    #   print(path_parts)
+    print(f"testando, essa eh a ultima parte{last_part}")
+    # Now, last_part contains the last part of the URL
+    print(f"ultima parte-> {last_part}")
+    if last_part:
+      return redirect(last_part)
+  return redirect(path_parts[-2])
