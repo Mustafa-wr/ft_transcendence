@@ -31,9 +31,9 @@ urlpatterns = [
     path('debug/', include('debug_toolbar.urls')),
 ]
 
-urlpatterns += i18n_patterns (
-   path('', include('myapp.urls')),
-   prefix_default_language=False,
-)
+# urlpatterns += i18n_patterns (
+#    path('', include('myapp.urls')),
+#    prefix_default_language=False,
+# )
 
 
