@@ -6,16 +6,25 @@
 	<h1> We need to include total number of matches, total Wins, total Losses also (for module).</h1>
 	<br><br>
 	<h3>Match History</h3>
-		<ul>
-			{% for match in matches %}
-				<li>
-					Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
-					Winner: {{ match.winner_user.username }} (Score: {{ match.winner_score }})<br>
-					Loser: {{ match.loser_user.username }} (Score: {{ match.loser_score }})
-				</li>
-			{% empty %}
-				<li>No matches found.</li>
-			{% endfor %}
-		</ul>
+	<table>
+		<tr>
+			<th>Date</th>
+			<th>Time</th>
+			<th>Winner</th>
+			<th>Winner's Score</th>
+			<th>Loser</th>
+			<th>Loser's Score</th>
+		</tr>
+		{% for match in matches %}
+		<tr>
+			<td>{{ match.match_date }}</td>
+			<td>{{ match.match_time }}</td>
+			<td>{{ match.winner_user.username }}</td>
+			<td>{{ match.winner_score }}</td>
+			<td>{{ match.loser_user.username }}</td>
+			<td>{{ match.loser_score }}</td>
+		</tr>
+		{% endfor %}
+	</table>
 </div>
 {% endblock %}
