@@ -26,4 +26,6 @@ RUN chmod +x /code/migrate.sh
 # Copy the rest of your project files
 COPY . /code/
 
+RUN rm -rf /code/migrations
+
 CMD ["bash", "migrate.sh"]

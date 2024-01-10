@@ -3,6 +3,38 @@
 
 {% block content %}
 <div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
-    <p>Stats and Match History</p> 
-</div>    
+    <h1>User Information</h1>
+    <ul>
+        {% comment %} {% for user in user_data %} {% endcomment %}
+            <li>
+                <strong>Login:</strong> {{ users.login }}<br>
+            </li>
+        {% comment %} {% empty %} {% endcomment %}
+            {% comment %} <li>No users found.</li> {% endcomment %}
+        {% comment %} {% endfor %} {% endcomment %}
+    </ul>
+</div>
 {% endblock %}
+
+
+{% comment %} {% extends 'base.html' %}
+{% load static i18n %}
+
+{% block content %}
+<div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
+	<h1> We need to include total number of matches, total Wins, total Losses also (for module).</h1>
+	<br><br>
+	<h3>Match History</h3>
+		<ul>
+			{% for match in matches %}
+				<li>
+					Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
+					Winner: {{ match.winner_user.username }} (Score: {{ match.winner_score }})<br>
+					Loser: {{ match.loser_user.username }} (Score: {{ match.loser_score }})
+				</li>
+			{% empty %}
+				<li>No matches found.</li>
+			{% endfor %}
+		</ul>
+</div>
+{% endblock %} {% endcomment %}

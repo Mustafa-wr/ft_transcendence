@@ -1,20 +1,31 @@
 {% extends 'base.html' %}
 {% load static i18n %}
-{% load static %}
 
 {% block content %}
-<body>
-	<div class="page-content" style="background-image: url({% static 'arcade_new.png' %}); background-repeat: no-repeat; background-size: 100% 100%; min-height: 100%;">
-		<div class="page-content pt-5 text-light text-center">
-			<p>Ready to play Pong?</p>
-			{% if user_info %}
-      <h2>User Info</h2>
-      <pre>{{ user_info | safe }}</pre>
-      {% else %}
-			<button class="auto-btn">Authorize</button>
-			{% endif %}
-      <script src="{% static 'app.js' %}"></script>
-		</div>    
-	</div> 
-</body>
+<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
+    <fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+        <legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
+        <p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
+        <p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
+        <p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
+        <p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
+    </fieldset>
+    <br><br>
+    <fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+    <legend class="display-6 float-none w-auto p-3">{% trans "Ready to play Pong?" %}</legend>
+    <a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Computer" %}</a>
+    <a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play Tournment" %}</a>
+    <a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Online Player" %}</a>
+    <br><br>
+</fieldset>
+</div>
+
+<script> 
+	// Check if the URL contains a code and redirect to the home page without query parameters
+if (window.location.href.includes("?code=")) {
+	window.history.replaceState({}, document.title, "/"); // Remove query parameters
+  }
+</script>
 {% endblock %}
+
+

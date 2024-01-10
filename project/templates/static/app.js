@@ -7,4 +7,4 @@ function authorize() {
   window.location.href = authorizationUrl;
 }
 
-autoBtn.addEventListener("click", authorize);
+autoBtn.addEventListener("click", authorize); 
