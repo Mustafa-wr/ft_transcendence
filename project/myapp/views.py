@@ -6,28 +6,7 @@ from .models import RegistrationForm
 from .models import Match
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
-
-
-def base(request):
-	return render(request, 'base.html')
-
-# def sign_up(request):
-# 	if request.method == 'POST':
-# 		form = RegistrationForm(request.POST)
-# 		if form.is_valid():
-# 			user = form.save()
-# 			login(request, user)
-# 			return redirect('home')
-# 	else:
-# 		form = RegistrationForm()
-
-# 	return render(request, 'registration/sign-up.html', {'form': form})
-
-def index(request):
-    return render(request, 'index.html')
-
-def game(request):
-    return render(request, 'game.html')
+from django.contrib.auth.decorators import login_required
 
 def authorize(request):
     client_id = "client_id=u-s4t2ud-8156fc58fc2005216ad58258e48c1a311ceb0c4b4bd45451aba59272720501f4"
@@ -40,31 +19,41 @@ def authorize(request):
 def login(request):
   return render(request, 'login.html')
 
+# @login_required(login_url='login') --->cris commented, after we include this to make sure only loged users can access the pages
+def game(request):
+    return render(request, 'game.html')
+
+# @login_required(login_url='login')
 def home(request):
   return render(request, 'home.html')
 
+# @login_required(login_url='login')
 def edit(request):
   return render(request, 'edit.html')
 
+# @login_required(login_url='login')
 def stats(request):
 	matches = Match.objects.all().select_related('winner_user', 'loser_user')
 	return render(request, 'stats.html', {'matches': matches})
 
+# @login_required(login_url='login')
 def friends(request):
   return render(request, 'friends.html')
 
+# @login_required(login_url='login')
 def logout(request):
   return render(request, 'logout.html')
 
-# def switch_language(request, language):
-#     activate(language)
-#     old_path = request.META.get('HTTP_REFERER', None)
-#     print(f"ultimo url-> {old_path}")
-#     if old_path:
-#         path_parts = old_path.split('/')
-#         print(f"todos os paths-> {path_parts}")
-#         last_part = path_parts[-1] or path_parts[-2]
-#         if last_part:
-#             print(f"ultima parte da url-> {last_part}")
-#             return redirect(last_part)
-#     return redirect('home')
+def switch_language(request, language):
+    activate(language)
+    old_path = request.META.get('HTTP_REFERER', None)
+    # print(f"ultimo url-> {old_path}")
+    if old_path:
+        path_parts = old_path.split('/')
+        # print(f"todos os paths-> {path_parts}")
+        last_part = path_parts[-1] or path_parts[-2]
+        if last_part:
+            # print(f"ultima parte da url-> {last_part}")
+            return redirect(last_part)
+    return redirect('home')
+
