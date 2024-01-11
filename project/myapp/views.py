@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template import loader
 from .models import RegistrationForm
-from .models import Match
+from .models import Match, User, user_data
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
@@ -88,8 +88,11 @@ def edit(request):
   return render(request, 'edit.html')
 
 def stats(request):
-	matches = Match.objects.all().select_related('winner_user', 'loser_user')
-	return render(request, 'stats.html', {'matches': matches})
+	# matches = Match.objects.all().select_related('winner_user', 'loser_user')
+	current_user = request.session['user_info'].get('login')
+	user_info = user_data.objects.filter(login=current_user).first()
+	context = {"user_info": user_info}
+	return render(request, 'stats.html', context)
 
 def friends(request):
   return render(request, 'friends.html')

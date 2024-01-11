@@ -6,14 +6,13 @@ from .models import user_data
 
 def callback(request):
     if 'code' in request.GET:
-		
         code = request.GET.get('code')
         print(f"Received authorization code: {code}")
         
         token_url = "https://api.intra.42.fr/oauth/token"
-        client_id = "u-s4t2ud-8156fc58fc2005216ad58258e48c1a311ceb0c4b4bd45451aba59272720501f4"
-        client_secret = "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"
-        redirect_uri = f"http://{request.get_host()}/callback"
+        client_id = "u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
+        client_secret = "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"
+        redirect_uri = "http://127.0.0.1:8000/callback"
         
         data = {
             'grant_type': 'authorization_code',
@@ -45,6 +44,7 @@ def callback(request):
                     email = user_info.get('email'),
                     # image_link = data["image"]["link"]
                 ).save()
+                user_info = user_response.json()
                 return render(request, 'home.html', {'user_info': user_info})
             else:
                 return render(request, 'error.html', {'error': 'Access token not found in the response'})

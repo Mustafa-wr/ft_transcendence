@@ -7,8 +7,12 @@
     <ul>
         {% comment %} {% for user in user_data %} {% endcomment %}
             <li>
-                <strong>Login:</strong> {{ users.login }}<br>
+                <strong>Login:</strong> {{ user_info.login }}<br>
+				
             </li>
+			<li>
+				<strong>Nickname:</strong> {{ user_info.nickname }}<br>
+			</li>
         {% comment %} {% empty %} {% endcomment %}
             {% comment %} <li>No users found.</li> {% endcomment %}
         {% comment %} {% endfor %} {% endcomment %}
