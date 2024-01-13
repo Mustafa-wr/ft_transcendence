@@ -2,33 +2,30 @@ from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import RegistrationForm
-from .models import Match, User, user_data
+from .models import user_profile, match_history
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
 
-
-def stats_view(request):
-    users = user_data.objects.all()  # Fetch all User objects
-    return render(request, 'stats.html', {'users': users})
-
+def stats(request):
+	matches = match_history.objects.all().select_related('winner_user', 'loser_user')
+	return render(request, 'stats.html', {'matches': matches})
 
 def base(request):
 	return render(request, 'base.html')
 
 def login(request):
-    # Check if the user is already authenticated
-    if request.method == 'GET':
-        print(f"am heeree{request.user.is_authenticated}")
-    if request.user.is_authenticated:
-	    return redirect('/home')
-    user_info = request.session.get('user_info')
-    print(f"am heeree{user_info}")
-    if user_info:
-        # If already authenticated, redirect to home or dashboard
-        return redirect('home')
-    return render(request, 'login.html')
+	# Check if the user is already authenticated
+	if request.method == 'GET':
+		print(f"am heeree{request.user.is_authenticated}")
+	if request.user.is_authenticated:
+		return redirect('/home')
+	user_info = request.session.get('user_info')
+	print(f"am heeree{user_info}")
+	if user_info:
+		# If already authenticated, redirect to home or dashboard
+		return redirect('home')
+	return render(request, 'login.html')
 
     # Your login logic goes here...
     # If the login is successful and the user is authenticated:
@@ -72,14 +69,15 @@ def home(request):
   return render(request, 'home.html')
 
 def edit(request):
-  return render(request, 'edit.html')
+  user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+  return render(request, 'edit.html', {'user':user})
 
-def stats(request):
-	# matches = Match.objects.all().select_related('winner_user', 'loser_user')
-	current_user = request.session['user_info'].get('login')
-	user_info = user_data.objects.filter(login=current_user).first()
-	context = {"user_info": user_info}
-	return render(request, 'stats.html', context)
+# def stats(request):
+# 	# matches = Match.objects.all().select_related('winner_user', 'loser_user')
+# 	current_user = request.session['user_info'].get('login')
+# 	user_info = user_profile.objects.filter(login=current_user).first()
+# 	context = {"user_info": user_info}
+# 	return render(request, 'stats.html', context)
 
 def friends(request):
   return render(request, 'friends.html')
