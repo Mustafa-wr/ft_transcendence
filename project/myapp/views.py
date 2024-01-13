@@ -49,19 +49,6 @@ def authenticated_user(view_func):
             return redirect('login')
     return wrapper
 
-
-# def sign_up(request):
-# 	if request.method == 'POST':
-# 		form = RegistrationForm(request.POST)
-# 		if form.is_valid():
-# 			user = form.save()
-# 			login(request, user)
-# 			return redirect('home')
-# 	else:
-# 		form = RegistrationForm()
-
-# 	return render(request, 'registration/sign-up.html', {'form': form})
-
 @authenticated_user
 def index(request):
     return render(request, 'index.html')
@@ -79,7 +66,7 @@ def authorize(request):
 
 # def login(request):
 #   return render(request, 'login.html')
-  
+
 @authenticated_user
 def home(request):
   return render(request, 'home.html')
@@ -102,7 +89,7 @@ def logout(request):
     # Remove the user_info from the session
     if 'user_info' in request.session:
         del request.session['user_info']
-    
+
     # Redirect to a page indicating successful logout or any other desired page
     return redirect('home')  # Replace 'home' with the URL name of your desired page
 
@@ -138,18 +125,18 @@ def logout(request):
 #         activate(language)
 #         old_path = request.META.get('HTTP_REFERER', None)
 #         last_part = None
-        
+
 #         if old_path:
 #             path_parts = old_path.split('/')
 #             last_part = path_parts[-1]
-        
+
 #         print(f"am heeree{last_part}")
 #         print(f"ultima parte-> {last_part}")
-        
+
 #         if last_part:
 #             return redirect(last_part)
 #         return redirect('home')
-    
+
 #     except Exception as e:
 #         # Handle the exception here
 #         print(f"An error occurred: {str(e)}")
