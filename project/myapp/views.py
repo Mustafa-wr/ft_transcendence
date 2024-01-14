@@ -8,7 +8,7 @@ from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
 
 def stats(request):
-	matches = match_record.objects.all().select_related('winner_user', 'loser_user')
+	matches = match_record.objects.all()
 	return render(request, 'stats.html', {'matches': matches})
 
 def base(request):
