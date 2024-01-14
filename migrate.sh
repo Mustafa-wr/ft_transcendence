@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sleep 5
+
 echo "Running migrate.sh script..."
 
 python project/manage.py makemigrations myapp --noinput
