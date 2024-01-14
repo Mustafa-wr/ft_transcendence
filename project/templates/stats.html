@@ -10,8 +10,8 @@
 			{% for match in matches %}
 				<li>
 					Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
-					Winner: {{ match.winner_user.username }} (Score: {{ match.winner_score }})<br>
-					Loser: {{ match.loser_user.username }} (Score: {{ match.loser_score }})
+					Winner: {{ match.winner_user.login }} (Score: {{ match.winner_score }})<br>
+					Loser: {{ match.loser_user.login }} (Score: {{ match.loser_score }})
 				</li>
 			{% empty %}
 				<li>No matches found.</li>
