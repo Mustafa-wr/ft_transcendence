@@ -1,6 +1,12 @@
 #!/bin/bash
 
+sleep 5
+
+echo "Running migrate.sh script..."
+
 python project/manage.py makemigrations myapp --noinput
 python project/manage.py migrate --noinput
 
-python project/manage.py runserver 0000:8000
+echo "\nMigrations completed."
+
+python project/manage.py runserver 0.0.0.0:8000

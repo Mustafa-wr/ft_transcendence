@@ -2,13 +2,18 @@
 {% load static i18n %}
 
 {% block content %}
-<div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
-    <p>Edit Profile</p>
-    <p>Edit username</p>
-    <p>Choose alias for tournments</p>
-    <p>Edit Avatar</p>
-</div>    
+<div class="page-content py-5 bg-black text-light">
+	<h1>User Information</h1>
+    <ul>
+		<li>
+			<strong>Login:</strong> {{ user.login }}<br>
+		</li>
+		<li>
+			<strong>Nickname:</strong> {{ user.nickname }}<br>
+		</li>
+		<li>
+			<strong>Win/Loss Ratio:</strong> {{ user.wins }}, {{ user.losses }}<br>
+		</li>
+	</ul>
+</div>
 {% endblock %}
-
-
-
