@@ -17,5 +17,10 @@
 				<li>No matches found.</li>
 			{% endfor %}
 		</ul>
+		{% if match_count %}
+			<p>Match Count: {{ match_count }}</p>
+		{% else %}
+			<p>Match Count: 0</p>
+		{% endif %}
 </div>
 {% endblock %}

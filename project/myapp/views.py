@@ -6,10 +6,13 @@ from .models import user_profile, match_record
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
+from django.db.models import Q
 
 def stats(request):
-	matches = match_record.objects.all()
-	return render(request, 'stats.html', {'matches': matches})
+	current_user = user_profile.objects.get(login=request.session['user_info'].get('login'))
+	matches = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user))
+	match_count = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user)).count()
+	return render(request, 'stats.html', {'matches': matches, 'match_count':match_count})
 
 def base(request):
 	return render(request, 'base.html')
