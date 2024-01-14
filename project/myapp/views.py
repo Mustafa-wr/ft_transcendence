@@ -72,13 +72,6 @@ def edit(request):
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
   return render(request, 'edit.html', {'user':user})
 
-# def stats(request):
-# 	# matches = Match.objects.all().select_related('winner_user', 'loser_user')
-# 	current_user = request.session['user_info'].get('login')
-# 	user_info = user_profile.objects.filter(login=current_user).first()
-# 	context = {"user_info": user_info}
-# 	return render(request, 'stats.html', context)
-
 def friends(request):
   return render(request, 'friends.html')
 
