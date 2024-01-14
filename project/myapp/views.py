@@ -8,6 +8,19 @@ from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
 from django.db.models import Q
 
+def authenticated_user(view_func):
+	def wrapper(request, *args, **kwargs):
+		user_info = request.session.get('user_info')
+		if user_info:
+			# User is authenticated, allow access to the view
+			return view_func(request, *args, **kwargs)
+		else:
+			print("not authenticated")
+			# User is not authenticated, redirect to the login page
+			return redirect('login')
+	return wrapper
+
+@authenticated_user
 def stats(request):
 	current_user = user_profile.objects.get(login=request.session['user_info'].get('login'))
 	matches = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user))
@@ -37,18 +50,6 @@ def login(request):
 
     # Then redirect to home or dashboard
 
-def authenticated_user(view_func):
-    def wrapper(request, *args, **kwargs):
-        user_info = request.session.get('user_info')
-        if user_info:
-            # User is authenticated, allow access to the view
-            return view_func(request, *args, **kwargs)
-        else:
-            print("not authenticated")
-            # User is not authenticated, redirect to the login page
-            return redirect('login')
-    return wrapper
-
 @authenticated_user
 def index(request):
     return render(request, 'index.html')
@@ -64,17 +65,16 @@ def authorize(request):
 
     return redirect('/home/')
 
-# def login(request):
-#   return render(request, 'login.html')
-
 @authenticated_user
 def home(request):
   return render(request, 'home.html')
 
+@authenticated_user
 def edit(request):
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
   return render(request, 'edit.html', {'user':user})
 
+@authenticated_user
 def friends(request):
   return render(request, 'friends.html')
 
