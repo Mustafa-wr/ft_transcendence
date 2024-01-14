@@ -19,8 +19,8 @@ class user_profile(models.Model):
 class match_record(models.Model):
 	match_date = models.DateField()
 	match_time = models.TimeField()
-	winner_user = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='won_matches')
-	loser_user = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='lost_matches')
+	match_winner = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='won_matches')
+	match_loser = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='lost_matches')
 	winner_score = models.IntegerField()
 	loser_score = models.IntegerField()
 
