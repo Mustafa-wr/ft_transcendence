@@ -2,13 +2,13 @@ from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import user_profile, match_history
+from .models import user_profile, match_record
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
 
 def stats(request):
-	matches = match_history.objects.all().select_related('winner_user', 'loser_user')
+	matches = match_record.objects.all().select_related('winner_user', 'loser_user')
 	return render(request, 'stats.html', {'matches': matches})
 
 def base(request):

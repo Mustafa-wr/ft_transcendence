@@ -16,7 +16,7 @@ class user_profile(models.Model):
 	def __str__(self):
 		return self.login
 
-class match_history(models.Model):
+class match_record(models.Model):
 	match_date = models.DateField()
 	match_time = models.TimeField()
 	winner_user = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='won_matches')
