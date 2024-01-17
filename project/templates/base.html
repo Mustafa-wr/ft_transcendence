@@ -24,46 +24,100 @@
 </head>
 
 <body class="bg-black">
-    <div class="container-fluid p-0 m-0">
+    {% comment %} <div class="container-fluid p-0 m-0">
         <!-- Top Navigation Bar -->
-        <nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
-            <!-- Logo and Home -->
-            <div class="nav-item navbar-brand px-3"><a class="nav-link" href="{% url 'home' %}"><img src="{% static 'logo_name.png' %}" alt="Logo" class="w-75"></a>
-            </div>
-            <!-- Info of user on navbar -->
-            <div class="nav-item px-3 dropdown ms-auto">
-                <a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
-                    <span class="navbar-text small">username</span>
-                    <img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
-                </a>
-                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
-                        <li><a class="dropdown-item" href="{% url 'edit' %}">{% trans "Edit Profile" %}</a></li>
-                        <li><a class="dropdown-item" href="{% url 'friends' %}">{% trans "Friends" %}</a></li>
-                        <li><a class="dropdown-item" href="{% url 'stats' %}">{% trans "Stats" %}</a></li>
-                        <li class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
-                    </ul>
-            </div>
-            <!-- Languages dropdown -->
-            <div class="nav-item dropdown">
-                <a class="nav-link" href="#" id="languagesDropdown" type="button" data-bs-toggle="dropdown"><img src="{% static 'language_icon.png' %}" alt="languages" class="w-50"></a>
-                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end" aria-labelledby="languagesDropdown">
-                        {% get_current_language as LANGUAGE_CODE %}
-                        {% get_available_languages as LANGUAGES %}
-                        {% get_language_info_list for LANGUAGES as languages %}
-                        {% comment %} {% for language in languages %}
-                            <li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}       ------>mustafa has commented this line
-                            </a></li>
-                        {% endfor %} {% endcomment %}
-                    </ul>
-            </div>
-        </nav>
         <!-- Page Content -->
-        <div class="container-fluid p-0 m-0" id="contents">
-            {% block content %}{% endblock %}
-        </div>
-    </div>
-<!-- Bootstrap 5.3.2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </div> {% endcomment %}
+	<nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
+		<!-- Logo and Home -->
+		<div class="nav-item navbar-brand px-3"><a class="nav-link" href="{% url 'home' %}"><img src="{% static 'logo_name.png' %}" alt="Logo" class="w-75"></a>
+		</div>
+		<!-- Info of user on navbar -->
+		<div class="nav-item px-3 dropdown ms-auto">
+			<a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
+				<span class="navbar-text small">username</span>
+				<img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
+			</a>
+				<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
+					<li><a class="dropdown-item" href="{% url 'edit' %}">{% trans "Edit Profile" %}</a></li>
+					<li><a class="dropdown-item" href="{% url 'friends' %}">{% trans "Friends" %}</a></li>
+					<li><a class="dropdown-item" href="{% url 'stats' %}">{% trans "Stats" %}</a></li>
+					<li class="dropdown-divider"></li>
+					<li><a class="dropdown-item text-danger" href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+				</ul>
+		</div>
+		<!-- Languages dropdown -->
+		<div class="nav-item dropdown">
+			<a class="nav-link" href="#" id="languagesDropdown" type="button" data-bs-toggle="dropdown"><img src="{% static 'language_icon.png' %}" alt="languages" class="w-50"></a>
+				<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end" aria-labelledby="languagesDropdown">
+					{% get_current_language as LANGUAGE_CODE %}
+					{% get_available_languages as LANGUAGES %}
+					{% get_language_info_list for LANGUAGES as languages %}
+					{% comment %} {% for language in languages %}
+						<li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}       ------>mustafa has commented this line
+						</a></li>
+					{% endfor %} {% endcomment %}
+				</ul>
+		</div>
+	</nav>
+	<div class="container-fluid p-0 m-0" id="contents">
+		{% block content %}{% endblock %}
+	</div>
+	<!-- Bootstrap 5.3.2 JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+	<script>
+		
+		
+		contentContainer = document.getElementById("contents");
+		function loadContent() {
+			url = window.location.href;
+			console.log(url);
+			if (url == null) {
+				return ;
+			}
+			console.log(url);
+			
+			fetch(url)
+			.then((response) => response.text())
+			.then((html) => {
+				contentContainer.innerHTML = html;
+			})
+		.catch((error) => console.error("Error loading content:", error));
+	}
+	
+	window.addEventListener("popstate", function () {
+		urlRoute();
+	});
+
+	const urlRoute = (event) => {
+		event = event || window.event; // get window.event if event argument not provided
+		event.preventDefault();
+		console.log(event.target.href);
+		if(event.target.href) {
+			window.history.pushState({}, "", event.target.href);
+			loadContent();
+		}
+		// window.history.pushState(state, unused, target link);
+		//window.history.pushState({}, "", event.target.href);
+		//urlLocationHandler();
+	};
+	
+
+	document.addEventListener("click", (e) => {
+		const { target } = e;
+		//if (target.matches("dropdown-item")) {
+			e.preventDefault();
+			urlRoute();
+			//console.log(event.target);
+			//navigateTo(target.href);
+		//}
+		//e.preventDefault();
+		//console.log(event.target);
+		//loadContent(event.target.href);
+
+	});
+  </script>
+  
+
 </body>
 </html>
