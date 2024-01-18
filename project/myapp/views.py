@@ -2,7 +2,7 @@ from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import user_profile, match_record
+from .models import user_profile, match_record, Game
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
@@ -53,9 +53,27 @@ def login(request):
 @authenticated_user
 def index(request):
     return render(request, 'index.html')
+
 @authenticated_user
 def game(request):
     return render(request, 'game.html')
+
+# @authenticated_user
+# def pong(request):
+# 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+# 	return render(request, 'pong.html', {'user': user})
+
+@authenticated_user
+def pong(request):
+        game_instance = Game()  
+        game_instance.player_2 = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+        print(f"am heeree at pong view {game_instance.player_2}")
+        template = loader.get_template('pong.html')
+        context = {
+            'game': game_instance,
+        }
+        return HttpResponse(template.render(context, request))
+    
 
 def authorize(request):
     client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"

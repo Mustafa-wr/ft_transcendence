@@ -16,6 +16,22 @@ class user_profile(models.Model):
 	def __str__(self):
 		return self.login
 
+class match_maker(models.Model):
+	players = models.ManyToManyField(user_profile)
+
+class Game(models.Model):
+	player_1 = models.CharField(max_length=100, default='default_value')
+	player_2 = models.CharField(max_length=100, default='default_value')
+	game_level = models.IntegerField(default=0)
+
+	
+class tournament(models.Model):
+	name = models.CharField(max_length=100, default='default_value')
+	players = models.ManyToManyField(user_profile)
+	#matches = models.ManyToManyField(match_record)
+	
+
+
 class match_record(models.Model):
 	match_date = models.DateField()
 	match_time = models.TimeField()
