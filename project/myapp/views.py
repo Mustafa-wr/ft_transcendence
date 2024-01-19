@@ -25,7 +25,7 @@ def stats(request):
 	current_user = user_profile.objects.get(login=request.session['user_info'].get('login'))
 	matches = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user))
 	match_count = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user)).count()
-	return render(request, 'stats.html', {'matches': matches, 'match_count':match_count})
+	return render(request, 'base.html', {'matches': matches, 'match_count':match_count})
 
 def base(request):
 	return render(request, 'base.html')
@@ -67,12 +67,12 @@ def authorize(request):
 
 @authenticated_user
 def home(request):
-  return render(request, 'home.html')
+  return render(request, 'base.html')
 
 @authenticated_user
 def edit(request):
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-  return render(request, 'edit.html', {'user':user})
+  return render(request, 'base.html', {'user':user})
 
 @authenticated_user
 def friends(request):

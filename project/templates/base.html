@@ -28,64 +28,252 @@
         <!-- Top Navigation Bar -->
         <!-- Page Content -->
     </div> {% endcomment %}
-	<nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
-		<!-- Logo and Home -->
-		<div class="nav-item navbar-brand px-3"><a class="nav-link" href="{% url 'home' %}"><img src="{% static 'logo_name.png' %}" alt="Logo" class="w-75"></a>
-		</div>
-		<!-- Info of user on navbar -->
-		<div class="nav-item px-3 dropdown ms-auto">
-			<a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
-				<span class="navbar-text small">username</span>
-				<img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
-			</a>
-				<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
-					<li><a class="dropdown-item" href="{% url 'edit' %}">{% trans "Edit Profile" %}</a></li>
-					<li><a class="dropdown-item" href="{% url 'friends' %}">{% trans "Friends" %}</a></li>
-					<li><a class="dropdown-item" href="{% url 'stats' %}">{% trans "Stats" %}</a></li>
-					<li class="dropdown-divider"></li>
-					<li><a class="dropdown-item text-danger" href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
-				</ul>
-		</div>
-		<!-- Languages dropdown -->
-		<div class="nav-item dropdown">
-			<a class="nav-link" href="#" id="languagesDropdown" type="button" data-bs-toggle="dropdown"><img src="{% static 'language_icon.png' %}" alt="languages" class="w-50"></a>
-				<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end" aria-labelledby="languagesDropdown">
-					{% get_current_language as LANGUAGE_CODE %}
-					{% get_available_languages as LANGUAGES %}
-					{% get_language_info_list for LANGUAGES as languages %}
-					{% comment %} {% for language in languages %}
-						<li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}       ------>mustafa has commented this line
-						</a></li>
-					{% endfor %} {% endcomment %}
-				</ul>
-		</div>
-	</nav>
+	{% block navbar %}
+		{% if not is_home_page %}
+			<nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
+				<!-- Logo and Home -->
+				<div class="nav-item navbar-brand px-3"><a  id="homeButton" class="nav-link" href="{% url 'home' %}"><img src="{% static 'logo_name.png' %}" alt="Logo" class="w-75"></a>
+				</div>
+				<!-- Info of user on navbar -->
+				<div class="nav-item px-3 dropdown ms-auto">
+					<a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
+						<span class="navbar-text small">username</span>
+						<img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
+					</a>
+						<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
+							<li><a class="dropdown-item" href="{% url 'edit' %}">{% trans "Edit Profile" %}</a></li>
+							<li><a class="dropdown-item" href="{% url 'friends' %}">{% trans "Friends" %}</a></li>
+							<li><a class="dropdown-item" href="{% url 'stats' %}">{% trans "Stats" %}</a></li>
+							<li class="dropdown-divider"></li>
+							<li><a class="dropdown-item text-danger" href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+						</ul>
+				</div>
+				<!-- Languages dropdown -->
+				<div class="nav-item dropdown">
+					<a class="nav-link" href="#" id="languagesDropdown" type="button" data-bs-toggle="dropdown"><img src="{% static 'language_icon.png' %}" alt="languages" class="w-50"></a>
+						<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end" aria-labelledby="languagesDropdown">
+							{% get_current_language as LANGUAGE_CODE %}
+							{% get_available_languages as LANGUAGES %}
+							{% get_language_info_list for LANGUAGES as languages %}
+							{% comment %} {% for language in languages %}
+								<li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}       ------>mustafa has commented this line
+								</a></li>
+							{% endfor %} {% endcomment %}
+						</ul>
+				</div>
+			</nav>
+		{% endif %}
+	{% endblock%}
+
 	<div class="container-fluid p-0 m-0" id="contents">
 		{% block content %}{% endblock %}
 	</div>
 	<!-- Bootstrap 5.3.2 JS -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
 	<script>
+
+
+		
 		
 		
 		contentContainer = document.getElementById("contents");
-		function loadContent() {
-			url = window.location.href;
+		function loadContent(url) {
 			console.log(url);
-			if (url == null) {
-				return ;
+		
+			const path = url.split('/').filter(part => part !== '');
+			const lastPart = path[path.length - 1];
+		
+			if (lastPart === 'home') {
+				// Set the desired HTML content for the home page
+				const homeContent = `
+					<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
+						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+							<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
+							<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
+							<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
+							<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
+							<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
+						</fieldset>
+						<br><br>
+						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+							<legend class="display-6 float-none w-auto p-3">{% trans "Ready to play Pong?" %}</legend>
+							<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Computer" %}</a>
+							<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play Tournament" %}</a>
+							<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Online Player" %}</a>
+							<br><br>
+						</fieldset>
+					</div>
+				`;
+				contentContainer.innerHTML = homeContent;
+				return;
+			} else if (lastPart === 'edit') {
+				const edit_content = `
+				<div class="page-content py-5 bg-black text-light">
+					<h1>User Information</h1>
+					<ul>
+						<li>
+							<strong>Login:</strong> {{ user.login }}<br>
+						</li>
+						<li>
+							<strong>Nickname:</strong> {{ user.nickname }}<br>
+						</li>
+						<li>
+							<strong>Win/Loss Ratio:</strong> {{ user.wins }}, {{ user.losses }}<br>
+						</li>
+					</ul>
+				</div>
+				`;
+				contentContainer.innerHTML = edit_content;
+				return;
+			} else if (lastPart === 'stats') {
+				const stats_content = `
+				<div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
+					<h1> We need to include total number of matches, total Wins, total Losses also (for module).</h1>
+					<br><br>
+					<h3>Match History</h3>
+						<ul>
+							{% for match in matches %}
+								<li>
+									Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
+									Winner: {{ match.winner_user.login }} (Score: {{ match.winner_score }})<br>
+									Loser: {{ match.loser_user.login }} (Score: {{ match.loser_score }})
+								</li>
+							{% empty %}
+								<li>No matches found.</li>
+							{% endfor %}
+						</ul>
+						{% if match_count %}
+							<p>Match Count: {{ match_count }}</p>
+						{% else %}
+							<p>Match Count: 0</p>
+						{% endif %}
+				</div>
+				`;
+				contentContainer.innerHTML = stats_content;
+				return;
 			}
-			console.log(url);
-			
-			fetch(url)
-			.then((response) => response.text())
-			.then((html) => {
-				contentContainer.innerHTML = html;
-			})
-		.catch((error) => console.error("Error loading content:", error));
+		
+			// For other pages, fetch content as usual
+			fetch(url, { credentials: "same-origin" })
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(`HTTP error! Status: ${response.status}`);
+					}
+					return response.text();
+				})
+				.then((html) => {
+					contentContainer.innerHTML = html;
+				})
+				.catch((error) => console.error("Error loading content:", error));
+		}
+	
+	function handleUrlRoute(url) {
+		window.history.pushState({}, "", url);
+		loadContent(url);
+	  }
+	
+	  function handleNavigation(event) {
+		event = event || window.event;
+		const homeButton = document.getElementById("homeButton");
+		
+		if (homeButton && (event.target === homeButton || homeButton.contains(event.target))) {
+			console.log("home button clicked");
+			event.preventDefault();
+			const url = homeButton.href;
+			handleUrlRoute(url);
+		} else if (event.target.matches(".dropdown-item") || event.target.matches(".nav-link")) {
+			event.preventDefault();
+			const url = event.target.href;
+			handleUrlRoute(url);
+		}
 	}
 	
-	window.addEventListener("popstate", function () {
+	  document.addEventListener("click", handleNavigation);
+	
+	  window.addEventListener("popstate", function () {
+		const url = window.location.href;
+		loadContent(url);
+	  });
+	
+	  // Initial content load
+	  document.addEventListener("DOMContentLoaded", function () {
+		const initialUrl = window.location.href;
+	
+		if (initialUrl.endsWith('/home/') || initialUrl.endsWith('/home')) {
+			// If the initial URL is the home page, set the home content directly.
+			console.log("Home page loaded initially");
+			const homeContent = `
+				<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
+					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+						<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
+						<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
+						<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
+						<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
+						<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
+					</fieldset>
+					<br><br>
+					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+						<legend class="display-6 float-none w-auto p-3">{% trans "Ready to play Pong?" %}</legend>
+						<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Computer" %}</a>
+						<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play Tournament" %}</a>
+						<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Online Player" %}</a>
+						<br><br>
+					</fieldset>
+				</div>
+			`;
+			contentContainer.innerHTML = homeContent;
+		} else if (initialUrl.endsWith('/edit/') || initialUrl.endsWith('/edit')) {
+			const edit_content = `
+			<div class="page-content py-5 bg-black text-light">
+				<h1>User Information</h1>
+				<ul>
+					<li>
+						<strong>Login:</strong> {{ user.login }}<br>
+					</li>
+					<li>
+						<strong>Nickname:</strong> {{ user.nickname }}<br>
+					</li>
+					<li>
+						<strong>Win/Loss Ratio:</strong> {{ user.wins }}, {{ user.losses }}<br>
+					</li>
+				</ul>
+			</div>
+			`;
+			contentContainer.innerHTML = edit_content;
+		} else if (initialUrl.endsWith('/stats/') || initialUrl.endsWith('/stats')) {
+			const stats_content = `
+			<div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
+				<h1> We need to include total number of matches, total Wins, total Losses also (for module).</h1>
+				<br><br>
+				<h3>Match History</h3>
+					<ul>
+						{% for match in matches %}
+							<li>
+								Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
+								Winner: {{ match.winner_user.login }} (Score: {{ match.winner_score }})<br>
+								Loser: {{ match.loser_user.login }} (Score: {{ match.loser_score }})
+							</li>
+						{% empty %}
+							<li>No matches found.</li>
+						{% endfor %}
+					</ul>
+					{% if match_count %}
+						<p>Match Count: {{ match_count }}</p>
+					{% else %}
+						<p>Match Count: 0</p>
+					{% endif %}
+			</div>
+			`;
+			contentContainer.innerHTML = stats_content;
+		}
+		else {
+			// For other pages, load the content as usual.
+			loadContent(initialUrl);
+		}
+	});
+
+	{% comment %} window.addEventListener("popstate", function () {
 		urlRoute();
 	});
 
@@ -115,7 +303,8 @@
 		//console.log(event.target);
 		//loadContent(event.target.href);
 
-	});
+	}); {% endcomment %}
+
   </script>
 </body>
 </html>
