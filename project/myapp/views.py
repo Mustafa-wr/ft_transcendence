@@ -22,10 +22,13 @@ def authenticated_user(view_func):
 
 @authenticated_user
 def stats(request):
-	current_user = user_profile.objects.get(login=request.session['user_info'].get('login'))
-	matches = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user))
-	match_count = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user)).count()
-	return render(request, 'base.html', {'matches': matches, 'match_count':match_count})
+    current_user_login = request.session['user_info'].get('login')
+    current_user = get_object_or_404(user_profile, login=current_user_login)
+    
+    matches = match_record.objects.filter(Q(match_winner=current_user) | Q(match_loser=current_user))
+    match_count = matches.count()
+
+    return render(request, 'base.html', {'matches': matches, 'match_count': match_count})
 
 def base(request):
 	return render(request, 'base.html')
@@ -77,7 +80,7 @@ def edit(request):
 
 @authenticated_user
 def friends(request):
-  return render(request, 'friends.html')
+  return render(request, 'base.html')
 
 @authenticated_user
 def logout(request):
