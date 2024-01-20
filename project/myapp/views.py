@@ -75,6 +75,7 @@ def home(request):
 
 @authenticated_user
 def edit(request):
+  user_info = request.session['user_info']
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
   return render(request, 'base.html', {'user':user})
 
