@@ -1,5 +1,7 @@
 #!/bin/bash
 
+python -m pip install Pillow
+
 sleep 5
 
 echo "Running migrate.sh script..."

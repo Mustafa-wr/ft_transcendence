@@ -2,6 +2,11 @@
 
 {% block content %}
 <div class="page-content py-5 bg-black text-light">
+	<form method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<button type="submit">Save Changes</button>
+	</form>
 	<h1>User Information</h1>
     <ul>
 		<li>

@@ -9,9 +9,9 @@ class user_profile(models.Model):
 	email = models.EmailField(max_length=100, default='default_value')
 	image_link = models.CharField(max_length=150, default='default_value')
 	status = models.CharField(max_length=20, default='offline')
-	preferred_language = models.CharField(max_length=20, default="English")
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
+	image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
 	def __str__(self):
 		return self.login

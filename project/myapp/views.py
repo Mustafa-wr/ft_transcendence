@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from .forms import UserProfileForm
 
 def authenticated_user(view_func):
 	def wrapper(request, *args, **kwargs):
@@ -21,10 +22,26 @@ def authenticated_user(view_func):
 	return wrapper
 
 @authenticated_user
+def edit(request):
+	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	if request.method == 'POST':
+		form = UserProfileForm(request.POST, request.FILES, instance=profile)
+		if form.is_valid():
+			profile = form.save(commit=False)
+			if profile.image:  # Check if an image is uploaded
+				profile.image_link = profile.image.url
+			profile.save()
+			return redirect('edit')
+	else:
+		form = UserProfileForm(instance=profile)
+
+	return render(request, 'base.html', {'form': form, 'user': profile})
+
+@authenticated_user
 def stats(request):
     current_user_login = request.session['user_info'].get('login')
     current_user = get_object_or_404(user_profile, login=current_user_login)
-    
+
     matches = match_record.objects.filter(Q(match_winner=current_user) | Q(match_loser=current_user))
     match_count = matches.count()
 
@@ -73,11 +90,11 @@ def home(request):
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
   return render(request, 'base.html', {'user':user})
 
-@authenticated_user
-def edit(request):
-  user_info = request.session['user_info']
-  user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-  return render(request, 'base.html', {'user':user})
+# @authenticated_user
+# def edit(request):
+#   user_info = request.session['user_info']
+#   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+#   return render(request, 'base.html', {'user':user})
 
 @authenticated_user
 def friends(request):
