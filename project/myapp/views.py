@@ -2,12 +2,13 @@ from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import user_profile, match_record
+from .models import user_profile, match_record, user_friends
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .forms import UserProfileForm
+from django.contrib import messages
 
 def authenticated_user(view_func):
 	def wrapper(request, *args, **kwargs):
@@ -90,15 +91,26 @@ def home(request):
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
   return render(request, 'base.html', {'user':user})
 
-# @authenticated_user
-# def edit(request):
-#   user_info = request.session['user_info']
-#   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-#   return render(request, 'base.html', {'user':user})
-
-@authenticated_user
 def friends(request):
-  return render(request, 'base.html')
+	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	friends = user_friends.objects.filter(user=user).select_related('friend')
+	if request.method == 'POST':
+		search_query = request.POST.get('search_query', '').strip()
+		if search_query:
+			potential_friend = user_profile.objects.filter(login=search_query).first()
+			if user.login == search_query:
+				messages.error(request, 'You cannot add yourself as a friend.')
+			elif potential_friend and potential_friend != user:
+				if not user_friends.objects.filter(user=user, friend=potential_friend).exists():
+					user_friends.objects.create(user=user, friend=potential_friend)
+					messages.success(request, f"{potential_friend.login} added as friend.")
+				else:
+					messages.warning(request, "Already friends.")
+			else:
+				messages.error(request, "User not found.")
+
+	context = {'friends': friends}
+	return render(request, 'base.html', context)
 
 @authenticated_user
 def logout(request):

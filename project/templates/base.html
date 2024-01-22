@@ -164,9 +164,20 @@
 			} else if (lastPart == 'friends') {
 				const friends_content = `
 				<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;">
-					<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
+					<div class="search-bar-container text-center">
+						<form method="post" action="{% url 'friends' %}">
+							{% csrf_token %}
+							<input type="text" name="search_query" placeholder="Enter friend's login...">
+							<button type="submit">Add Friend</button>
+						</form>
+					</div>
+					{% if messages %}
+						<div class="messages">
+							<div>{{ message }}</div>
+						</div>
+					{% endif %}
 					<br>
-
+					<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
 					{% if friends_exist %}
 						<table class="table table-responsive table-dark rounded-4 overflow-hidden">
 							<thead class="border-bottom-0 table-secondary">
@@ -316,9 +327,22 @@
 		} else if (initialUrl.endsWith('/friends/') || initialUrl.endsWith('/friends')) {
 			const friends_content = `
 			<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;">
-				<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
+				<div class="search-bar-container text-center">
+					<form method="post" action="{% url 'friends' %}">
+						{% csrf_token %}
+						<input type="text" name="search_query" placeholder="Enter friend's login...">
+						<button type="submit">Add Friend</button>
+					</form>
+				</div>
+				{% if messages %}
+					<div class="messages">
+						{% for message in messages %}
+							<div>{{ message }}</div>
+						{% endfor %}
+					</div>
+				{% endif %}
 				<br>
-
+				<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
 				{% if friends_exist %}
 					<table class="table table-responsive table-dark rounded-4 overflow-hidden">
 						<thead class="border-bottom-0 table-secondary">
