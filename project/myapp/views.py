@@ -5,7 +5,7 @@ from django.template import loader
 from .models import user_profile, match_record
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .forms import UserProfileForm
 
@@ -157,3 +157,15 @@ def logout(request):
 #         # Handle the exception here
 #         print(f"An error occurred: {str(e)}")
 #         raise Http404("Page not found")
+
+def switch_language(request, language):
+    activate(language)
+    old_path = request.META.get('HTTP_REFERER', None)
+    if old_path:
+        path_parts = old_path.split('/')
+        last_part = path_parts[-1] or path_parts[-2]
+        if last_part:
+            # print(f"ultima parte da url-> {last_part}")
+            return redirect(last_part)
+    return redirect('home')
+
