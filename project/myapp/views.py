@@ -91,6 +91,7 @@ def home(request):
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
   return render(request, 'base.html', {'user':user})
 
+@authenticated_user
 def friends(request):
 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
 	friends = user_friends.objects.filter(user=user).select_related('friend')
