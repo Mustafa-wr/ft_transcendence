@@ -16,121 +16,117 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
 #: .\project\settings.py:141
 msgid "English"
-msgstr "Inglês"
+msgstr ""
 
 #: .\project\settings.py:142
 msgid "Portuguese"
-msgstr "Português"
+msgstr "португальский"
 
 #: .\project\settings.py:143
 msgid "Spanish"
-msgstr "Espanhol"
+msgstr "испанский"
 
 #: .\project\settings.py:144
 msgid "Russian"
-msgstr "Russo"
+msgstr "Русский"
 
 #: .\templates\base.html:40
 msgid "Edit Profile"
-msgstr "Alterar Perfil"
+msgstr "Редактировать профиль"
 
 #: .\templates\base.html:41
 msgid "Friends"
-msgstr "Amigos"
+msgstr "Друзья"
 
 #: .\templates\base.html:42
 msgid "Stats"
-msgstr "Estatísticas"
+msgstr "Статистика"
 
 #: .\templates\base.html:44
 msgid "Logout"
-msgstr "Sair"
+msgstr "Выйти"
 
 #: .\templates\edit.html:7
 msgid "User Profile"
-msgstr "Alterar Perfil"
+msgstr "Профиль пользователя"
 
 #: .\templates\edit.html:8
 msgid "Username:"
-msgstr "Usuário:"
+msgstr "Имя пользователя:"
 
 #: .\templates\edit.html:9
 msgid "Alias:"
-msgstr "Apelido:"
+msgstr "Псевдоним:"
 
 #: .\templates\edit.html:13
 msgid "Save"
-msgstr "Salvar"
+msgstr "Сохранять"
 
 #: .\templates\friends.html:7
 msgid "List of Friends"
-msgstr "Lista de Amigos"
+msgstr "Список друзей"
 
 #: .\templates\friends.html:14 .\templates\friends.html:43
 msgid "USER"
-msgstr "USUÁRIO"
+msgstr "ПОЛЬЗОВАТЕЛЬ"
 
 #: .\templates\friends.html:15 .\templates\friends.html:44
 msgid "STATUS"
-msgstr "STATUS"
+msgstr "СТАТУС"
 
 #: .\templates\friends.html:30
 msgid "No friends!"
-msgstr "Nenhum amigo!"
+msgstr "Нет друзей!"
 
 #: .\templates\home.html:7
 msgid "The Game"
-msgstr "O Jogo"
+msgstr "Игра"
 
 #: .\templates\home.html:8
 msgid "Pong is a 2D game simulating table tennis."
-msgstr "Pong é um jogo 2D que simula tênis de mesa."
+msgstr "Pong — это 2D-игра, имитирующая настольный теннис."
 
 #: .\templates\home.html:9
 msgid "Players control paddles to hit the ball."
-msgstr "Os jogadores controlam as raquetes para rebater a bola."
+msgstr "Игроки управляют ракетками, чтобы отбить мяч."
 
 #: .\templates\home.html:10
 msgid "Points are earned when one fails to return the ball to the other side."
-msgstr ""
-"Pontos são ganhos quando alguém não consegue devolver a bola para o outro "
-"lado."
+msgstr "Очки зарабатываются, когда не удается вернуть мяч другой стороне."
 
 #: .\templates\home.html:11
 msgid "The goal is to reach 11 points before the opponent."
-msgstr "O objetivo é chegar aos 11 pontos antes do adversário."
+msgstr "Цель – набрать 11 очков раньше соперника."
 
 #: .\templates\home.html:15
 msgid "Ready?"
-msgstr "Pronto?"
+msgstr "Готовый?"
 
 #: .\templates\home.html:16
 msgid "Play vs Computer"
-msgstr "Jogar vs Computador"
+msgstr "Игра против компьютера"
 
 #: .\templates\home.html:17
 msgid "Play Tournment"
-msgstr "Jogar Torneio"
+msgstr "Играть в турнире."
 
 #: .\templates\home.html:18
 msgid "Play vs Online Player"
-msgstr "Jogar vs Jogador Online"
+msgstr "Игра против онлайн-игрока"
 
 #: .\templates\logout.html:6
 msgid "Are you sure you want to logout?"
-msgstr "Tem certeza que deseja sair?"
+msgstr "Вы действительно хотите выйти?"
 
 #: .\templates\logout.html:7
 msgid "Yes, logout"
-msgstr "Sim, sair"
+msgstr "Да, выйти"
 
 #: .\templates\logout.html:8
 msgid "Cancel"
-msgstr "Cancelar"
-
-#~ msgid "REMOVE"
-#~ msgstr "REMOVER"
+msgstr "Отмена"
