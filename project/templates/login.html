@@ -26,16 +26,19 @@
     <div class="container-fluid p-0 m-0 bg-black vh-100">
         <!-- Page Content -->
         <div class="page-content pt-5 text-light text-center bg-image">
-			<p>Welcome to ft_transcendence</p>
+			<h3>Welcome to ft_transcendence!</h4><br><br>
+            <h5>To play Pong you need to register with your 42 account.</h5><br><br>
 			{% if user_info %}
-      <h2>User Info</h2>
-      <pre>{{ user_info | safe }}</pre>
-      {% else %}
-	  
-			<button class="auto-btn">Authorize</button>
-			{% endif %}
-      <script src="{% static 'app.js' %}"></script>
-		</div>    
+                <h2>User Info</h2>
+                <pre>{{ user_info | safe }}</pre>
+            {% else %}
+                <button class="auto-btn">Authorize</button>
+            {% endif %}
+            <script src="{% static 'app.js' %}"></script>
+      <div class="p-5">
+      <img src="{% static '42logo.svg' %}" alt="42logo" width="100px" height="100px" id="42logo_img">
+      </div>
+    </div>
 	</div>
 
 

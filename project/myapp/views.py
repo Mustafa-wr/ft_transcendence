@@ -9,6 +9,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .forms import UserProfileForm
 from django.contrib import messages
+from django.utils import translation
+from django.views.i18n import set_language
+
 
 def authenticated_user(view_func):
 	def wrapper(request, *args, **kwargs):
@@ -121,64 +124,4 @@ def logout(request):
 
     # Redirect to a page indicating successful logout or any other desired page
     return redirect('home')  # Replace 'home' with the URL name of your desired page
-
-
-# def switch_language(request, language):
-#     activate(language)
-#     old_path = request.META.get('HTTP_REFERER', None)
-#     last_part = None
-#     # try:
-#     if old_path:
-# 	# Split the URL by '/'
-#         path_parts = old_path.split('/')
-# 	# Take the last part of the URL
-#         last_part = path_parts[-1]
-# 	#   print(path_parts)
-#     print(f"am heeree{last_part}")
-# 	# Now, last_part contains the last part of the URL
-#     print(f"ultima parte-> {last_part}")
-#     if last_part:
-# 	    return redirect(last_part)
-#     return redirect('home')
-
-
-
-
-    # except Exception as e:
-    #     return HttpResponseServerError(f"An error occurred: {e}")
-
-# from django.http import Http404
-
-# def switch_language(request, language):
-#     try:
-#         activate(language)
-#         old_path = request.META.get('HTTP_REFERER', None)
-#         last_part = None
-
-#         if old_path:
-#             path_parts = old_path.split('/')
-#             last_part = path_parts[-1]
-
-#         print(f"am heeree{last_part}")
-#         print(f"ultima parte-> {last_part}")
-
-#         if last_part:
-#             return redirect(last_part)
-#         return redirect('home')
-
-#     except Exception as e:
-#         # Handle the exception here
-#         print(f"An error occurred: {str(e)}")
-#         raise Http404("Page not found")
-
-def switch_language(request, language):
-    activate(language)
-    old_path = request.META.get('HTTP_REFERER', None)
-    if old_path:
-        path_parts = old_path.split('/')
-        last_part = path_parts[-1] or path_parts[-2]
-        if last_part:
-            # print(f"ultima parte da url-> {last_part}")
-            return redirect(last_part)
-    return redirect('home')
 

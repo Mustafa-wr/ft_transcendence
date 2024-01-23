@@ -37,8 +37,12 @@
 				<!-- Info of user on navbar -->
 				<div class="nav-item px-3 dropdown ms-auto">
 					<a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
-						<span class="navbar-text small">username</span>
-						<img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
+						<span class="navbar-text small">{{ user.login }}</span>
+						{% if user.image_link %}
+							<img src="{{ user.image_link }}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
+						{% else %}
+							<img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
+						{% endif %}
 					</a>
 						<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
 							<li><a class="dropdown-item" href="{% url 'edit' %}">{% trans "Edit Profile" %}</a></li>
@@ -49,18 +53,20 @@
 						</ul>
 				</div>
 				<!-- Languages dropdown -->
-				<div class="nav-item dropdown">
-					<a class="nav-link" href="#" id="languagesDropdown" type="button" data-bs-toggle="dropdown"><img src="{% static 'language_icon.png' %}" alt="languages" class="w-50"></a>
-						<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end" aria-labelledby="languagesDropdown">
-							{% get_current_language as LANGUAGE_CODE %}
-							{% get_available_languages as LANGUAGES %}
-							{% get_language_info_list for LANGUAGES as languages %}
-							{% comment %} {% for language in languages %}
-								<li><a class="dropdown-item" href="{% url 'switch_language' language=language.code %}">{{ language.name_local }}       ------>mustafa has commented this line
-								</a></li>
-							{% endfor %} {% endcomment %}
-						</ul>
-				</div>
+				<form id="languageForm" action="{% url 'set_language' %}" method="post">
+					{% csrf_token %}
+					<input name="next" type="hidden" value="{{ redirect_to }}">
+					<select name="language" onchange="document.getElementById('languageForm').submit()">
+						{% get_current_language as LANGUAGE_CODE %}
+						{% get_available_languages as LANGUAGES %}
+						{% get_language_info_list for LANGUAGES as languages %}
+						{% for language in languages %}
+							<option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
+								{{ language.name_local }}
+							</option>
+						{% endfor %}
+					</select>
+				</form>
 			</nav>
 		{% endif %}
 	{% endblock%}
@@ -101,10 +107,10 @@
 						</fieldset>
 						<br><br>
 						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-							<legend class="display-6 float-none w-auto p-3">{% trans "Ready to play Pong?" %}</legend>
-							<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Computer" %}</a>
-							<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play Tournament" %}</a>
-							<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Online Player" %}</a>
+							<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
+							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
+							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
+							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
 							<br><br>
 						</fieldset>
 					</div>
@@ -267,10 +273,10 @@
 					</fieldset>
 					<br><br>
 					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-						<legend class="display-6 float-none w-auto p-3">{% trans "Ready to play Pong?" %}</legend>
-						<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Computer" %}</a>
-						<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play Tournament" %}</a>
-						<a href="{% url 'game' %}" class="btn btn-primary">{% trans "Play vs Online Player" %}</a>
+						<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
+						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
+						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
+						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
 						<br><br>
 					</fieldset>
 				</div>
@@ -278,24 +284,23 @@
 			contentContainer.innerHTML = homeContent;
 		} else if (initialUrl.endsWith('/edit/') || initialUrl.endsWith('/edit')) {
 			const edit_content = `
-			<div class="page-content py-5 bg-black text-light">
-				<form method="post" enctype="multipart/form-data">
-					{% csrf_token %}
-					{{ form.as_p }}
-					<button type="submit">Save Changes</button>
-				</form>
-				<h1>User Information</h1>
-				<ul>
-					<li>
-						<strong>Login:</strong> {{ user.login }}<br>
-					</li>
-					<li>
-						<strong>Nickname:</strong> {{ user.nickname }}<br>
-					</li>
-					<li>
-						<strong>Win/Loss Ratio:</strong> {{ user.wins }}, {{ user.losses }}<br>
-					</li>
-				</ul>
+			<div class="page-content p-5 bg-black text-light text-center">
+				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+					<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">{% trans "User Profile" %}</legend>
+					<img src="{{ user.image_link }}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img"><br><br>
+					<p><strong>{% trans "Username:" %}</strong> {{ user.login }}</p><br>
+					<p><strong>{% trans "email:" %}</strong> {{ user.email }}</p><br>
+					<p><strong>{% trans "Alias:" %}</strong> {{ user.nickname }}</p><br>
+				</fieldset>
+				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+					<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">{% trans "Edit" %}</legend>
+					<form method="post" enctype="multipart/form-data">
+						{% csrf_token %}
+						{{ form.as_p }}
+						<br><br>
+						<button type="submit" class="btn btn-info">{% trans "Save" %}</button>
+					</form><br><br>
+				</fieldset>
 			</div>
 			`;
 			contentContainer.innerHTML = edit_content;

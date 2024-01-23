@@ -142,6 +142,7 @@ LANGUAGES = [
     ('en', _('English')),
     ('pt', _('Portuguese')),
     ('ru', _('Russian')),
+    ('es', _('Spanish')),
 ]
 
 # SECURE_SSL_REDIRECT = True
