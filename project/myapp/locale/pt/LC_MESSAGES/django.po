@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 21:15+0400\n"
+"POT-Creation-Date: 2024-01-25 22:59+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,35 +18,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\project\settings.py:141
+#: .\project\settings.py:142
 msgid "English"
 msgstr "Inglês"
 
-#: .\project\settings.py:142
+#: .\project\settings.py:143
 msgid "Portuguese"
 msgstr "Português"
-
-#: .\project\settings.py:143
-msgid "Spanish"
-msgstr "Espanhol"
 
 #: .\project\settings.py:144
 msgid "Russian"
 msgstr "Russo"
 
-#: .\templates\base.html:40
+#: .\templates\base.html:48
 msgid "Edit Profile"
 msgstr "Alterar Perfil"
 
-#: .\templates\base.html:41
+#: .\templates\base.html:49
 msgid "Friends"
 msgstr "Amigos"
 
-#: .\templates\base.html:42
+#: .\templates\base.html:50 .\templates\stats.html:7
 msgid "Stats"
 msgstr "Estatísticas"
 
-#: .\templates\base.html:44
+#: .\templates\base.html:52
 msgid "Logout"
 msgstr "Sair"
 
@@ -54,31 +50,43 @@ msgstr "Sair"
 msgid "User Profile"
 msgstr "Alterar Perfil"
 
-#: .\templates\edit.html:8
-msgid "Username:"
-msgstr "Usuário:"
+#: .\templates\edit.html:16
+msgid "Username"
+msgstr "Usuário"
 
-#: .\templates\edit.html:9
-msgid "Alias:"
-msgstr "Apelido:"
+#: .\templates\edit.html:24
+msgid "Alias for Tournaments"
+msgstr "Apelido para Torneios"
 
-#: .\templates\edit.html:13
+#: .\templates\edit.html:28
+msgid "Two-Factor Authentication (2FA)"
+msgstr "Autenticação de Dois Fatores (2FA)"
+
+#: .\templates\edit.html:30
+msgid "disable"
+msgstr "desabilitado"
+
+#: .\templates\edit.html:31
+msgid "enable"
+msgstr "habilitado"
+
+#: .\templates\edit.html:34
 msgid "Save"
 msgstr "Salvar"
 
-#: .\templates\friends.html:7
+#: .\templates\friends.html:6
 msgid "List of Friends"
 msgstr "Lista de Amigos"
 
-#: .\templates\friends.html:14 .\templates\friends.html:43
+#: .\templates\friends.html:13 .\templates\friends.html:40
 msgid "USER"
 msgstr "USUÁRIO"
 
-#: .\templates\friends.html:15 .\templates\friends.html:44
+#: .\templates\friends.html:14 .\templates\friends.html:41
 msgid "STATUS"
 msgstr "STATUS"
 
-#: .\templates\friends.html:30
+#: .\templates\friends.html:29
 msgid "No friends!"
 msgstr "Nenhum amigo!"
 
@@ -96,9 +104,7 @@ msgstr "Os jogadores controlam as raquetes para rebater a bola."
 
 #: .\templates\home.html:10
 msgid "Points are earned when one fails to return the ball to the other side."
-msgstr ""
-"Pontos são ganhos quando alguém não consegue devolver a bola para o outro "
-"lado."
+msgstr "Pontos são ganhos quando alguém não consegue devolver a bola para o outro lado."
 
 #: .\templates\home.html:11
 msgid "The goal is to reach 11 points before the opponent."
@@ -131,6 +137,52 @@ msgstr "Sim, sair"
 #: .\templates\logout.html:8
 msgid "Cancel"
 msgstr "Cancelar"
+
+#: .\templates\stats.html:9
+msgid "Total Matches:"
+msgstr "Total de Partidas:"
+
+#: .\templates\stats.html:10
+msgid "Total Wins:"
+msgstr "Total de Vitórias:"
+
+#: .\templates\stats.html:11
+msgid "Total Losses:"
+msgstr "Total de Derrotas:"
+
+#: .\templates\stats.html:12
+msgid "Success Ratio:"
+msgstr "Percentual de Aproveitamento:"
+
+#: .\templates\stats.html:15
+msgid "Match History"
+msgstr "Histórico de Partidas"
+
+#: .\templates\stats.html:21
+msgid "Date:"
+msgstr "Data:"
+
+#: .\templates\stats.html:21
+msgid "Time:"
+msgstr "Horário:"
+
+#: .\templates\stats.html:24
+msgid "Winner:"
+msgstr "Vencedor:"
+
+#: .\templates\stats.html:26
+msgid "Loser:"
+msgstr "Perdedor:"
+
+#: .\templates\stats.html:31
+msgid "No matches found."
+msgstr "Nenhum partida jogada."
+
+#~ msgid "Spanish"
+#~ msgstr "Espanhol"
+
+#~ msgid "Alias:"
+#~ msgstr "Apelido:"
 
 #~ msgid "REMOVE"
 #~ msgstr "REMOVER"

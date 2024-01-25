@@ -6,10 +6,10 @@
     <div class="container">
 		<h1 class="display-6" style="color:fuchsia;">{% trans "Stats" %}</h1>
 		<p class="p-3">
-			<strong>Total Matches:</strong> {{ match_count }}<br>
-			<strong>Total Wins:</strong> {{ total_wins }}<br>
-			<strong>Total Losses:</strong> {{ total_losses }}<br>
-			<strong>Success Ratio:</strong> {{ success_ratio|default:"N/A"|floatformat:"2" }}%
+			<strong>{% trans "Total Matches:" %}</strong> {{ match_count }}<br>
+			<strong>{% trans "Total Wins:" %}</strong> {{ total_wins }}<br>
+			<strong>{% trans "Total Losses:" %}</strong> {{ total_losses }}<br>
+			<strong>{% trans "Success Ratio:" %}</strong> {{ success_ratio|default:"N/A"|floatformat:"2" }}%
 		</p>
 
 		<h1 class="display-6" style="color:fuchsia;">{% trans "Match History" %}</h1>
@@ -18,17 +18,17 @@
                 <li class="list-group-item">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <strong>Date:</strong> {{ match.match_date }} &nbsp; <strong>Time:</strong> {{ match.match_time }}
+                            <strong>{% trans "Date:" %}</strong> {{ match.match_date }} &nbsp; <strong>{% trans "Time:" %}</strong> {{ match.match_time }}
                         </div>
                         <div>
-                            <span class="bg-success"><strong>Winner:</strong> {{ match.winner_user.login }} (Score: {{ match.winner_score }})</span>
+                            <span class="bg-success"><strong>{% trans "Winner:" %}</strong> {{ match.winner_user.login }} (Score: {{ match.winner_score }})</span>
                             <br>
-                            <span class="bg-danger"><strong>Loser:</strong> {{ match.loser_user.login }} (Score: {{ match.loser_score }})</span>
+                            <span class="bg-danger"><strong>{% trans "Loser:" %}</strong> {{ match.loser_user.login }} (Score: {{ match.loser_score }})</span>
                         </div>
                     </div>
                 </li>
             {% empty %}
-                <li class="list-group-item list-group-item-warning">No matches found.</li>
+                <li class="list-group-item list-group-item-warning">{% trans "No matches found." %}</li>
             {% endfor %}
         </ul>
 

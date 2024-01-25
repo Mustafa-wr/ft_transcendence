@@ -17,15 +17,15 @@
 				<input type="text" class="form-control" id="usernameForm" placeholder="{{ user.login }}" readonly>
 			</div>
 			<div class="form-group py-2">
-				<label for="email">Email</label>
+				<label for="email">{% trans "Email" %}</label>
 				<input type="email" class="form-control" id="emailForm" placeholder="{{ user.email }}" readonly>
 			</div>
 			<div class="form-group py-2">
-                <label for="alias">{% trans "Alias for Tournments" %}</label><br>
+                <label for="alias">{% trans "Alias for Tournaments" %}</label><br>
                 {{ form.nickname }}
             </div>
 			<div class="form-group py-2">
-				<label for="exampleFormControlSelect1">{% trans "Two-Factor-Authentication" %}</label>
+				<label for="exampleFormControlSelect1">{% trans "Two-Factor Authentication (2FA)" %}</label>
 				<select class="form-select" id="exampleFormControlSelect1">
 				  <option>{% trans "disable" %}</option>
 				  <option>{% trans "enable" %}</option>
