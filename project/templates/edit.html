@@ -1,16 +1,41 @@
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block content %}
-<div class="page-content p-5 bg-black text-light text-center">
-	<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+<div class="page-content p-0 bg-black text-light text-center">
+	<fieldset class="border rounded-5 px-3 text-light text-break text-start d-inline-block">
 		<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">{% trans "User Profile" %}</legend>
-		<p><strong>{% trans "Username:" %}</strong> {{ user.login }}</p><br>
-		<p><strong>{% trans "Alias:" %}</strong> {{ user.nickname }}</p>
-		<form method="post" enctype="multipart/form-data">
+		<img src="{{ user.image_link }}" alt="profile_img" class="rounded-pill" width="120px" height="120px" id="profile_img">
+		
+		<form>
 			{% csrf_token %}
-			{{ form.as_p }}
-			<button type="submit" class="btn btn-info">{% trans "Save" %}</button>
-		</form><br>
-	</fieldset>
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input type="email" class="form-control" id="emailForm" placeholder="{{ user.email }}" readonly>
+			</div>
+			<div class="form-group">
+				<label for="username">Username</label>
+				<input type="text" class="form-control" id="usernameForm" placeholder="{{ user.login }}" readonly>
+			</div>
+			<div class="form-group">
+				<label for="alias">Alias</label>
+				<input type="text" class="form-control" id="aliasForm" placeholder="{{ user.nickname }}">
+			</div>
+						
+			
+		
+			
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<button type="submit" class="btn btn-info">{% trans "Save" %}</button>
+			</form><br>
+		</form>
+		
+		<p>this is just checking data in the database</p>
+		<p><strong>{% trans "Username:" %}</strong> {{ user.login }}</p>
+		<p><strong>{% trans "Alias:" %}</strong> {{ user.nickname }}</p>
+
+	</fieldset>	
 </div>
 {% endblock %}

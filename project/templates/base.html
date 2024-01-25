@@ -24,13 +24,9 @@
 </head>
 
 <body class="bg-black">
-    {% comment %} <div class="container-fluid p-0 m-0">
+    <div class="container-fluid p-0 m-0">
         <!-- Top Navigation Bar -->
-        <!-- Page Content -->
-    </div> {% endcomment %}
-	{% block navbar %}
-		{% if not is_home_page %}
-			<nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
+        <nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
 				<!-- Logo and Home -->
 				<div class="nav-item navbar-brand px-3"><a  id="homeButton" class="nav-link" href="{% url 'home' %}"><img src="{% static 'logo_name.png' %}" alt="Logo" class="w-75"></a>
 				</div>
@@ -56,7 +52,8 @@
 				<form id="languageForm" action="{% url 'set_language' %}" method="post">
 					{% csrf_token %}
 					<input name="next" type="hidden" value="{{ redirect_to }}">
-					<select name="language" onchange="document.getElementById('languageForm').submit()">
+					<!-- <select name="language" onchange="document.getElementById('languageForm').submit()"> *commented by cris, use this and delete the submit and button Go --> 
+					<select name="language">
 						{% get_current_language as LANGUAGE_CODE %}
 						{% get_available_languages as LANGUAGES %}
 						{% get_language_info_list for LANGUAGES as languages %}
@@ -66,321 +63,16 @@
 							</option>
 						{% endfor %}
 					</select>
+					<input type="submit" value="Go">
 				</form>
 			</nav>
-		{% endif %}
-	{% endblock%}
+	
 
-	<div class="container-fluid p-0 m-0" id="contents">
+
+	<div class="container px-5" id="contents">
 		{% block content %}{% endblock %}
 	</div>
 	<!-- Bootstrap 5.3.2 JS -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-
-	<script>
-
-		var refreshFlag = localStorage.getItem('refreshFlag');
-
-        if (!refreshFlag) {
-            setTimeout(function(){
-                localStorage.setItem('refreshFlag', 'true');
-                location.reload();
-            }, 100);
-        }
-		contentContainer = document.getElementById("contents");
-		function loadContent(url) {
-			console.log(url);
-
-			const path = url.split('/').filter(part => part !== '');
-			const lastPart = path[path.length - 1];
-
-			if (lastPart === 'home') {
-				// Set the desired HTML content for the home page
-				const homeContent = `
-					<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
-						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-							<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
-							<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
-							<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
-							<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
-							<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
-						</fieldset>
-						<br><br>
-						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-							<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
-							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
-							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
-							<br><br>
-						</fieldset>
-					</div>
-				`;
-				contentContainer.innerHTML = homeContent;
-				return;
-			} else if (lastPart === 'edit') {
-				const edit_content = `
-				<div class="page-content py-5 bg-black text-light">
-					<form method="post" enctype="multipart/form-data">
-						{% csrf_token %}
-						{{ form.as_p }}
-						<button type="submit">Save Changes</button>
-					</form>
-					<h1>User Information</h1>
-					<ul>
-						<li>
-							<strong>Login:</strong> {{ user.login }}<br>
-						</li>
-						<li>
-							<strong>Nickname:</strong> {{ user.nickname }}<br>
-						</li>
-						<li>
-							<strong>Win/Loss Ratio:</strong> {{ user.wins }}, {{ user.losses }}<br>
-						</li>
-					</ul>
-				</div>
-				`;
-				contentContainer.innerHTML = edit_content;
-				return;
-			} else if (lastPart === 'stats') {
-				const stats_content = `
-				<div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
-					<h1> We need to include total number of matches, total Wins, total Losses also (for module).</h1>
-					<br><br>
-					<h3>Match History</h3>
-						<ul>
-							{% for match in matches %}
-								<li>
-									Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
-									Winner: {{ match.winner_user.login }} (Score: {{ match.winner_score }})<br>
-									Loser: {{ match.loser_user.login }} (Score: {{ match.loser_score }})
-								</li>
-							{% empty %}
-								<li>No matches found.</li>
-							{% endfor %}
-						</ul>
-						{% if match_count %}
-							<p>Match Count: {{ match_count }}</p>
-						{% else %}
-							<p>Match Count: 0</p>
-						{% endif %}
-				</div>
-				`;
-				contentContainer.innerHTML = stats_content;
-				return;
-			} else if (lastPart == 'friends') {
-				const friends_content = `
-				<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;">
-					<div class="search-bar-container text-center">
-						<form method="post" action="{% url 'friends' %}">
-							{% csrf_token %}
-							<input type="text" name="search_query" placeholder="Enter friend's login...">
-							<button type="submit">Add Friend</button>
-						</form>
-					</div>
-					{% if messages %}
-						<div class="messages">
-							<div>{{ message }}</div>
-						</div>
-					{% endif %}
-					<br>
-					<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
-					{% if friends_exist %}
-						<table class="table table-responsive table-dark rounded-4 overflow-hidden">
-							<thead class="border-bottom-0 table-secondary">
-								<tr>
-									<th scope="col">{% trans "USER" %}</th>
-									<th scope="col">{% trans "STATUS" %}</th>
-									<th scope="col"></th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for friend in friends %}
-									<tr>
-										<th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.nickname }}</th>
-										<td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
-										<td><img src="{% static 'delete_red.png' %}"></td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					{% else %}
-						<p>{% trans "No friends!" %}</p>
-					{% endif %}
-
-				</div>
-				`;
-				contentContainer.innerHTML = friends_content;
-				return;
-			}
-
-			// For other pages, fetch content as usual
-			/*fetch(url, { credentials: "same-origin" })
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error(`HTTP error! Status: ${response.status}`);
-					}
-					return response.text();
-				})
-				.then((html) => {
-					contentContainer.innerHTML = html;
-				})
-				.catch((error) => console.error("Error loading content:", error));*/
-		}
-
-	function handleUrlRoute(url) {
-		window.history.pushState({}, "", url);
-		loadContent(url);
-	  }
-
-	  function handleNavigation(event) {
-		event = event || window.event;
-		const homeButton = document.getElementById("homeButton");
-
-		if (homeButton && (event.target === homeButton || homeButton.contains(event.target))) {
-			console.log("home button clicked");
-			event.preventDefault();
-			const url = homeButton.href;
-			handleUrlRoute(url);
-		} else if (event.target.matches(".dropdown-item") || event.target.matches(".nav-link")) {
-			event.preventDefault();
-			const url = event.target.href;
-			handleUrlRoute(url);
-		}
-	}
-
-	  document.addEventListener("click", handleNavigation);
-
-	  window.addEventListener("popstate", function () {
-		const url = window.location.href;
-		loadContent(url);
-	  });
-
-	  // Initial content load
-	  document.addEventListener("DOMContentLoaded", function () {
-		const initialUrl = window.location.href;
-
-		if (initialUrl.endsWith('/home/') || initialUrl.endsWith('/home')) {
-			// If the initial URL is the home page, set the home content directly.
-			console.log("Home page loaded initially");
-			const homeContent = `
-				<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
-					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-						<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
-						<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
-						<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
-						<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
-						<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
-					</fieldset>
-					<br><br>
-					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-						<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
-						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
-						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
-						<br><br>
-					</fieldset>
-				</div>
-			`;
-			contentContainer.innerHTML = homeContent;
-		} else if (initialUrl.endsWith('/edit/') || initialUrl.endsWith('/edit')) {
-			const edit_content = `
-			<div class="page-content p-5 bg-black text-light text-center">
-				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-					<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">{% trans "User Profile" %}</legend>
-					<img src="{{ user.image_link }}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img"><br><br>
-					<p><strong>{% trans "Username:" %}</strong> {{ user.login }}</p><br>
-					<p><strong>{% trans "email:" %}</strong> {{ user.email }}</p><br>
-					<p><strong>{% trans "Alias:" %}</strong> {{ user.nickname }}</p><br>
-				</fieldset>
-				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-					<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">{% trans "Edit" %}</legend>
-					<form method="post" enctype="multipart/form-data">
-						{% csrf_token %}
-						{{ form.as_p }}
-						<br><br>
-						<button type="submit" class="btn btn-info">{% trans "Save" %}</button>
-					</form><br><br>
-				</fieldset>
-			</div>
-			`;
-			contentContainer.innerHTML = edit_content;
-		} else if (initialUrl.endsWith('/stats/') || initialUrl.endsWith('/stats')) {
-			const stats_content = `
-			<div class="page-content py-5 bg-black text-light" style="min-height: 100%;">
-				<h1> We need to include total number of matches, total Wins, total Losses also (for module).</h1>
-				<br><br>
-				<h3>Match History</h3>
-					<ul>
-						{% for match in matches %}
-							<li>
-								Date: {{ match.match_date }} Time: {{ match.match_time }}<br>
-								Winner: {{ match.winner_user.login }} (Score: {{ match.winner_score }})<br>
-								Loser: {{ match.loser_user.login }} (Score: {{ match.loser_score }})
-							</li>
-						{% empty %}
-							<li>No matches found.</li>
-						{% endfor %}
-					</ul>
-					{% if match_count %}
-						<p>Match Count: {{ match_count }}</p>
-					{% else %}
-						<p>Match Count: 0</p>
-					{% endif %}
-			</div>
-			`;
-			contentContainer.innerHTML = stats_content;
-		} else if (initialUrl.endsWith('/friends/') || initialUrl.endsWith('/friends')) {
-			const friends_content = `
-			<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;">
-				<div class="search-bar-container text-center">
-					<form method="post" action="{% url 'friends' %}">
-						{% csrf_token %}
-						<input type="text" name="search_query" placeholder="Enter friend's login...">
-						<button type="submit">Add Friend</button>
-					</form>
-				</div>
-				{% if messages %}
-					<div class="messages">
-						{% for message in messages %}
-							<div>{{ message }}</div>
-						{% endfor %}
-					</div>
-				{% endif %}
-				<br>
-				<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
-				{% if friends_exist %}
-					<table class="table table-responsive table-dark rounded-4 overflow-hidden">
-						<thead class="border-bottom-0 table-secondary">
-							<tr>
-								<th scope="col">{% trans "USER" %}</th>
-								<th scope="col">{% trans "STATUS" %}</th>
-								<th scope="col"></th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for friend in friends %}
-								<tr>
-									<th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.nickname }}</th>
-									<td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
-									<td><img src="{% static 'delete_red.png' %}"></td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				{% else %}
-					<p>{% trans "No friends!" %}</p>
-				{% endif %}
-
-			</div>
-			`;
-			contentContainer.innerHTML = friends_content;
-		}
-		else {
-			// For other pages, load the content as usual.
-			loadContent(initialUrl);
-		}
-	});
-
-  </script>
 </body>
 </html>
