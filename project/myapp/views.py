@@ -12,6 +12,8 @@ from django.contrib import messages
 from django.utils import translation
 from django.views.i18n import set_language
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 import requests
 
 def authenticated_user(view_func):
@@ -25,6 +27,12 @@ def authenticated_user(view_func):
 			# User is not authenticated, redirect to the login page
 			return redirect('login')
 	return wrapper
+
+def authorize(request):
+    client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
+    redirect_uri = f"http://{request.get_host()}/callback"
+    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
+    return redirect('/home/')
 
 def base(request):
 	return render(request, 'base.html')
@@ -45,12 +53,6 @@ def login(request):
 @authenticated_user
 def index(request):
     return render(request, 'index.html')
-
-def authorize(request):
-    client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
-    redirect_uri = f"http://{request.get_host()}/callback"
-    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
-    return redirect('/home/')
 
 @authenticated_user
 def home(request):
@@ -83,19 +85,29 @@ def friends(request):
 
 @authenticated_user
 def edit(request):
-	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-	if request.method == 'POST':
-		form = UserProfileForm(request.POST, request.FILES, instance=profile)
-		if form.is_valid():
-			profile = form.save(commit=False)
-			if profile.image:  # Check if an image is uploaded
-				profile.image_link = profile.image.url
-			profile.save()
-			return redirect('edit')
-	else:
-		form = UserProfileForm(instance=profile)
-	return render(request, 'edit.html', {'form': form, 'user': profile})
-
+    profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            # Save form data without committing to the database
+            profile = form.save(commit=False)
+            # Check if a new image was provided
+            if 'image' in request.FILES:
+                # Delete old image file
+                if profile.image:
+                    default_storage.delete(profile.image.path)
+                # Save the new image file
+                image = request.FILES['image']
+                profile.image.save(image.name, ContentFile(image.read()))
+                # Update the image_link field
+                profile.image_link = profile.image.url
+            # Save the profile to the database
+            profile.save()
+            return redirect('edit')
+    else:
+        form = UserProfileForm(instance=profile)
+        form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
+    return render(request, 'edit.html', {'form': form, 'user': profile})
 
 @authenticated_user
 def stats(request):

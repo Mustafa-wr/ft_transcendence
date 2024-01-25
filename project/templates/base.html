@@ -33,7 +33,11 @@
 				<!-- Info of user on navbar -->
 				<div class="nav-item px-3 dropdown ms-auto">
 					<a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
-						<span class="navbar-text small">{{ user.login }}</span>
+						{% if user.login %}
+							<span class="navbar-text small">{{ user.login }}</span>
+						{% else %}
+						<span class="navbar-text small">username</span>
+						{% endif %}
 						{% if user.image_link %}
 							<img src="{{ user.image_link }}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
 						{% else %}
