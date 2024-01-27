@@ -17,14 +17,34 @@ class user_profile(models.Model):
 
 	def __str__(self):
 		return self.login
+	
+
+
+class Match_maker(models.Model):
+	match_name = models.CharField(max_length=100, default='default_value')
+	players = models.ManyToManyField(user_profile, related_name='players')
+
+class Game(models.Model):
+	player_1 = models.CharField(max_length=100, default='default_value')
+	player_2 = models.CharField(max_length=100, default='default_value')
+	player_1_score = models.IntegerField(default=0)
+	player_2_score = models.IntegerField(default=0)
+
+	
+class tournament(models.Model):
+	tournament_name = models.CharField(max_length=100, default='default_value')
+	players = models.ManyToManyField(user_profile, related_name='tournament_players')
+	#matches = models.ManyToManyField(match_record)
+	
+
 
 class match_record(models.Model):
-	match_date = models.DateField()
-	match_time = models.TimeField()
-	match_winner = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='won_matches')
+	match_date = models.DateField(auto_now_add=True)
+	match_time = models.TimeField(auto_now_add=True)
+	match_winner = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='won_matches') # default=None
 	match_loser = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='lost_matches')
-	winner_score = models.IntegerField()
-	loser_score = models.IntegerField()
+	winner_score = models.IntegerField(default=0)
+	loser_score = models.IntegerField(default=0)
 
 class user_friends(models.Model):
 	user = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='friends')
