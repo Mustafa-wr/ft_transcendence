@@ -2,36 +2,49 @@
 {% load static i18n %}
 
 {% block content %}
-<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;">
-    <div class="container">
-		<h1 class="display-6" style="color:fuchsia;">{% trans "Stats" %}</h1>
-		<p class="p-3">
-			<strong>{% trans "Total Matches:" %}</strong> {{ match_count }}<br>
-			<strong>{% trans "Total Wins:" %}</strong> {{ total_wins }}<br>
-			<strong>{% trans "Total Losses:" %}</strong> {{ total_losses }}<br>
-			<strong>{% trans "Success Ratio:" %}</strong> {{ success_ratio|default:"N/A"|floatformat:"2" }}%
-		</p>
+<div class="page-content container p-0 bg-black text-light text-center" style="min-height: 100%;">
+    <div class="pb-3">
+        <fieldset class="border rounded-5 p-2 text-light text-break text-start d-inline-block">
+            <legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">{% trans "Stats" %}</legend>
+            <table class="table-responsive overflow-hidden">
+                <tr>
+                    <th scope="col" class="text-start px-2"></th>
+                    <th scope="col" class="text-end px-2">{% trans "Totals" %}</th>
+                    <th scope="col"></th>
+                </tr>
+                <tr>
+                    <td class="text-start px-2">{% trans "Matches" %}&ensp;</td>
+                    <td class="text-end text-warning px-2">{{ match_count }}</td>
+                </tr>
+                <tr>
+                    <td class="text-start px-2">{% trans "Wins" %}&ensp;</td>
+                    <td class="text-end text-success px-2">{{ total_wins }}</td>
+                </tr>
+                <tr>
+                    <td class="text-start px-2">{% trans "Losses" %}&ensp;</td>
+                    <td class="text-end text-danger px-2">{{ total_losses }}</td>
+                </tr>
+                <tr>
+                    <td class="text-start px-2 pb-3">{% trans "Success Ratio" %}&ensp;</td>
+                    <td class="text-end text-info px-2 pb-3">{{ success_ratio|default:"N/A"|floatformat:"2" }}%</td>
+                </tr>
+            </table>
+        </fieldset>
 
-		<h1 class="display-6" style="color:fuchsia;">{% trans "Match History" %}</h1>
-        <ul class="list-group p-3">
-            {% for match in matches %}
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>{% trans "Date:" %}</strong> {{ match.match_date }} &nbsp; <strong>{% trans "Time:" %}</strong> {{ match.match_time }}
-                        </div>
-                        <div>
-                            <span class="bg-success"><strong>{% trans "Winner:" %}</strong> {{ match.winner_user.login }} (Score: {{ match.winner_score }})</span>
-                            <br>
-                            <span class="bg-danger"><strong>{% trans "Loser:" %}</strong> {{ match.loser_user.login }} (Score: {{ match.loser_score }})</span>
-                        </div>
-                    </div>
-                </li>
-            {% empty %}
-                <li class="list-group-item list-group-item-warning">{% trans "No matches found." %}</li>
-            {% endfor %}
-        </ul>
-
+        <fieldset class="p-0 text-light text-break text-start">
+            <legend class="display-6 float-none w-auto pt-2" style="color:fuchsia;">{% trans "Match History" %}</legend>
+            <table class="table table-responsive overflow-hidden">
+                {% for match in matches %}
+                <tr>
+                    <td class="bg-black text-light">{% trans "Date: " %}<strong>{{ match.match_date }}</strong> &nbsp; {% trans "Time: " %}<strong>{{ match.match_time }}</strong> &nbsp;&nbsp; </td> 
+                    <td class="bg-black text-light">{% trans "Winner: " %}<strong  class="text-success">{{ match.winner_user.login }}</strong> &nbsp;&nbsp; </td>
+                    <td class="bg-black text-light">{% trans "Score: " %}<strong>{{ match.winner_score }}</strong>{% trans " x " %} X <strong>{{ match.loser_score }}</strong> &nbsp;&nbsp; </td>
+                    <td class="bg-black text-light">{% trans "Loser: " %}<strong  class="text-danger">{{ match.loser_user.login }}</strong>  &nbsp;&nbsp;  </td>
+                </tr>
+                {% empty %}
+                    <td class="bg-black text-warning">{% trans "No matches played" %}</td>
+                {% endfor %}
+        </fieldset>
     </div>
 </div>
 {% endblock %}

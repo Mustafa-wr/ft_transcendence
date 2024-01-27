@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-25 22:59+0400\n"
+"POT-Creation-Date: 2024-01-27 03:51+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgstr "Alterar Perfil"
 msgid "Friends"
 msgstr "Amigos"
 
-#: .\templates\base.html:50 .\templates\stats.html:7
+#: .\templates\base.html:50 .\templates\stats.html:8
 msgid "Stats"
 msgstr "Estatísticas"
 
@@ -46,47 +46,55 @@ msgstr "Estatísticas"
 msgid "Logout"
 msgstr "Sair"
 
-#: .\templates\edit.html:7
+#: .\templates\edit.html:30
 msgid "User Profile"
-msgstr "Alterar Perfil"
+msgstr "Perfil do Usuário"
 
-#: .\templates\edit.html:16
+#: .\templates\edit.html:38
 msgid "Username"
 msgstr "Usuário"
 
-#: .\templates\edit.html:24
+#: .\templates\edit.html:42
+msgid "Email"
+msgstr "Email"
+
+#: .\templates\edit.html:46
 msgid "Alias for Tournaments"
 msgstr "Apelido para Torneios"
 
-#: .\templates\edit.html:28
+#: .\templates\edit.html:50
 msgid "Two-Factor Authentication (2FA)"
 msgstr "Autenticação de Dois Fatores (2FA)"
 
-#: .\templates\edit.html:30
+#: .\templates\edit.html:52
 msgid "disable"
 msgstr "desabilitado"
 
-#: .\templates\edit.html:31
+#: .\templates\edit.html:53
 msgid "enable"
 msgstr "habilitado"
 
-#: .\templates\edit.html:34
+#: .\templates\edit.html:56
 msgid "Save"
 msgstr "Salvar"
 
-#: .\templates\friends.html:6
+#: .\templates\friends.html:10
+msgid "Add Friend"
+msgstr "Adicionar Amigo"
+
+#: .\templates\friends.html:19
 msgid "List of Friends"
 msgstr "Lista de Amigos"
 
-#: .\templates\friends.html:13 .\templates\friends.html:40
+#: .\templates\friends.html:24
 msgid "USER"
 msgstr "USUÁRIO"
 
-#: .\templates\friends.html:14 .\templates\friends.html:41
+#: .\templates\friends.html:25
 msgid "STATUS"
 msgstr "STATUS"
 
-#: .\templates\friends.html:29
+#: .\templates\friends.html:40
 msgid "No friends!"
 msgstr "Nenhum amigo!"
 
@@ -138,45 +146,63 @@ msgstr "Sim, sair"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: .\templates\stats.html:9
-msgid "Total Matches:"
-msgstr "Total de Partidas:"
-
-#: .\templates\stats.html:10
-msgid "Total Wins:"
-msgstr "Total de Vitórias:"
-
-#: .\templates\stats.html:11
-msgid "Total Losses:"
-msgstr "Total de Derrotas:"
-
 #: .\templates\stats.html:12
-msgid "Success Ratio:"
-msgstr "Percentual de Aproveitamento:"
+msgid "Totals"
+msgstr "Totais"
 
-#: .\templates\stats.html:15
+#: .\templates\stats.html:16
+msgid "Matches"
+msgstr "Partidas"
+
+#: .\templates\stats.html:20
+msgid "Wins"
+msgstr "Vitórias"
+
+#: .\templates\stats.html:24
+msgid "Losses"
+msgstr "Derrotas"
+
+#: .\templates\stats.html:28
+msgid "Success Ratio"
+msgstr "Percentual de Sucesso:"
+
+#: .\templates\stats.html:35
 msgid "Match History"
 msgstr "Histórico de Partidas"
 
-#: .\templates\stats.html:21
-msgid "Date:"
-msgstr "Data:"
+#: .\templates\stats.html:39
+msgid "Date: "
+msgstr "Data: "
 
-#: .\templates\stats.html:21
-msgid "Time:"
-msgstr "Horário:"
+#: .\templates\stats.html:39
+msgid "Time: "
+msgstr "Horário: "
 
-#: .\templates\stats.html:24
-msgid "Winner:"
-msgstr "Vencedor:"
+#: .\templates\stats.html:40
+msgid "Winner: "
+msgstr "Vencedor: "
 
-#: .\templates\stats.html:26
-msgid "Loser:"
-msgstr "Perdedor:"
+#: .\templates\stats.html:41
+msgid "Score: "
+msgstr "Resultado: "
 
-#: .\templates\stats.html:31
-msgid "No matches found."
+#: .\templates\stats.html:41
+msgid " x "
+msgstr " x "
+
+#: .\templates\stats.html:42
+msgid "Loser: "
+msgstr "Perdedor: "
+
+#: .\templates\stats.html:45
+msgid "No matches played"
 msgstr "Nenhum partida jogada."
+
+#~ msgid "Total Matches:"
+#~ msgstr "Total de Partidas:"
+
+#~ msgid "Total Losses:"
+#~ msgstr "Total de Derrotas:"
 
 #~ msgid "Spanish"
 #~ msgstr "Espanhol"

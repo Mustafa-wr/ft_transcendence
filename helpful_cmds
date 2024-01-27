@@ -2,5 +2,9 @@
 psql -U myuser -d mydb
 SELECT * FROM myapp_user_profile;
 
+-----> cmds for translate..
+python manage.py makemessages -l pt 
+python manage.py compilemessages   
+
 -----> cmds for docker..
 docker system prune --all --force --volume
