@@ -1,12 +1,14 @@
 from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from .models import user_profile, match_record, Game
+from .models import user_profile, match_record, Game, Match_maker
+from . import forms
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect
 from django.db.models import Q
+import json
 
 def authenticated_user(view_func):
 	def wrapper(request, *args, **kwargs):
@@ -22,7 +24,7 @@ def authenticated_user(view_func):
 
 @authenticated_user
 def stats(request):
-	current_user = user_profile.objects.get(login=request.session['user_info'].get('login'))
+	current_user = user_profile.objects.get(login=request.session['user_info'].get('login')).first()
 	matches = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user))
 	match_count = match_record.objects.filter(Q(match_winner=current_user)|Q(match_loser=current_user)).count()
 	return render(request, 'stats.html', {'matches': matches, 'match_count':match_count})
@@ -65,14 +67,39 @@ def game(request):
 
 @authenticated_user
 def pong(request):
-        game_instance = Game()  
-        game_instance.player_2 = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-        print(f"am heeree at pong view {game_instance.player_2}")
-        template = loader.get_template('pong.html')
-        context = {
-            'game': game_instance,
-        }
-        return HttpResponse(template.render(context, request))
+		if (Match_maker.objects.all().count() == 0):
+				Match_maker.objects.create()
+		match_record_instance = forms.Create_match_record()
+		if request.method == 'GET':
+			match_maker = Match_maker.objects.all().first()
+			match_maker.players.add(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
+			if (match_maker.players.count() > 1):
+				game_instance = Game()
+				game_instance.player_1 = match_maker.players.all().first()
+				game_instance.player_2 = match_maker.players.all()[1]
+				match_maker.players.remove(game_instance.player_1, game_instance.player_2)
+				# match_maker.players.clear()
+				template = loader.get_template('pong.html')
+				context = {
+					'game': game_instance,
+					'match_record': match_record_instance,
+				}
+				return HttpResponse(template.render(context, request))
+			else:
+				return redirect('home')
+		elif request.method == 'POST':
+			data = json.loads(request.body)
+			match_record_instance.match_winner = user_profile.objects.filter(login=data['winner']).first()
+			match_record_instance.match_loser = user_profile.objects.filter(login=data['loser']).first()
+			match_record_instance.winner_score = data['winner_score']
+			match_record_instance.loser_score = data['loser_score']
+			if (match_record_instance.is_valid()):
+				match_record_instance.save()
+			return redirect('home')			
+		
+			
+			
+		
     
 
 def authorize(request):

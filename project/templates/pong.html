@@ -1,3 +1,8 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -15,7 +20,7 @@
   
       canvas {
           display: block;
-          margin: auto;
+          margin: 0;
           padding:0%;
           width: 100%;
           max-width: 1050px;
@@ -24,39 +29,74 @@
           background-color: black;
           border: 2px solid slateblue;
       }
+           
+
   </style>
   
   </head>
   <body>
+    {% csrf_token %}
+    <!-- <div id="finish" class="hidden">
+     <button id="game_over" onclick="gameOver()">Game Over</button>
+    </div> -->
     <!-- Drawing the game field -->
     <canvas width="1050" height="750" id="game"></canvas>
     <script>
-
       var animationFrameID;
-
       window.onload = function () {
-      // Accessing the game field from the document
+        
+        // var winner = "";
+        // var loser = "";
+        // var winner_score = 0;
+        // var loser_score = 0;
+
+        async function gameOver(){
+          
+          let headers = {
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/json"
+          }
+          const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value
+          headers['X-CSRFToken'] = csrf
+
+          let response = await fetch("pong", {
+
+            method:"POST",
+            headers: headers,
+            body:JSON.stringify({
+              winner: winner,
+              loser: loser,
+              winner_score: winner_score,
+              loser_score: loser_score
+            })            
+          });
+          let response_data = await response.json();
+          if (response_data.success){
+            alert("Game Over. " + winner + " Wins!\n" + loser + "Score: " + loser_score + "\n" + winner +" Score: " + winner_score);
+          }
+          else{
+            alert("Something went wrong");
+          }
+        }
+
+      
       const canvas = document.getElementById("game");
-      // Making the field two-dimensional
       const context = canvas.getContext("2d");
-      // Size of the game grid
       const grid = 15;
-      // Height of the paddle
       const paddleHeight = grid * 5; // 80
       //Retrieving user names
-      var leftplayer = "lp";
-      var rightplayer = "{{game.player_2}}";
+      var leftplayer = "{{game.player_2}}";
+      var rightplayer = "{{game.player_1}}";
+    
 
       // Setting the maximum distance the paddles can move downwards
       const LeftmaxPaddleY = canvas.height - grid - paddleHeight ;
       const RightmaxPaddleY = canvas.height - grid - paddleHeight;
 
-      // Paddle speed
+  
       var paddleSpeed = 6;
-      // Ball speed
       var ballSpeed = 4;
-      // Record
-      var record = localStorage.getItem("record") ? localStorage.getItem("record") : 0;
+    
       // Score
       var rp_count = 0;
       var lp_count = 0;
@@ -64,7 +104,6 @@
       var secret = false;
       // Number of bounces in secret mode
       var secret_count = 0;
-      // Ball color, initially white
       ballColor = "purple";
    
       // Describe the left paddle
@@ -72,9 +111,7 @@
         // Position it in the center
         x: grid * 2,
         y: canvas.height / 2 - paddleHeight / 2,
-        // Width is one grid cell
         width: grid,
-        // Take height from the constant
         height: paddleHeight,
         // The paddle doesn't move anywhere at the start
         dy: 0,
@@ -84,7 +121,6 @@
         // Position it in the center on the right side
         x: canvas.width - grid * 3,
         y: canvas.height / 2 - paddleHeight / 2,
-        // Set the same width and height
         width: grid,
         height: paddleHeight,
         // The right paddle doesn't move anywhere initially
@@ -98,7 +134,7 @@
         // Square, the size of a grid cell
         width: grid,
         height: grid,
-        radius: grid,
+        radius:( grid / 2) + 1,
         // The ball is not scored at the start, so remove the flag indicating that the ball needs to be reintroduced
         resetting: false,
         // Serve the ball to the top right corner
@@ -127,17 +163,26 @@
       // Main game loop
       function loop() {
         // Clear the game field
-        animationFrameID = requestAnimationFrame(loop);
-        if (rp_count == 10 || lp_count == 10) {
+        
+        if (rp_count == 11 || lp_count == 11) {
             cancelAnimationFrame(animationFrameID);
-            if(rp_count == 10){
-             // alert("Game Over " + "{{ user.login}}" + " wins !!\n" + "Left Player Score: " + lp_count + "\n" +  rightplayer +" Score: " + rp_count); 
-              alert("Game Over. " + rightplayer + " Wins!\n" + "Left Player Score: " + lp_count + "\n" +  rightplayer +" Score: " + rp_count);
+            if(rp_count == 11){            
+              winner = rightplayer;
+              loser = leftplayer;
+              winner_score = rp_count;
+              loser_score = lp_count;
             }
             else{
-              alert("Game Over. Left Player Wins!" + "\n" + "Left Player Score: " + lp_count + "\n" +  rightplayer +" Score: " + rp_count);  
+              winner = leftplayer;
+              loser = rightplayer;
+              winner_score = lp_count;
+              loser_score = rp_count;
             }
+            alert("Game Over. " + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
+            gameOver();           
           }
+        else
+          animationFrameID = requestAnimationFrame(loop);
         context.clearRect(0, 0, canvas.width, canvas.height);
         // If the paddles were moving somewhere on the previous step, let them continue moving
         leftPaddle.y += leftPaddle.dy;
@@ -148,7 +193,7 @@
         boundary_check(rightPaddle, grid, RightmaxPaddleY);
       
         
-        // Draw the paddles in blue
+        // Draw the paddles
         context.fillStyle = "blue";
         // Each paddle is a rectangle
         context.fillRect(
@@ -163,21 +208,20 @@
           rightPaddle.width,
           rightPaddle.height
         );
-        // If the ball was moving somewhere on the previous step, let it continue moving
+          // If the ball was moving somewhere on the previous step, let it continue moving
         ball.x += ball.dx;
         ball.y += ball.dy;
-        // Make the left paddle move exactly like the ball
-        // leftPaddle.dy = ball.dy;
-        // If the ball touches the bottom wall, change its direction on the Y axis
+
+        //check for wall hits
         if (ball.y < grid) {
           ball.y = grid;
           ball.dy *= -1;
         }
-        // Do the same if the ball touches the top wall
         else if (ball.y + grid > canvas.height - grid) {
           ball.y = canvas.height - grid * 2;
           ball.dy *= -1;
         }
+
         // If the ball flew off the game field to the left or right, restart it
         if ((ball.x < 0 || ball.x > canvas.width) && !ball.resetting) {
           // Mark that the ball is restarted to avoid looping
@@ -292,7 +336,7 @@
         // Set size and font
         context.font = "20pt Courier";
         // Display left player score
-        context.fillText("Left Player: " + lp_count, 50, 650);
+        context.fillText( leftplayer + ": " + lp_count, 50, 650);
         // Display right player score
         context.fillText(rightplayer + " : " + rp_count, 700, 650);
 
@@ -304,3 +348,5 @@
     </script>
   </body>
 </html>
+{% endblock %}
+```
