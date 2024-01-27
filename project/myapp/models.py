@@ -56,3 +56,8 @@ class user_friends(models.Model):
 class PongSpaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'myapp'
+
+class Create_match_record(forms.ModelForm):
+    class Meta:
+        model = match_record
+        fields = ['match_winner', 'match_loser', 'winner_score', 'loser_score']

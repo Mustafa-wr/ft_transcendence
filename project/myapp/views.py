@@ -2,7 +2,7 @@ from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from .models import user_profile, match_record, user_friends
+from .models import user_profile, match_record, user_friends, Create_match_record
 from .models import user_profile, match_record, Game, Match_maker
 from . import forms
 from django.utils.translation import gettext as _
@@ -94,7 +94,7 @@ def game(request):
 def pong(request):
 		if (Match_maker.objects.all().count() == 0):
 				Match_maker.objects.create()
-		match_record_instance = forms.Create_match_record()
+		match_record_instance = Create_match_record()
 		if request.method == 'GET':
 			match_maker = Match_maker.objects.all().first()
 			match_maker.players.add(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
