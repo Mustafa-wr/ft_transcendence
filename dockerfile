@@ -28,4 +28,6 @@ COPY . /code/
 
 RUN rm -rf /code/migrations
 
+RUN dos2unix migrate.sh
+
 CMD ["bash", "migrate.sh"]

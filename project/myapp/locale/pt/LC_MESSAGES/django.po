@@ -59,7 +59,7 @@ msgid "Email"
 msgstr "Email"
 
 #: .\templates\edit.html:46
-msgid "Alias for Tournaments"
+msgid "Nickname for Tournaments"
 msgstr "Apelido para Torneios"
 
 #: .\templates\edit.html:50

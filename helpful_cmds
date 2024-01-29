@@ -6,5 +6,8 @@ SELECT * FROM myapp_user_profile;
 python manage.py makemessages -l pt 
 python manage.py compilemessages   
 
+------> cmds for scripts from windows..
+dos2unix ./scripts/*.sh
+
 -----> cmds for docker..
-docker system prune --all --force --volume
+docker system prune --all --force
