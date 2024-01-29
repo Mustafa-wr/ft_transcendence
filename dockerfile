@@ -12,7 +12,10 @@ RUN pip install --upgrade pip \
     && pip install requests \
     && pip install psycopg2-binary \
     && pip install django-cors-headers \
-	&& pip install django-debug-toolbar
+	&& pip install django-debug-toolbar \
+    && pip install django-htmx
+
+RUN apt-get update && apt-get install -y dos2unix
 
 # Copy the migrate.sh script into the container
 COPY migrate.sh /code/migrate.sh
@@ -28,6 +31,6 @@ COPY . /code/
 
 RUN rm -rf /code/migrations
 
-RUN dos2unix migrate.sh
+RUN dos2unix /code/migrate.sh
 
 CMD ["bash", "migrate.sh"]
