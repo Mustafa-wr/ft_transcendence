@@ -30,6 +30,8 @@ def authenticated_user(view_func):
 
 @authenticated_user
 def edit(request):
+	is_game = False
+	is_home_page = False
 	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
 	if request.method == 'POST':
 		form = UserProfileForm(request.POST, request.FILES, instance=profile)
@@ -42,17 +44,18 @@ def edit(request):
 	else:
 		form = UserProfileForm(instance=profile)
 
-	return render(request, 'base.html', {'form': form, 'user': profile})
+	return render(request, 'base.html', {'form': form, 'user': profile, 'is_home_page': is_home_page, 'is_game': is_game})
 
 @authenticated_user
 def stats(request):
+    is_home_page = False
     current_user_login = request.session['user_info'].get('login')
     current_user = get_object_or_404(user_profile, login=current_user_login)
 
     matches = match_record.objects.filter(Q(match_winner=current_user) | Q(match_loser=current_user))
     match_count = matches.count()
 
-    return render(request, 'base.html', {'matches': matches, 'match_count': match_count})
+    return render(request, 'base.html', {'matches': matches, 'match_count': match_count, 'is_home_page': is_home_page})
 
 def base(request):
 	return render(request, 'base.html')
@@ -83,7 +86,9 @@ def index(request):
 
 @authenticated_user
 def game(request):
-    return render(request, 'game.html')
+    is_home_page = False
+    is_game = True
+    return render(request, 'base.html', {'is_home_page': is_home_page, 'is_game': is_game})
 
 # @authenticated_user
 # def pong(request):
@@ -137,11 +142,14 @@ def authorize(request):
 
 @authenticated_user
 def home(request):
+  is_home_page = True
+  is_game = False
   user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-  return render(request, 'base.html', {'user':user})
+  return render(request, 'base.html', {'user': user, 'is_home_page': is_home_page, 'is_game': is_game})
 
 @authenticated_user
 def friends(request):
+	is_home_page = False
 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
 	friends = user_friends.objects.filter(user=user).select_related('friend')
 	if request.method == 'POST':
@@ -159,7 +167,7 @@ def friends(request):
 			else:
 				messages.error(request, "User not found.")
 
-	context = {'friends': friends}
+	context = {'friends': friends, 'is_home_page': is_home_page}
 	return render(request, 'base.html', context)
 
 @authenticated_user
@@ -170,4 +178,3 @@ def logout(request):
 
     # Redirect to a page indicating successful logout or any other desired page
     return redirect('home')  # Replace 'home' with the URL name of your desired page
-
