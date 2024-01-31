@@ -1,8 +1,7 @@
-{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block content %}
-<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;">
+<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;" id="friendsPage">
   <div class="search-bar-container text-center">
     <form method="post" action="{% url 'friends' %}">
       {% csrf_token %}

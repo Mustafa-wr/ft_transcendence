@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+
 {% load static i18n %}
 
 {% block content %}
-<div class="page-content p-0 bg-black text-light text-center">
+<div class="page-content p-0 bg-black text-light text-center" id="editPage">
 
 	<!-- Language switch form outside the main form -->
 	<form id="languageForm" action="{% url 'set_language' %}" method="post" class="form-control-sm d-flex justify-content-end">
@@ -55,4 +55,4 @@
 
 </div>
 
-{% endblock %}
+{% endblock content %}

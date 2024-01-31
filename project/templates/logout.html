@@ -2,7 +2,7 @@
 {% load static i18n %}
 
 {% block content %}
-<div class="page-content py-5 bg-black text-light text-center" style="min-height: 100%;">
+<div class="page-content py-5 bg-black text-light text-center" style="min-height: 100%;" id="logoutPage">
     <p>{% trans "Are you sure you want to logout?" %}</p>
     <a href="{% url 'logout_view' %}" class="btn btn-danger">{% trans "Yes, logout" %}</a>
     <a href="{% url 'home' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
