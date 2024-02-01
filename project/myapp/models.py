@@ -11,9 +11,14 @@ class user_profile(models.Model):
 	preferred_language = models.CharField(max_length=12, default='English')
 	two_factor_auth_status = models.CharField(max_length=12, default='Disabled')
 	status = models.CharField(max_length=20, default='offline')
-	wins = models.IntegerField(default=0)
-	losses = models.IntegerField(default=0)
 	image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+	@property
+	def wins(self):
+		return self.won_matches.count()
+
+	@property
+	def losses(self):
+		return self.lost_matches.count()
 
 	def __str__(self):
 		return self.login
