@@ -44,7 +44,7 @@ def callback(request):
                     # image_link = data["image"]["link"]
                 ).save()
                 user_info = user_response.json()
-                return render(request, 'home.html', {'user_info': user_info})
+                return render(request, 'home_full.html', {'user_info': user_info})
             else:
                 return render(request, 'error.html', {'error': 'Access token not found in the response'})
         except requests.exceptions.RequestException as e:

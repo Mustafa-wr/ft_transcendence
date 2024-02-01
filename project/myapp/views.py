@@ -35,20 +35,24 @@ def authorize(request):
     return redirect('/home/')
 
 def base(request):
-	return render(request, 'base.html')
+    return render(request, 'base.html')
 
 def login(request):
-	# Check if the user is already authenticated
-	if request.method == 'GET':
-		print(f"am heeree{request.user.is_authenticated}")
-	if request.user.is_authenticated:
-		return redirect('home')
-	user_info = request.session.get('user_info')
-	print(f"am heeree{user_info}")
-	if user_info:
+    if request.htmx:
+        template_name = 'home.html'
+    else:
+        template_name = 'home_full.html'
+    # Check if the user is already authenticated
+    if request.method == 'GET':
+        print(f"am heeree{request.user.is_authenticated}")
+    if request.user.is_authenticated:
+        return redirect(template_name)
+    user_info = request.session.get('user_info')
+    print(f"am heeree{user_info}")
+    if user_info:
 		# If already authenticated, redirect to home or dashboard
-		return redirect('home')
-	return render(request, 'login.html')
+        return redirect(template_name)
+    return render(request, 'login.html')
 
 @authenticated_user
 def index(request):
@@ -65,7 +69,12 @@ def home(request):
 
 @authenticated_user
 def game(request):
-    return render(request, 'game.html')
+    if request.htmx:
+        template_name = 'home.html'
+    else:
+        template_name = 'home_full.html'
+    user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+    return render(request, template_name, {'user':user})
 
 @authenticated_user
 def friends(request):
@@ -151,8 +160,6 @@ def logout(request):
     # Revoke the OAuth2 token
     # if request.session.get('oauth_access_token'):
         # revoke_token * -> we need to revoke the token to logout
-    # Clear the session
     request.session.clear()
-    # Redirect to the login page or another page
     return redirect('login')
 
