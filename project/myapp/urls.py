@@ -1,6 +1,7 @@
 from django.urls import include, path
 from . import views
 
+
 urlpatterns = [
     path('', views.login, name='login'),
     path('login/', views.login, name='login'),
@@ -11,7 +12,7 @@ urlpatterns = [
     path('profile/edit', views.edit, name='edit'),
     path('profile/stats', views.stats, name='stats'),
     path('profile/friends', views.friends, name='friends'),
-    path('logout/', views.logout, name='logout'),
+    path('logout/', views.logout_view, name='logout_view'),
 ]
 
 

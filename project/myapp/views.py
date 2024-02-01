@@ -13,6 +13,7 @@ from .forms import UserProfileForm
 from django.contrib import messages
 from django.utils import translation
 from django.views.i18n import set_language
+from django.contrib.auth import logout
 
 import json
 
@@ -162,12 +163,11 @@ def friends(request):
 	context = {'friends': friends}
 	return render(request, 'base.html', context)
 
-@authenticated_user
-def logout(request):
-    # Remove the user_info from the session
-    if 'user_info' in request.session:
-        del request.session['user_info']
+def logout_view(request):
+    logout(request)
+    
+    request.session.flush()
 
-    # Redirect to a page indicating successful logout or any other desired page
-    return redirect('home')  # Replace 'home' with the URL name of your desired page
+    return redirect('login')
+
 

@@ -10,6 +10,7 @@ from myapp.views import authorize
 from myapp.aouth import callback
 from django.conf.urls.i18n import i18n_patterns
 import debug_toolbar
+from myapp.views import logout_view
 
 
 urlpatterns = [
@@ -21,6 +22,7 @@ urlpatterns = [
     path('callback/', callback, name='callback'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('debug/', include('debug_toolbar.urls')),
+    path('logout/', logout_view, name='logout_view'),
 ]
 
 if settings.DEBUG:
