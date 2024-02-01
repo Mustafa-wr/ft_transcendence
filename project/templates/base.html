@@ -71,7 +71,7 @@
 
 	<div class="container-fluid p-0 m-0" id="contents">
 		{% block content %}
-			{% if is_home_page %}
+			{% comment %} {% if is_home_page %}
 			<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
 				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
 					<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
@@ -83,7 +83,7 @@
 				<br><br>
 				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
 					<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-					<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
+					<a href="{% url 'game' %}" class="btn btn-info" >{% trans "Play vs Computer" %}</a>
 					<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
 					<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
 					<br><br>
@@ -92,7 +92,7 @@
 			{% elif is_game %}
 			<canvas width="750" height="585" id="game"></canvas>
 			<script src="{% static 'game.js' %}"></script>
-			{% endif %}
+			{% endif %} {% endcomment %}
 		{% endblock %}
 	</div>
 	<!-- Bootstrap 5.3.2 JS -->
@@ -108,7 +108,6 @@
             }, 100);
         }
 		contentContainer = document.getElementById("contents");
-		contentBody = document.getElementById("body_content");
 		function loadContent(url) {
 			console.log(url);
 
@@ -116,25 +115,27 @@
 			const lastPart = path[path.length - 1];
 
 			if (lastPart === 'home') {
-				const home_content = `
-				<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
-					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-						<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
-						<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
-						<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
-						<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
-						<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
-					</fieldset>
-					<br><br>
-					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-						<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
-						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
-						<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
+				// Set the desired HTML content for the home page
+				const homeContent = `
+					<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
+						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+							<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
+							<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
+							<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
+							<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
+							<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
+						</fieldset>
 						<br><br>
-					</fieldset>
-				</div>
+						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+							<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
+							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
+							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
+							<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
+							<br><br>
+						</fieldset>
+					</div>
 				`;
+				contentContainer.innerHTML = homeContent;
 				return;
 			} else if (lastPart === 'edit') {
 				const edit_content = `
@@ -230,16 +231,14 @@
 				`;
 				contentContainer.innerHTML = friends_content;
 				return;
-			} /*else if(lastPart == 'game') {
+			} else if(lastPart == 'game') {
 				const game_content = `
-					<!-- Рисуем игровое поле -->
-					<canvas width="750" height="585" id="game"></canvas>
-					<script src="{% static 'game.js' %}"><\/script>
+				<canvas width="750" height="585" id="game"></canvas>
+				<script src="{% static 'game.js' %}"></script>
 				`;
-				console.log(game_content);
 				contentContainer.innerHTML = game_content;
 				return;
-			}*/
+			}
 
 			// For other pages, fetch content as usual
 			/*fetch(url, { credentials: "same-origin" })
@@ -263,13 +262,17 @@
 	  function handleNavigation(event) {
 		event = event || window.event;
 		const homeButton = document.getElementById("homeButton");
-
+		console.log(event.target);
 		if (homeButton && (event.target === homeButton || homeButton.contains(event.target))) {
 			console.log("home button clicked");
 			event.preventDefault();
 			const url = homeButton.href;
 			handleUrlRoute(url);
 		} else if (event.target.matches(".dropdown-item") || event.target.matches(".nav-link")) {
+			event.preventDefault();
+			const url = event.target.href;
+			handleUrlRoute(url);
+		} else if (event.target.matches(".btn.btn-info")) {
 			event.preventDefault();
 			const url = event.target.href;
 			handleUrlRoute(url);
@@ -286,28 +289,30 @@
 	  // Initial content load
 	  document.addEventListener("DOMContentLoaded", function () {
 		const initialUrl = window.location.href;
-		
-		if(initialUrl.endsWith('/home/') || initialUrl.endsWith('/home')) {
-			const home_content = `
-			<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
-				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-					<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
-					<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
-					<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
-					<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
-					<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
-				</fieldset>
-				<br><br>
-				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-					<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-					<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
-					<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
-					<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
+
+		if (initialUrl.endsWith('/home/') || initialUrl.endsWith('/home')) {
+			// If the initial URL is the home page, set the home content directly.
+			console.log("Home page loaded initially");
+			const homeContent = `
+				<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
+					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+						<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
+						<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
+						<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
+						<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
+						<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
+					</fieldset>
 					<br><br>
-				</fieldset>
-			</div>
+					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+						<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
+						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
+						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
+						<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
+						<br><br>
+					</fieldset>
+				</div>
 			`;
-			contentContainer.innerHTML = home_content;
+			contentContainer.innerHTML = homeContent;
 		} else if (initialUrl.endsWith('/edit/') || initialUrl.endsWith('/edit')) {
 			const edit_content = `
 			<div class="page-content p-5 bg-black text-light text-center">
@@ -400,15 +405,14 @@
 			</div>
 			`;
 			contentContainer.innerHTML = friends_content;
-		} /*else if(initialUrl.endsWith('/game/') || initialUrl.endsWith('/game')) {
+		} else if(initialUrl.endsWith('/game/') || initialUrl.endsWith('/game')) {
 			const game_content = `
-				<!-- Рисуем игровое поле -->
-				<canvas width="750" height="585" id="game"></canvas>
-				<script src="{% static 'game.js' %}"><\/script>
+			<canvas width="750" height="585" id="game"></canvas>
+			<h1>Game</h1>
+			<script src="{% static 'game.js' %}"></script>
 			`;
-			console.log(game_content);
 			contentContainer.innerHTML = game_content;
-		} */
+		}
 		else {
 			// For other pages, load the content as usual.
 			loadContent(initialUrl);

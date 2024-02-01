@@ -1,4 +1,5 @@
 // Обращаемся к игровому полю из документа
+	console.log("Hello World 2 iojdsiojsdijciosdjciosdiojdso")
       const canvas = document.getElementById("game");
       // Делаем поле двухмерным
       const context = canvas.getContext("2d");
