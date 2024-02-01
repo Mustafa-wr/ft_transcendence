@@ -16,7 +16,7 @@
   {% endif %}
   <br>
   <h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
-  {% if friends_exist %}
+  {% if friends %}
     <table class="table table-responsive table-dark rounded-4 overflow-hidden">
       <thead class="border-bottom-0 table-secondary">
         <tr>
@@ -30,7 +30,15 @@
           <tr>
             <th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.nickname }}</th>
             <td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
-            <td><img src="{% static 'delete_red.png' %}"></td>
+            <td>
+				<form method="post" action="{% url 'friends' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_friend_id" value="{{ friend.id }}">
+                    <button type="submit" class="btn p-0 border-0" style="background-color:transparent;">
+                        <img src="{% static 'delete_red.png' %}" alt="Delete">
+                    </button>
+                </form>
+			</td>
           </tr>
         {% endfor %}
       </tbody>

@@ -82,10 +82,20 @@ def friends(request):
         template_name = 'friends.html'
     else:
         template_name = 'friends_full.html'
-	
+
     user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
     friends = user_friends.objects.filter(user=user).select_related('friend')
     if request.method == 'POST':
+        if 'delete_friend_id' in request.POST:
+            friend_id = request.POST.get('delete_friend_id')
+            friend_to_delete = user_friends.objects.filter(id=friend_id, user=user).first()
+            if friend_to_delete:
+                friend_to_delete.delete()
+                messages.success(request, f"{friend_to_delete.friend.login} has been removed from friends.")
+            else:
+                messages.error(request, "Friend could not be found.")
+            return redirect('friends')
+            # return render(request, template_name, {'user':user})
         search_query = request.POST.get('search_query', '').strip()
         if search_query:
             potential_friend = user_profile.objects.filter(login=search_query).first()
@@ -107,7 +117,7 @@ def edit(request):
         template_name = 'edit.html'
     else:
         template_name = 'edit_full.html'
-    
+
     profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
