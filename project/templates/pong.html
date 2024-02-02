@@ -1,3 +1,7 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
 
 <!DOCTYPE html>
 <html>
@@ -32,9 +36,7 @@
   </head>
   <body>
     {% csrf_token %}
-    <!-- <div id="finish" class="hidden">
-     <button id="game_over" onclick="gameOver()">Game Over</button>
-    </div> -->
+
     <!-- Drawing the game field -->
     <canvas width="1050" height="750" id="game"></canvas>
     <script>
@@ -47,7 +49,7 @@
         // var loser_score = 0;
 
         async function gameOver(){
-          
+          // event.preventDefault()
           let headers = {
             "X-Requested-With": "XMLHttpRequest",
             "Content-Type": "application/json"
@@ -60,25 +62,25 @@
             method:"POST",
             headers: headers,
             body:JSON.stringify({
-              winner: winner,
-              loser: loser,
+              match_winner: winner,
+              match_loser: loser,
               winner_score: winner_score,
               loser_score: loser_score
             })            
           });
-          let response_data = await response.json();
-          if (response_data.success){
-            alert("Game Over. " + winner + " Wins!\n" + loser + "Score: " + loser_score + "\n" + winner +" Score: " + winner_score);
-          }
-          else{
-            alert("Something went wrong");
-          }
+          // let response_data = await response.json();
+          // if (response_data.success){
+          //   alert("Game  is Over. " + winner + " Wins!\n" + loser + "Score: " + loser_score + "\n" + winner +" Score: " + winner_score);
+          // }
+          // else{
+          //   alert("Something went wrong");
+          // }
         }
 
       
       const canvas = document.getElementById("game");
       const context = canvas.getContext("2d");
-      const grid = 15;
+      const grid = 20;
       const paddleHeight = grid * 5; // 80
       //Retrieving user names
       var leftplayer = "{{game.player_2}}";
@@ -154,15 +156,14 @@
         } else if (paddle.y > bottom) {
           paddle.y = bottom;
         }
-    
       }
       // Main game loop
       function loop() {
         // Clear the game field
         
-        if (rp_count == 11 || lp_count == 11) {
+        if (rp_count == 3 || lp_count == 3) {
             cancelAnimationFrame(animationFrameID);
-            if(rp_count == 11){            
+            if(rp_count == 3){            
               winner = rightplayer;
               loser = leftplayer;
               winner_score = rp_count;
@@ -174,8 +175,8 @@
               winner_score = lp_count;
               loser_score = rp_count;
             }
-            alert("Game Over. " + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
             gameOver();           
+            alert("Game Over! " + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
           }
         else
           animationFrameID = requestAnimationFrame(loop);
@@ -250,9 +251,7 @@
         // Check and do the same for the right paddle
         else if (collides(ball, rightPaddle)) {
           ball.dx *= -1;
-          ball.x = rightPaddle.x - rightPaddle.width;
-          // Count the bounces
-        //   count += 1;
+          ball.x = rightPaddle.x - rightPaddle.width;          
           // If it reaches 5, activate the secret level
           if (rp_count >= 5 || lp_count >= 5) {
             secret = true;
@@ -289,7 +288,7 @@
         context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
         context.fill();
         // Draw the walls
-        context.fillStyle = "white";
+        context.fillStyle = "fuschia";
         context.fillRect(0, 0, canvas.width, grid);
         context.fillRect(0, canvas.height - grid, canvas.width, canvas.height);
         // Draw the grid in the middle
@@ -344,3 +343,5 @@
     </script>
   </body>
 </html>
+{% endblock %}
+
