@@ -83,9 +83,10 @@
 				<br><br>
 				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
 					<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-					<a href="{% url 'game' %}" class="btn btn-info" >{% trans "Play vs Computer" %}</a>
-					<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
+					<a href="#" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#gameModal">{% trans "Play vs Computer" %}</a>
+					<a href="#" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#gameModal">{% trans "Play Tournament" %}</a>
 					<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
+
 					<br><br>
 				</fieldset>
 			</div>
@@ -128,9 +129,9 @@
 						<br><br>
 						<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
 							<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
-							<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
-							<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
+							<a id="vs_comp" class="btn btn-info">{% trans "Play vs Computer" %}</a>
+							<a class="btn btn-info">{% trans "Play Tournament" %}</a>
+							<a id="multi_player" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
 							<br><br>
 						</fieldset>
 					</div>
@@ -231,14 +232,14 @@
 				`;
 				contentContainer.innerHTML = friends_content;
 				return;
-			} else if(lastPart == 'game') {
+			} /*else if(lastPart == 'game') {
 				const game_content = `
 				<canvas width="750" height="585" id="game"></canvas>
-				<script src="{% static 'game.js' %}"></script>
+				<script src="{% static 'game.js' %}"><\/script>
 				`;
 				contentContainer.innerHTML = game_content;
 				return;
-			}
+			} */
 
 			// For other pages, fetch content as usual
 			/*fetch(url, { credentials: "same-origin" })
@@ -272,10 +273,6 @@
 			event.preventDefault();
 			const url = event.target.href;
 			handleUrlRoute(url);
-		} else if (event.target.matches(".btn.btn-info")) {
-			event.preventDefault();
-			const url = event.target.href;
-			handleUrlRoute(url);
 		}
 	}
 
@@ -305,9 +302,9 @@
 					<br><br>
 					<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
 						<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
-						<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournament" %}</a>
-						<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
+						<a id="vs_comp" class="btn btn-info">{% trans "Play vs Computer" %}</a>
+						<a class="btn btn-info">{% trans "Play Tournament" %}</a>
+						<a id="multi_player" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
 						<br><br>
 					</fieldset>
 				</div>
@@ -405,19 +402,52 @@
 			</div>
 			`;
 			contentContainer.innerHTML = friends_content;
-		} else if(initialUrl.endsWith('/game/') || initialUrl.endsWith('/game')) {
+		} /*else if(initialUrl.endsWith('/game/') || initialUrl.endsWith('/game')) {
 			const game_content = `
 			<canvas width="750" height="585" id="game"></canvas>
 			<h1>Game</h1>
-			<script src="{% static 'game.js' %}"></script>
+			<script src="{% static 'game.js' %}"><\/script>
 			`;
 			contentContainer.innerHTML = game_content;
-		}
+		}*/
 		else {
 			// For other pages, load the content as usual.
 			loadContent(initialUrl);
 		}
+
+		document.body.addEventListener('click', function(event) {
+			if (event.target.id === 'vs_comp') {
+				event.preventDefault();
+				openGameWindow();
+			} else if (event.target.id === 'multi_player') {
+				event.preventDefault();
+				openMultiWindow();
+			}
+		});
 	});
+
+	function openGameWindow() {
+        // Open a new window with an empty HTML document
+        const gameWindow = window.open('', 'Game Window', 'width=800, height=600');
+		console.log("hi there");
+        // Update the location to the game URL
+        gameWindow.location.href = '{% url 'game' %}';
+
+        // Optionally, you can focus the new window
+        gameWindow.focus();
+    }
+
+    function openMultiWindow() {
+        // Open a new window with an empty HTML document
+        const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
+
+        // Update the location to the multiplayer URL
+        multiWindow.location.href = '{% url 'pong' %}';
+
+        // Optionally, you can focus the new window
+        multiWindow.focus();
+    }
+	
 
   </script>
 </body>

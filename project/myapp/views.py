@@ -88,7 +88,7 @@ def index(request):
 def game(request):
     is_home_page = False
     is_game = True
-    return render(request, 'base.html', {'is_home_page': is_home_page, 'is_game': is_game})
+    return render(request, 'game.html', {'is_home_page': is_home_page, 'is_game': is_game})
 
 # @authenticated_user
 # def pong(request):
