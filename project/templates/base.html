@@ -437,15 +437,30 @@
         gameWindow.focus();
     }
 
-    function openMultiWindow() {
-        // Open a new window with an empty HTML document
-        const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
+	async function openMultiWindow() {
+        // Perform a fetch request to the 'pong' URL
+        const response = await fetch('{% url 'pong' %}', {
+            method: 'GET', // or 'POST' if your view expects a POST request
+            headers: {
+                'Content-Type': 'application/json',
+                // Include any other headers your request needs
+            },
+            // Include body if your request method is POST
+            // body: JSON.stringify({ key: 'value' })
+        });
 
-        // Update the location to the multiplayer URL
-        multiWindow.location.href = '{% url 'pong' %}';
-
-        // Optionally, you can focus the new window
-        multiWindow.focus();
+        if (response.ok) {
+            const data = await response.text();
+            // Process the response data as needed
+            // For example, you could open a new window with the response data
+            const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
+            multiWindow.document.write(data);
+            multiWindow.document.close(); // Ensure the document is fully written
+            multiWindow.focus();
+        } else {
+            console.error('Fetch error:', response.statusText);
+            // Handle fetch error
+        }
     }
 	
 

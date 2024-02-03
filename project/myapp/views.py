@@ -116,7 +116,7 @@ def pong(request):
 				}
 				return HttpResponse(template.render(context, request))
 			else:
-				return redirect('home')
+				return render(request, 'no_players.html')
 		elif request.method == 'POST':
 			data = json.loads(request.body)
 			match_record_instance.match_winner = user_profile.objects.filter(login=data['winner']).first()
