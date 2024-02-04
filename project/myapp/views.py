@@ -99,33 +99,35 @@ def game(request):
 def pong(request):
 		if (Match_maker.objects.all().count() == 0):
 				Match_maker.objects.create()
-		match_record_instance = Create_match_record()
 		if request.method == 'GET':
-			match_maker = Match_maker.objects.all().first()
+			match_maker = Match_maker.objects.first()
+			match_maker.players.remove(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
 			match_maker.players.add(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
 			if (match_maker.players.count() > 1):
 				game_instance = Game()
 				game_instance.player_1 = match_maker.players.all().first()
-				game_instance.player_2 = match_maker.players.all()[1]
-				match_maker.players.remove(game_instance.player_1, game_instance.player_2)
-				# match_maker.players.clear()
+				match_maker.players.remove(game_instance.player_1)
+				game_instance.player_2 = match_maker.players.all().first()
+				match_maker.players.remove(game_instance.player_2)
 				template = loader.get_template('pong.html')
 				context = {
 					'game': game_instance,
-					'match_record': match_record_instance,
 				}
 				return HttpResponse(template.render(context, request))
 			else:
 				return render(request, 'no_players.html')
-		elif request.method == 'POST':
-			data = json.loads(request.body)
-			match_record_instance.match_winner = user_profile.objects.filter(login=data['winner']).first()
-			match_record_instance.match_loser = user_profile.objects.filter(login=data['loser']).first()
-			match_record_instance.winner_score = data['winner_score']
-			match_record_instance.loser_score = data['loser_score']
-			if (match_record_instance.is_valid()):
+		else:
+			if request.method == 'POST':
+				data = json.loads(request.body)
+				match_record_instance = match_record()
+				match_record_instance.match_winner = user_profile.objects.filter(login=data['match_winner']).first()
+				match_record_instance.match_loser = user_profile.objects.filter(login=data['match_loser']).first()
+				match_record_instance.winner_score = data['winner_score']
+				match_record_instance.loser_score = data['loser_score']
 				match_record_instance.save()
+				# return JsonResponse({'status': 'success'})
 			return redirect('home')			
+			
 		
 			
 			
