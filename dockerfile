@@ -14,6 +14,8 @@ RUN pip install --upgrade pip \
     && pip install django-cors-headers \
 	&& pip install django-debug-toolbar
 
+RUN apt-get update && apt-get install -y dos2unix
+
 # Copy the migrate.sh script into the container
 COPY migrate.sh /code/migrate.sh
 
@@ -27,5 +29,7 @@ RUN chmod +x /code/migrate.sh
 COPY . /code/
 
 RUN rm -rf /code/migrations
+
+RUN dos2unix /code/migrate.sh
 
 CMD ["bash", "migrate.sh"]

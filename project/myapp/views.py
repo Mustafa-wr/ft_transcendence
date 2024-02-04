@@ -13,6 +13,8 @@ from .forms import UserProfileForm
 from django.contrib import messages
 from django.utils import translation
 from django.views.i18n import set_language
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 import json
 
@@ -37,25 +39,33 @@ def edit(request):
 		form = UserProfileForm(request.POST, request.FILES, instance=profile)
 		if form.is_valid():
 			profile = form.save(commit=False)
-			if profile.image:  # Check if an image is uploaded
+			if 'image' in request.FILES:
+				if profile.image:
+					default_storage.delete(profile.image.path)
+				image = request.FILES['image']
+				profile.image.save(image.name, ContentFile(image.read()))
 				profile.image_link = profile.image.url
 			profile.save()
 			return redirect('edit')
 	else:
 		form = UserProfileForm(instance=profile)
-
+		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
 	return render(request, 'base.html', {'form': form, 'user': profile, 'is_home_page': is_home_page, 'is_game': is_game})
 
 @authenticated_user
 def stats(request):
     is_home_page = False
     current_user_login = request.session['user_info'].get('login')
-    current_user = get_object_or_404(user_profile, login=current_user_login)
-
+    current_users = user_profile.objects.filter(login=current_user_login)
+    if not current_users.exists():
+        return render(request, 'stats.html', {'matches': [], 'match_count': 0})
+    current_user = current_users.first()
     matches = match_record.objects.filter(Q(match_winner=current_user) | Q(match_loser=current_user))
     match_count = matches.count()
-
-    return render(request, 'base.html', {'matches': matches, 'match_count': match_count, 'is_home_page': is_home_page})
+    total_wins = matches.filter(match_winner=current_user).count()
+    total_losses = matches.filter(match_loser=current_user).count()
+    success_ratio = total_wins / max(total_wins + total_losses, 1)
+    return render(request, 'base.html', {'matches': matches, 'match_count': match_count, 'total_wins': total_wins, 'total_losses': total_losses, 'success_ratio': success_ratio, 'user': current_user, 'is_home_page': is_home_page})
 
 def base(request):
 	return render(request, 'base.html')
@@ -151,32 +161,39 @@ def home(request):
 
 @authenticated_user
 def friends(request):
-	is_home_page = False
-	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-	friends = user_friends.objects.filter(user=user).select_related('friend')
-	if request.method == 'POST':
-		search_query = request.POST.get('search_query', '').strip()
-		if search_query:
-			potential_friend = user_profile.objects.filter(login=search_query).first()
-			if user.login == search_query:
-				messages.error(request, 'You cannot add yourself as a friend.')
-			elif potential_friend and potential_friend != user:
-				if not user_friends.objects.filter(user=user, friend=potential_friend).exists():
-					user_friends.objects.create(user=user, friend=potential_friend)
-					messages.success(request, f"{potential_friend.login} added as friend.")
-				else:
-					messages.warning(request, "Already friends.")
-			else:
-				messages.error(request, "User not found.")
-
-	context = {'friends': friends, 'is_home_page': is_home_page}
-	return render(request, 'base.html', context)
+    is_home_page = False
+    user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+    friends = user_friends.objects.filter(user=user).select_related('friend')
+    if request.method == 'POST':
+        if 'delete_friend_id' in request.POST:
+            friend_id = request.POST.get('delete_friend_id')
+            friend_to_delete = user_friends.objects.filter(id=friend_id, user=user).first()
+            if friend_to_delete:
+                friend_to_delete.delete()
+                messages.success(request, f"{friend_to_delete.friend.login} has been removed from friends.")
+            else:
+                messages.error(request, "Friend could not be found.")
+            return redirect('friends')
+        search_query = request.POST.get('search_query', '').strip()
+        if search_query:
+            potential_friend = user_profile.objects.filter(login=search_query).first()
+            if user.login == search_query:
+                messages.error(request, 'You cannot add yourself as a friend.')
+            elif potential_friend and potential_friend != user:
+                if not user_friends.objects.filter(user=user, friend=potential_friend).exists():
+                    user_friends.objects.create(user=user, friend=potential_friend)
+                    messages.success(request, f"{potential_friend.login} added as friend.")
+                else:
+                    messages.warning(request, "Already friends.")
+            else:
+                messages.error(request, "User not found.")
+    return render(request, 'base.html', {'friends': friends, 'is_home_page': is_home_page, 'user': user})
 
 @authenticated_user
 def logout(request):
-    # Remove the user_info from the session
-    if 'user_info' in request.session:
-        del request.session['user_info']
+    # Revoke the OAuth2 token
+    # if request.session.get('oauth_access_token'):
+        # revoke_token * -> we need to revoke the token to logout
+    request.session.clear()
+    return redirect('login')
 
-    # Redirect to a page indicating successful logout or any other desired page
-    return redirect('home')  # Replace 'home' with the URL name of your desired page
