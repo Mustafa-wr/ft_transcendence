@@ -12,8 +12,7 @@ RUN pip install --upgrade pip \
     && pip install requests \
     && pip install psycopg2-binary \
     && pip install django-cors-headers \
-	&& pip install django-debug-toolbar \
-    && pip install django-htmx
+	&& pip install django-debug-toolbar
 
 RUN apt-get update && apt-get install -y dos2unix
 

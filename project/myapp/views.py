@@ -38,20 +38,16 @@ def base(request):
     return render(request, 'base.html')
 
 def login(request):
-    if request.htmx:
-        template_name = 'home.html'
-    else:
-        template_name = 'home_full.html'
     # Check if the user is already authenticated
     if request.method == 'GET':
         print(f"am heeree{request.user.is_authenticated}")
     if request.user.is_authenticated:
-        return redirect(template_name)
+        return redirect('home')
     user_info = request.session.get('user_info')
     print(f"am heeree{user_info}")
     if user_info:
 		# If already authenticated, redirect to home or dashboard
-        return redirect(template_name)
+        return redirect('home')
     return render(request, 'login.html')
 
 @authenticated_user
@@ -60,29 +56,16 @@ def index(request):
 
 @authenticated_user
 def home(request):
-    if request.htmx:
-        template_name = 'home.html'
-    else:
-        template_name = 'home_full.html'
     user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-    return render(request, template_name, {'user':user})
+    return render(request, 'home.html', {'user':user})
 
 @authenticated_user
 def game(request):
-    if request.htmx:
-        template_name = 'home.html'
-    else:
-        template_name = 'home_full.html'
     user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-    return render(request, template_name, {'user':user})
+    return render(request, 'home.html', {'user':user})
 
 @authenticated_user
 def friends(request):
-    if request.htmx:
-        template_name = 'friends.html'
-    else:
-        template_name = 'friends_full.html'
-
     user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
     friends = user_friends.objects.filter(user=user).select_related('friend')
     if request.method == 'POST':
@@ -109,15 +92,10 @@ def friends(request):
                     messages.warning(request, "Already friends.")
             else:
                 messages.error(request, "User not found.")
-    return render(request, template_name, {'user':user})
+    return render(request, 'friends.html', {'user':user})
 
 @authenticated_user
 def edit(request):
-    if request.htmx:
-        template_name = 'edit.html'
-    else:
-        template_name = 'edit_full.html'
-
     profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
@@ -140,21 +118,16 @@ def edit(request):
     else:
         form = UserProfileForm(instance=profile)
         form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
-    return render(request, template_name, {'form': form, 'user': profile})
+    return render(request, 'edit.html', {'form': form, 'user': profile})
 
 @authenticated_user
 def stats(request):
-    if request.htmx:
-        template_name = 'stats.html'
-    else:
-        template_name = 'stats_full.html'
-
     current_user_login = request.session['user_info'].get('login')
     # Use filter instead of get_object_or_404 to handle potential multiple profiles
     current_users = user_profile.objects.filter(login=current_user_login)
     # Handle the case where there are no matching profiles
     if not current_users.exists():
-        return render(request, template_name, {'matches': [], 'match_count': 0})
+        return render(request, 'stats.html', {'matches': [], 'match_count': 0})
     # Get the first profile if there are multiple matches (assuming login is unique)
     current_user = current_users.first()
     matches = match_record.objects.filter(Q(match_winner=current_user) | Q(match_loser=current_user))
@@ -163,7 +136,7 @@ def stats(request):
     total_wins = matches.filter(match_winner=current_user).count()
     total_losses = matches.filter(match_loser=current_user).count()
     success_ratio = total_wins / max(total_wins + total_losses, 1)
-    return render(request, template_name, {'matches': matches, 'match_count': match_count, 'total_wins': total_wins, 'total_losses': total_losses, 'success_ratio': success_ratio, 'user': current_user})
+    return render(request, 'stats.html', {'matches': matches, 'match_count': match_count, 'total_wins': total_wins, 'total_losses': total_losses, 'success_ratio': success_ratio, 'user': current_user})
 
 @authenticated_user
 def logout(request):

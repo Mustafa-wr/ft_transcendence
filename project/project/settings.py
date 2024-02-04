@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'myapp',
     'debug_toolbar',
     'corsheaders',
-    'django_htmx',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +55,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [
