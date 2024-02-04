@@ -100,10 +100,6 @@ def game(request):
     is_game = True
     return render(request, 'game.html', {'is_home_page': is_home_page, 'is_game': is_game})
 
-# @authenticated_user
-# def pong(request):
-# 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-# 	return render(request, 'pong.html', {'user': user})
 
 @authenticated_user
 def pong(request):

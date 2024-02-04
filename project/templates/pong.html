@@ -310,26 +310,21 @@
 
         // Now, watch for when someone releases a key to stop the paddle's movement
         document.addEventListener("keyup", function (e) {
-          // If it's the up or down arrow key,
-          if (e.which === 38 || e.which === 40) {
-            // stop the right paddle
+         
+          if (e.which === 38 || e.which === 40) { // If it's the up or down arrow key,stop the right paddle
             rightPaddle.dy = 0;
           }
-          if (e.which === 87 || e.which === 83) {
-            // stop the left paddle
+          if (e.which === 87 || e.which === 83) { //if its 'W' or 'S' keys, stop the left paddle
             leftPaddle.dy = 0;
           }
         });
-        // Text color
-        context.fillStyle = "#ff0000";
-        // Set size and font
+        // Text color, size and font
+        context.fillStyle = "#ff0000"; 
         context.font = "20pt Courier";
-        // Display left player score
-        context.fillText( leftplayer + ": " + lp_count, 50, 650);
-        // Display right player score
-        context.fillText(rightplayer + " : " + rp_count, 700, 650);
 
-        //context.fillText( "{{user.login}}  : " + rp_count, 700, 650);
+        // Display player scores
+        context.fillText( leftplayer + ": " + lp_count, 50, 650);
+        context.fillText(rightplayer + " : " + rp_count, 700, 650);
       }
       // Start the game
       animationFrameID = requestAnimationFrame(loop);
