@@ -2,24 +2,27 @@ from django.apps import AppConfig
 from django.db import models
 from django import forms
 
-# Create your models here.
 class user_profile(models.Model):
 	login = models.CharField(max_length=100, default='default_value')
 	nickname = models.CharField(max_length=100, default='default_value')
 	email = models.EmailField(max_length=100, default='default_value')
 	image_link = models.CharField(max_length=150, default='default_value')
-	preferred_language = models.CharField(max_length=11, default='English')
-	two_factor_auth_status = models.CharField(max_length=10, default='disabled')
+	preferred_language = models.CharField(max_length=12, default='English')
+	two_factor_auth_status = models.CharField(max_length=12, default='Disabled')
 	status = models.CharField(max_length=20, default='offline')
-	wins = models.IntegerField(default=0)
-	losses = models.IntegerField(default=0)
 	image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+	@property
+	def wins(self):
+		return self.won_matches.count()
+
+	@property
+	def losses(self):
+		return self.lost_matches.count()
 
 	def __str__(self):
 		return self.login
+
 	
-
-
 class Match_maker(models.Model):
 	match_name = models.CharField(max_length=100, default='default_value')
 	players = models.ManyToManyField(user_profile, related_name='players')
@@ -37,7 +40,6 @@ class tournament(models.Model):
 	#matches = models.ManyToManyField(match_record)
 	
 
-
 class match_record(models.Model):
 	match_date = models.DateField(auto_now_add=True)
 	match_time = models.TimeField(auto_now_add=True)
@@ -49,7 +51,6 @@ class match_record(models.Model):
 class user_friends(models.Model):
 	user = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='friends')
 	friend = models.ForeignKey(user_profile, on_delete=models.CASCADE, related_name='friends_of')
-
 	class Meta:
 		unique_together = (('user', 'friend'),)
 
