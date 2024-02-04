@@ -24,7 +24,14 @@ class Match_maker(models.Model):
 	match_name = models.CharField(max_length=100, default='default_value')
 	players = models.ManyToManyField(user_profile, related_name='players')
 
+	def add_player(self, login):
+		player_to_add = user_profile.objects.filter(login=login).first()
+		self.players.remove(player_to_add)
+		self.players.add(player_to_add)
+
 class Game(models.Model):
+	# tournament_name = models.ForeignKey(Match_maker, on_delete=models.CASCADE, related_name='games', NULL=True, blank=True)
+	# level = models.IntegerField(default=0)
 	player_1 = models.CharField(max_length=100, default='default_value')
 	player_2 = models.CharField(max_length=100, default='default_value')
 	player_1_score = models.IntegerField(default=0)
@@ -34,9 +41,11 @@ class Game(models.Model):
 class tournament(models.Model):
 	tournament_name = models.CharField(max_length=100, default='default_value')
 	players = models.ManyToManyField(user_profile, related_name='tournament_players')
-	#matches = models.ManyToManyField(match_record)
+	# start_date = models.DateField(auto_now_add=True)
 	
-
+	# class Meta:
+	# 	ordering = ['-players__wins']
+ 
 
 class match_record(models.Model):
 	match_date = models.DateField(auto_now_add=True)

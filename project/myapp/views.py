@@ -101,8 +101,7 @@ def pong(request):
 				Match_maker.objects.create()
 		if request.method == 'GET':
 			match_maker = Match_maker.objects.first()
-			match_maker.players.remove(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
-			match_maker.players.add(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
+			match_maker.add_player(request.session['user_info'].get('login'))
 			if (match_maker.players.count() > 1):
 				game_instance = Game()
 				game_instance.player_1 = match_maker.players.all().first()
@@ -124,6 +123,7 @@ def pong(request):
 				match_record_instance.match_loser = user_profile.objects.filter(login=data['match_loser']).first()
 				match_record_instance.winner_score = data['winner_score']
 				match_record_instance.loser_score = data['loser_score']
+				match_record_instance.full_clean()
 				match_record_instance.save()
 				# return JsonResponse({'status': 'success'})
 			return redirect('home')			
