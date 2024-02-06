@@ -14,7 +14,8 @@ from django.contrib import messages
 from django.utils import translation
 from django.views.i18n import set_language
 from django.contrib.auth import logout
-
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 import json
 
 def authenticated_user(view_func):
@@ -178,7 +179,6 @@ def home(request):
 			return redirect('edit')
 	else:
 		form = UserProfileForm(instance=profile)
-		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
 	context = {
 		'form': form,
 		'user': profile,
@@ -259,5 +259,4 @@ def edit(request):
 			return redirect('edit')
 	else:
 		form = UserProfileForm(instance=profile)
-		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
 	return render(request, 'base.html', {'form': form, 'user': profile, 'is_home_page': is_home_page, 'is_game': is_game})
