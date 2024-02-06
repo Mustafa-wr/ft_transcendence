@@ -35,9 +35,9 @@
                 {% for match in matches %}
                 <tr>
                     <td class="bg-black text-light">{% trans "Date: " %}<strong>{{ match.match_date }}</strong> &nbsp; {% trans "Time: " %}<strong>{{ match.match_time }}</strong> &nbsp;&nbsp; </td> 
-                    <td class="bg-black text-light">{% trans "Winner: " %}<strong  class="text-success">{{ match.winner_user.login }}</strong> &nbsp;&nbsp; </td>
+                    <td class="bg-black text-light">{% trans "Winner: " %}<strong  class="text-success">{{ match.match_winner }}</strong> &nbsp;&nbsp; </td>
                     <td class="bg-black text-light">{% trans "Score: " %}<strong>{{ match.winner_score }}</strong>{% trans " x " %} X <strong>{{ match.loser_score }}</strong> &nbsp;&nbsp; </td>
-                    <td class="bg-black text-light">{% trans "Loser: " %}<strong  class="text-danger">{{ match.loser_user.login }}</strong>  &nbsp;&nbsp;  </td>
+                    <td class="bg-black text-light">{% trans "Loser: " %}<strong  class="text-danger">{{ match.match_loser }}</strong>  &nbsp;&nbsp;  </td>
                 </tr>
                 {% empty %}
                     <td class="bg-black text-warning">{% trans "No matches played" %}</td>
