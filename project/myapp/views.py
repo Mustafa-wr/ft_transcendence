@@ -162,7 +162,7 @@ def home(request):
 	match_count = matches.count()
 	total_wins = matches.filter(match_winner=current_user).count()
 	total_losses = matches.filter(match_loser=current_user).count()
-	success_ratio = total_wins / max(total_wins + total_losses, 1)
+	success_ratio = (total_wins / max(total_wins + total_losses, 1.0))*100
 	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
 	if request.method == 'POST':
 		form = UserProfileForm(request.POST, request.FILES, instance=profile)
