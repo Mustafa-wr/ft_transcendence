@@ -42,7 +42,7 @@ def stats(request):
     match_count = matches.count()
     total_wins = matches.filter(match_winner=current_user).count()
     total_losses = matches.filter(match_loser=current_user).count()
-    success_ratio = total_wins / max(total_wins + total_losses, 1)
+    success_ratio = (total_wins / max(total_wins + total_losses, 1.0))*100
     return render(request, 'base.html', {'matches': matches, 'match_count': match_count, 'total_wins': total_wins, 'total_losses': total_losses, 'success_ratio': success_ratio, 'user': current_user, 'is_home_page': is_home_page})
 
 def base(request):

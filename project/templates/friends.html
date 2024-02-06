@@ -28,7 +28,7 @@
       <tbody>
         {% for friend in friends %}
           <tr>
-            <th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.nickname }}</th>
+            <th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.login }}</th>
             <td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
             <td>
 				<form method="post" action="{% url 'friends' %}" style="display:inline;">
