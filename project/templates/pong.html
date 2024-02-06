@@ -32,22 +32,15 @@
   </head>
   <body>
     {% csrf_token %}
-    <!-- <div id="finish" class="hidden">
-     <button id="game_over" onclick="gameOver()">Game Over</button>
-    </div> -->
+   
     <!-- Drawing the game field -->
     <canvas width="1050" height="750" id="game"></canvas>
     <script>
       var animationFrameID;
       window.onload = function () {
-        
-        // var winner = "";
-        // var loser = "";
-        // var winner_score = 0;
-        // var loser_score = 0;
 
         async function gameOver(){
-          
+           // event.preventDefault()
           let headers = {
             "X-Requested-With": "XMLHttpRequest",
             "Content-Type": "application/json"
@@ -60,19 +53,19 @@
             method:"POST",
             headers: headers,
             body:JSON.stringify({
-              winner: winner,
-              loser: loser,
+              match_winner: winner,
+              match_loser: loser,
               winner_score: winner_score,
               loser_score: loser_score
-            })            
+            })                 
           });
-          let response_data = await response.json();
-          if (response_data.success){
-            alert("Game Over. " + winner + " Wins!\n" + loser + "Score: " + loser_score + "\n" + winner +" Score: " + winner_score);
-          }
-          else{
-            alert("Something went wrong");
-          }
+          // let response_data = await response.json();
+          // if (response_data.success){
+          //   alert("Game Over. " + winner + " Wins!\n" + loser + "Score: " + loser_score + "\n" + winner +" Score: " + winner_score);
+          // }
+          // else{
+          //   alert("Something went wrong");
+          // }
         }
 
       
@@ -174,8 +167,8 @@
               winner_score = lp_count;
               loser_score = rp_count;
             }
-            alert("Game Over. " + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
             gameOver();           
+            alert("Game Over. " + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
           }
         else
           animationFrameID = requestAnimationFrame(loop);
