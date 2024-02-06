@@ -154,10 +154,31 @@ def authorize(request):
 
 @authenticated_user
 def home(request):
-  is_home_page = True
-  is_game = False
-  user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-  return render(request, 'base.html', {'user': user, 'is_home_page': is_home_page, 'is_game': is_game})
+	is_home_page = True
+	is_game = False
+	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	if request.method == 'POST':
+		form = UserProfileForm(request.POST, request.FILES, instance=profile)
+		if form.is_valid():
+			profile = form.save(commit=False)
+			if 'image' in request.FILES:
+				if profile.image:
+					default_storage.delete(profile.image.path)
+				image = request.FILES['image']
+				profile.image.save(image.name, ContentFile(image.read()))
+				profile.image_link = profile.image.url
+			profile.save()
+			return redirect('edit')
+	else:
+		form = UserProfileForm(instance=profile)
+		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
+	context = {
+		'form': form,
+		'user': profile,
+		'is_home_page': is_home_page,
+		'is_game': is_game
+	}
+	return render(request, 'base.html', context)
 
 @authenticated_user
 def friends(request):
