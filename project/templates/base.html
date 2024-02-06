@@ -56,29 +56,6 @@
 
 	<div class="container-fluid p-0 m-0" id="contents">
 		{% block content %}
-			{% comment %} {% if is_home_page %}
-			<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
-				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-					<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
-					<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
-					<p>{% trans "Players control paddles to hit the ball." %}</p>
-					<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
-					<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
-				</fieldset>
-				<br><br>
-				<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-					<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-					<a href="#" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#gameModal">{% trans "Play vs Computer" %}</a>
-					<a href="#" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#gameModal">{% trans "Play Tournament" %}</a>
-					<a href="{% url 'pong' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
-
-					<br><br>
-				</fieldset>
-			</div>
-			{% elif is_game %}
-			<canvas width="750" height="585" id="game"></canvas>
-			<script src="{% static 'game.js' %}"></script>
-			{% endif %} {% endcomment %}
 		{% endblock %}
 	</div>
 	<!-- Bootstrap 5.3.2 JS -->
@@ -99,7 +76,7 @@
 
 			const path = url.split('/').filter(part => part !== '');
 			const lastPart = path[path.length - 1];
-
+		
 			if (lastPart === 'home') {
 				// Set the desired HTML content for the home page
 				const homeContent = `
@@ -124,146 +101,15 @@
 				contentContainer.innerHTML = homeContent;
 				return;
 			} else if (lastPart === 'edit') {
-				const edit_content = `
-				<div class="page-content p-0 bg-black text-light text-center" id="editPage">
-					<form id="languageForm" action="{% url 'set_language' %}" method="post" class="form-control-sm d-flex justify-content-end">
-						{% csrf_token %}
-						<input name="next" type="hidden" value="{{ redirect_to }}">
-						<select name="language" onchange="document.getElementById('languageForm').submit()" class="form-select form-select-sm" style="width: 120px;">
-							{% get_current_language as LANGUAGE_CODE %}
-							{% get_available_languages as LANGUAGES %}
-							{% get_language_info_list for LANGUAGES as languages %}
-							{% for language in languages %}
-								<option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
-									{{ language.name_local }}
-								</option>
-							{% endfor %}
-						</select>
-					</form><br>	
-					<fieldset class="border rounded-5 p-2 mb-3 text-light text-break text-start d-inline-block">
-						<legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">{% trans "User Profile" %}</legend>
-						<form method="post" enctype="multipart/form-data" class="d-inline-block">
-							{% csrf_token %}
-							<div class="form-group form-control-sm py-1">
-								<img src="{{ user.image_link }}" alt="profile_img" class="rounded-pill" width="90px" height="90px" id="profile_img">
-								{{ form.image }}           
-							</div>
-							<div class="form-group form-control-sm py-1">
-								<label for="username">{% trans "Username" %}</label>
-								<input type="text" class="form-control" id="usernameForm" placeholder="{{ user.login }}" readonly>
-							</div>
-							<div class="form-group form-control-sm py-1">
-								<label for="email">{% trans "Email" %}</label>
-								<input type="email" class="form-control" id="emailForm" placeholder="{{ user.email }}" readonly>
-							</div>
-							<div class="form-group form-control-sm py-1">
-								<label for="alias">{% trans "Nickname for Tournaments" %}</label><br>
-								{{ form.nickname }}
-							<button type="submit" class="btn btn-info m-2">{% trans "Save" %}</button>
-						</form>	
-					</fieldset>
-				</div>
-				`;
+				const edit_content = `{% include 'edit.html' %}`;
 				contentContainer.innerHTML = edit_content;
 				return;
 			} else if (lastPart === 'stats') {
-				const stats_content = `
-				<div class="page-content container p-0 bg-black text-light text-center" style="min-height: 100%;" id="statsPage">
-					<div class="pb-3">
-						<fieldset class="border rounded-5 p-2 text-light text-break text-start d-inline-block">
-							<legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">{% trans "Stats" %}</legend>
-							<table class="table-responsive overflow-hidden">
-								<tr>
-									<th scope="col" class="text-start px-2"></th>
-									<th scope="col" class="text-end px-2">{% trans "Totals" %}</th>
-									<th scope="col"></th>
-								</tr>
-								<tr>
-									<td class="text-start px-2">{% trans "Matches" %}&ensp;</td>
-									<td class="text-end text-warning px-2">{{ match_count }}</td>
-								</tr>
-								<tr>
-									<td class="text-start px-2">{% trans "Wins" %}&ensp;</td>
-									<td class="text-end text-success px-2">{{ total_wins }}</td>
-								</tr>
-								<tr>
-									<td class="text-start px-2">{% trans "Losses" %}&ensp;</td>
-									<td class="text-end text-danger px-2">{{ total_losses }}</td>
-								</tr>
-								<tr>
-									<td class="text-start px-2 pb-3">{% trans "Success Ratio" %}&ensp;</td>
-									<td class="text-end text-info px-2 pb-3">{{ success_ratio|default:"N/A"|floatformat:"2" }}%</td>
-								</tr>
-							</table>
-						</fieldset>
-						<fieldset class="p-0 text-light text-break text-start">
-							<legend class="display-6 float-none w-auto pt-2" style="color:fuchsia;">{% trans "Match History" %}</legend>
-							<table class="table table-responsive overflow-hidden">
-								{% for match in matches %}
-								<tr>
-									<td class="bg-black text-light">{% trans "Date: " %}<strong>{{ match.match_date }}</strong> &nbsp; {% trans "Time: " %}<strong>{{ match.match_time }}</strong> &nbsp;&nbsp; </td> 
-									<td class="bg-black text-light">{% trans "Winner: " %}<strong  class="text-success">{{ match.winner_user.login }}</strong> &nbsp;&nbsp; </td>
-									<td class="bg-black text-light">{% trans "Score: " %}<strong>{{ match.winner_score }}</strong>{% trans " x " %} X <strong>{{ match.loser_score }}</strong> &nbsp;&nbsp; </td>
-									<td class="bg-black text-light">{% trans "Loser: " %}<strong  class="text-danger">{{ match.loser_user.login }}</strong>  &nbsp;&nbsp;  </td>
-								</tr>
-								{% empty %}
-									<td class="bg-black text-warning">{% trans "No matches played" %}</td>
-								{% endfor %}
-						</fieldset>
-					</div>
-				</div>
-				`;
+				const stats_content = `{% include 'stats.html' %}`;
 				contentContainer.innerHTML = stats_content;
 				return;
 			} else if (lastPart == 'friends') {
-				const friends_content = `
-				<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;" id="friendsPage">
-					<div class="search-bar-container text-center">
-						<form method="post" action="{% url 'friends' %}">
-						{% csrf_token %}
-						<input type="text" name="search_query" placeholder="Enter friend's login">
-						<button type="submit" class="btn btn-info">{% trans "Add Friend" %}</button>
-						</form>
-					</div>
-					{% if messages %}
-						<div class="messages">
-						<div>{{ message }}</div>
-						</div>
-					{% endif %}
-					<br>
-					<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
-					{% if friends %}
-						<table class="table table-responsive table-dark rounded-4 overflow-hidden">
-						<thead class="border-bottom-0 table-secondary">
-							<tr>
-							<th scope="col">{% trans "USER" %}</th>
-							<th scope="col">{% trans "STATUS" %}</th>
-							<th scope="col"></th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for friend in friends %}
-							<tr>
-								<th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.nickname }}</th>
-								<td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
-								<td>
-									<form method="post" action="{% url 'friends' %}" style="display:inline;">
-										{% csrf_token %}
-										<input type="hidden" name="delete_friend_id" value="{{ friend.id }}">
-										<button type="submit" class="btn p-0 border-0" style="background-color:transparent;">
-											<img src="{% static 'delete_red.png' %}" alt="Delete">
-										</button>
-									</form>
-								</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-						</table>
-					{% else %}
-						<p>{% trans "No friends!" %}</p>
-					{% endif %}
-					</div>
-				`;
+				const friends_content = `{% include 'friends.html' %}`;
 				contentContainer.innerHTML = friends_content;
 				return;
 			} /*else if(lastPart == 'game') {
@@ -345,144 +191,13 @@
 			`;
 			contentContainer.innerHTML = homeContent;
 		} else if (initialUrl.endsWith('/edit/') || initialUrl.endsWith('/edit')) {
-			const edit_content = `
-			<div class="page-content p-0 bg-black text-light text-center" id="editPage">
-				<form id="languageForm" action="{% url 'set_language' %}" method="post" class="form-control-sm d-flex justify-content-end">
-					{% csrf_token %}
-					<input name="next" type="hidden" value="{{ redirect_to }}">
-					<select name="language" onchange="document.getElementById('languageForm').submit()" class="form-select form-select-sm" style="width: 120px;">
-						{% get_current_language as LANGUAGE_CODE %}
-						{% get_available_languages as LANGUAGES %}
-						{% get_language_info_list for LANGUAGES as languages %}
-						{% for language in languages %}
-							<option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
-								{{ language.name_local }}
-							</option>
-						{% endfor %}
-					</select>
-				</form><br>	
-				<fieldset class="border rounded-5 p-2 mb-3 text-light text-break text-start d-inline-block">
-					<legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">{% trans "User Profile" %}</legend>
-					<form method="post" enctype="multipart/form-data" class="d-inline-block">
-						{% csrf_token %}
-						<div class="form-group form-control-sm py-1">
-							<img src="{{ user.image_link }}" alt="profile_img" class="rounded-pill" width="90px" height="90px" id="profile_img">
-							{{ form.image }}           
-						</div>
-						<div class="form-group form-control-sm py-1">
-							<label for="username">{% trans "Username" %}</label>
-							<input type="text" class="form-control" id="usernameForm" placeholder="{{ user.login }}" readonly>
-						</div>
-						<div class="form-group form-control-sm py-1">
-							<label for="email">{% trans "Email" %}</label>
-							<input type="email" class="form-control" id="emailForm" placeholder="{{ user.email }}" readonly>
-						</div>
-						<div class="form-group form-control-sm py-1">
-							<label for="alias">{% trans "Nickname for Tournaments" %}</label><br>
-							{{ form.nickname }}
-						<button type="submit" class="btn btn-info m-2">{% trans "Save" %}</button>
-					</form>	
-				</fieldset>
-			</div>
-			`;
+			const edit_content = `{% include 'edit.html' %}`;
 			contentContainer.innerHTML = edit_content;
 		} else if (initialUrl.endsWith('/stats/') || initialUrl.endsWith('/stats')) {
-			const stats_content = `
-			<div class="page-content container p-0 bg-black text-light text-center" style="min-height: 100%;" id="statsPage">
-				<div class="pb-3">
-					<fieldset class="border rounded-5 p-2 text-light text-break text-start d-inline-block">
-						<legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">{% trans "Stats" %}</legend>
-						<table class="table-responsive overflow-hidden">
-							<tr>
-								<th scope="col" class="text-start px-2"></th>
-								<th scope="col" class="text-end px-2">{% trans "Totals" %}</th>
-								<th scope="col"></th>
-							</tr>
-							<tr>
-								<td class="text-start px-2">{% trans "Matches" %}&ensp;</td>
-								<td class="text-end text-warning px-2">{{ match_count }}</td>
-							</tr>
-							<tr>
-								<td class="text-start px-2">{% trans "Wins" %}&ensp;</td>
-								<td class="text-end text-success px-2">{{ total_wins }}</td>
-							</tr>
-							<tr>
-								<td class="text-start px-2">{% trans "Losses" %}&ensp;</td>
-								<td class="text-end text-danger px-2">{{ total_losses }}</td>
-							</tr>
-							<tr>
-								<td class="text-start px-2 pb-3">{% trans "Success Ratio" %}&ensp;</td>
-								<td class="text-end text-info px-2 pb-3">{{ success_ratio|default:"N/A"|floatformat:"2" }}%</td>
-							</tr>
-						</table>
-					</fieldset>
-					<fieldset class="p-0 text-light text-break text-start">
-						<legend class="display-6 float-none w-auto pt-2" style="color:fuchsia;">{% trans "Match History" %}</legend>
-						<table class="table table-responsive overflow-hidden">
-							{% for match in matches %}
-							<tr>
-								<td class="bg-black text-light">{% trans "Date: " %}<strong>{{ match.match_date }}</strong> &nbsp; {% trans "Time: " %}<strong>{{ match.match_time }}</strong> &nbsp;&nbsp; </td> 
-								<td class="bg-black text-light">{% trans "Winner: " %}<strong  class="text-success">{{ match.winner_user.login }}</strong> &nbsp;&nbsp; </td>
-								<td class="bg-black text-light">{% trans "Score: " %}<strong>{{ match.winner_score }}</strong>{% trans " x " %} X <strong>{{ match.loser_score }}</strong> &nbsp;&nbsp; </td>
-								<td class="bg-black text-light">{% trans "Loser: " %}<strong  class="text-danger">{{ match.loser_user.login }}</strong>  &nbsp;&nbsp;  </td>
-							</tr>
-							{% empty %}
-								<td class="bg-black text-warning">{% trans "No matches played" %}</td>
-							{% endfor %}
-					</fieldset>
-				</div>
-			</div>
-			`;
+			const stats_content = `{% include 'stats.html' %}`;
 			contentContainer.innerHTML = stats_content;
 		} else if (initialUrl.endsWith('/friends/') || initialUrl.endsWith('/friends')) {
-			const friends_content = `
-			<div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;" id="friendsPage">
-				<div class="search-bar-container text-center">
-					<form method="post" action="{% url 'friends' %}">
-					{% csrf_token %}
-					<input type="text" name="search_query" placeholder="Enter friend's login">
-					<button type="submit" class="btn btn-info">{% trans "Add Friend" %}</button>
-					</form>
-				</div>
-				{% if messages %}
-					<div class="messages">
-					<div>{{ message }}</div>
-					</div>
-				{% endif %}
-				<br>
-				<h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
-				{% if friends %}
-					<table class="table table-responsive table-dark rounded-4 overflow-hidden">
-					<thead class="border-bottom-0 table-secondary">
-						<tr>
-						<th scope="col">{% trans "USER" %}</th>
-						<th scope="col">{% trans "STATUS" %}</th>
-						<th scope="col"></th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for friend in friends %}
-						<tr>
-							<th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.nickname }}</th>
-							<td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
-							<td>
-								<form method="post" action="{% url 'friends' %}" style="display:inline;">
-									{% csrf_token %}
-									<input type="hidden" name="delete_friend_id" value="{{ friend.id }}">
-									<button type="submit" class="btn p-0 border-0" style="background-color:transparent;">
-										<img src="{% static 'delete_red.png' %}" alt="Delete">
-									</button>
-								</form>
-							</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-					</table>
-				{% else %}
-					<p>{% trans "No friends!" %}</p>
-				{% endif %}
-			</div>
-			`;
+			const friends_content = `{% include 'friends.html' %}`;
 			contentContainer.innerHTML = friends_content;
 		} /*else if(initialUrl.endsWith('/game/') || initialUrl.endsWith('/game')) {
 			const game_content = `
@@ -508,6 +223,8 @@
 		});
 	});
 
+	
+	
 	function openGameWindow() {
         // Open a new window with an empty HTML document
         const gameWindow = window.open('', 'Game Window', 'width=800, height=600');

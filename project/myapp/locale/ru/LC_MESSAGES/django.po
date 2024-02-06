@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 21:15+0400\n"
+"POT-Creation-Date: 2024-01-29 21:36+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,67 +19,84 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
-#: .\project\settings.py:141
-msgid "English"
-msgstr ""
 
 #: .\project\settings.py:142
-msgid "Portuguese"
-msgstr "португальский"
+msgid "English"
+msgstr "Английский"
 
 #: .\project\settings.py:143
-msgid "Spanish"
-msgstr "испанский"
+msgid "Portuguese"
+msgstr "португальский"
 
 #: .\project\settings.py:144
 msgid "Russian"
 msgstr "Русский"
 
-#: .\templates\base.html:40
+#: .\templates\base.html:48
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
-#: .\templates\base.html:41
+#: .\templates\base.html:49
 msgid "Friends"
 msgstr "Друзья"
 
-#: .\templates\base.html:42
+#: .\templates\base.html:50 .\templates\stats.html:8
 msgid "Stats"
 msgstr "Статистика"
 
-#: .\templates\base.html:44
+#: .\templates\base.html:52
 msgid "Logout"
 msgstr "Выйти"
 
-#: .\templates\edit.html:7
+#: .\templates\edit.html:30
 msgid "User Profile"
 msgstr "Профиль пользователя"
 
-#: .\templates\edit.html:8
-msgid "Username:"
-msgstr "Имя пользователя:"
+#: .\templates\edit.html:38
+msgid "Username"
+msgstr "Имя пользователя"
 
-#: .\templates\edit.html:9
-msgid "Alias:"
-msgstr "Псевдоним:"
+#: .\templates\edit.html:42
+msgid "Email"
+msgstr "Электронная почта:"
 
-#: .\templates\edit.html:13
+#: .\templates\edit.html:46
+msgid "Nickname for Tournaments"
+msgstr "Псевдоним для турниров"
+
+#: .\templates\edit.html:50
+msgid "Two-Factor Authentication (2FA)"
+msgstr "Двухфакторная аутентификация (2FA)"
+
+#: .\templates\edit.html:52
+msgid "disable"
+msgstr "отключить"
+
+#: .\templates\edit.html:53
+msgid "enable"
+msgstr "включить"
+
+#: .\templates\edit.html:56
 msgid "Save"
 msgstr "Сохранять"
 
-#: .\templates\friends.html:7
+#: .\templates\friends.html:10
+msgid "Add Friend"
+msgstr "Добавить в друзья"
+
+#: .\templates\friends.html:19
 msgid "List of Friends"
 msgstr "Список друзей"
 
-#: .\templates\friends.html:14 .\templates\friends.html:43
+#: .\templates\friends.html:24
 msgid "USER"
 msgstr "ПОЛЬЗОВАТЕЛЬ"
 
-#: .\templates\friends.html:15 .\templates\friends.html:44
+#: .\templates\friends.html:25
 msgid "STATUS"
 msgstr "СТАТУС"
 
-#: .\templates\friends.html:30
+#: .\templates\friends.html:40
 msgid "No friends!"
 msgstr "Нет друзей!"
 
@@ -130,3 +147,61 @@ msgstr "Да, выйти"
 #: .\templates\logout.html:8
 msgid "Cancel"
 msgstr "Отмена"
+
+#: .\templates\stats.html:12
+msgid "Totals"
+msgstr "Итоги"
+
+#: .\templates\stats.html:16
+msgid "Matches"
+msgstr "Матчи"
+
+#: .\templates\stats.html:20
+msgid "Wins"
+msgstr "Победы"
+
+#: .\templates\stats.html:24
+msgid "Losses"
+msgstr "Потери"
+
+#: .\templates\stats.html:28
+msgid "Success Ratio"
+msgstr "Коэффициент успеха"
+
+#: .\templates\stats.html:35
+msgid "Match History"
+msgstr "История матчей"
+
+#: .\templates\stats.html:39
+msgid "Date: "
+msgstr "Дата: "
+
+#: .\templates\stats.html:39
+msgid "Time: "
+msgstr "Время: "
+
+#: .\templates\stats.html:40
+msgid "Winner: "
+msgstr "Победитель: "
+
+#: .\templates\stats.html:41
+msgid "Score: "
+msgstr "Счет: "
+
+#: .\templates\stats.html:41
+msgid " x "
+msgstr " x "
+
+#: .\templates\stats.html:42
+msgid "Loser: "
+msgstr "Неудачник: "
+
+#: .\templates\stats.html:45
+msgid "No matches played"
+msgstr "Ни одного матча не сыграно"
+
+#~ msgid "Spanish"
+#~ msgstr "испанский"
+
+#~ msgid "Alias:"
+#~ msgstr "Псевдоним:"

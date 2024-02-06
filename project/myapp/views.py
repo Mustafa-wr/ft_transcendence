@@ -5,7 +5,7 @@ from django.template import loader
 from .models import user_profile, match_record, user_friends, Create_match_record
 from .models import user_profile, match_record, Game, Match_maker
 from . import forms
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
@@ -15,7 +15,6 @@ from django.utils import translation
 from django.views.i18n import set_language
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-
 import json
 
 def authenticated_user(view_func):
@@ -30,27 +29,6 @@ def authenticated_user(view_func):
 			return redirect('login')
 	return wrapper
 
-@authenticated_user
-def edit(request):
-	is_game = False
-	is_home_page = False
-	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-	if request.method == 'POST':
-		form = UserProfileForm(request.POST, request.FILES, instance=profile)
-		if form.is_valid():
-			profile = form.save(commit=False)
-			if 'image' in request.FILES:
-				if profile.image:
-					default_storage.delete(profile.image.path)
-				image = request.FILES['image']
-				profile.image.save(image.name, ContentFile(image.read()))
-				profile.image_link = profile.image.url
-			profile.save()
-			return redirect('edit')
-	else:
-		form = UserProfileForm(instance=profile)
-		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
-	return render(request, 'base.html', {'form': form, 'user': profile, 'is_home_page': is_home_page, 'is_game': is_game})
 
 @authenticated_user
 def stats(request):
@@ -218,3 +196,25 @@ def logout(request):
     request.session.clear()
     return redirect('login')
 
+@authenticated_user
+def edit(request):
+	is_game = False
+	is_home_page = False
+	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	if request.method == 'POST':
+		form = UserProfileForm(request.POST, request.FILES, instance=profile)
+		
+		if form.is_valid():
+			profile = form.save(commit=False)
+			if 'image' in request.FILES:
+				if profile.image:
+					default_storage.delete(profile.image.path)
+				image = request.FILES['image']
+				profile.image.save(image.name, ContentFile(image.read()))
+				profile.image_link = profile.image.url
+			profile.save()
+			return redirect('edit')
+	else:
+		form = UserProfileForm(instance=profile)
+		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
+	return render(request, 'base.html', {'form': form, 'user': profile, 'is_home_page': is_home_page, 'is_game': is_game})
