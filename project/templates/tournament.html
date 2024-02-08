@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -12,6 +11,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          background: black;
       }
   
       canvas {
@@ -22,122 +22,107 @@
           max-width: 1050px;
           height: 100%;
           max-height: 750px;
-          background-color: black;
+          background: black;
       }
            
 
   </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  
   </head>
   <body>
     {% csrf_token %}
-   
     <!-- Drawing the game field -->
     <canvas width="1050" height="750" id="game"></canvas>
+
     <script>
       var animationFrameID;
-      window.onload = function () {
-
-        async function gameOver(){
-           // event.preventDefault()
-          let headers = {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          }
-          const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value
-          headers['X-CSRFToken'] = csrf
-
-          let response = await fetch("pong", {
-            method:"POST",
-            headers: headers,
-            body:JSON.stringify({
-              match_winner: winner,
-              match_loser: loser,
-              winner_score: winner_score,
-              loser_score: loser_score
-            })                 
-          });
-        }
-
+      var leftplayer;
+      var rightplayer;
       
+      // Get the canvas and context      
       const canvas = document.getElementById("game");
       const context = canvas.getContext("2d");
       const grid = 15;
       const paddleHeight = grid * 5; // 80
-      //Retrieving user names
-      var leftplayer = "{{game.player_2}}";
-      var rightplayer = "{{game.player_1}}";
-
-      // Setting the maximum distance the paddles can move downwards
-      const LeftmaxPaddleY = canvas.height - grid - paddleHeight ;
-      const RightmaxPaddleY = canvas.height - grid - paddleHeight;
-  
-      var paddleSpeed = 6;
-      var ballSpeed = 4;
-    
-      // Score
-      var rp_count = 0;
-      var lp_count = 0;
-      // Activate secret level
-      var secret = false;
-      // Number of bounces in secret mode
-      var secret_count = 0;
-      ballColor = "purple";
+      
+      window.onload = function () {
+        // Score
+        var rp_count = 0;
+        var lp_count = 0; 
+        
+        //  Retrieving user names         
+          var player_array = ["{{players.0}}", "{{players.1}}", "{{players.2}}", "{{players.3}}", "{{players.4}}", "{{players.5}}", "{{players.6}}", "{{players.7}}"];
+          leftplayer = player_array[0];
+          rightplayer = player_array[1];
+      
+        // Setting the maximum distance the paddles can move downwards
+          const LeftmaxPaddleY = canvas.height - grid - paddleHeight ;
+          const RightmaxPaddleY = canvas.height - grid - paddleHeight;
+      
+          var paddleSpeed = 6;
+          var ballSpeed = 4;
    
-      // Describe the left paddle
-      const leftPaddle = {
-        // Position it in the center
-        x: grid * 2,
-        y: canvas.height / 2 - paddleHeight / 2,
-        width: grid,
-        height: paddleHeight,
-        // The paddle doesn't move anywhere at the start
-        dy: 0,
-      };
-      // Describe the right paddle
-      const rightPaddle = {
-        // Position it in the center on the right side
-        x: canvas.width - grid * 3,
-        y: canvas.height / 2 - paddleHeight / 2,
-        width: grid,
-        height: paddleHeight,
-        // The right paddle doesn't move anywhere initially
-        dy: 0,
-      };
-      // Describe the ball
-      const ball = {
-        // It appears in the center of the field
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        // Square, the size of a grid cell
-        width: grid,
-        height: grid,
-        radius:( grid / 2) + 1,
-        // The ball is not scored at the start, so remove the flag indicating that the ball needs to be reintroduced
-        resetting: false,
-        // Serve the ball to the top right corner
-        dx: ballSpeed,
-        dy: -ballSpeed,
-      };
-      // Check whether two objects with known coordinates intersect or not
-      // More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-      function collides(obj1, obj2) {
-        return (
-          obj1.x < obj2.x + obj2.width &&
-          obj1.x + obj1.width > obj2.x &&
-          obj1.y < obj2.y + obj2.height &&
-          obj1.y + obj1.height > obj2.y
-        );
-      }
-
-      function boundary_check(paddle, top, bottom) {
-        if (paddle.y < top) {
-          paddle.y = top;
-        } else if (paddle.y > bottom) {
-          paddle.y = bottom;
-        }
+          // Activate secret level
+          var secret = false;
+          // Number of bounces in secret mode
+          var secret_count = 0;
+          ballColor = "white";
     
-      }
+        // Describe the left paddle
+        const leftPaddle = {
+          // Position it in the center
+          x: grid * 2,
+          y: canvas.height / 2 - paddleHeight / 2,
+          width: grid,
+          height: paddleHeight,
+          // The paddle doesn't move anywhere at the start
+          dy: 0,
+        };
+        // Describe the right paddle
+        const rightPaddle = {
+          // Position it in the center on the right side
+          x: canvas.width - grid * 3,
+          y: canvas.height / 2 - paddleHeight / 2,
+          width: grid,
+          height: paddleHeight,
+          // The right paddle doesn't move anywhere initially
+          dy: 0,
+        };
+        // Describe the ball
+        const ball = {
+          // It appears in the center of the field
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          // Square, the size of a grid cell
+          width: grid,
+          height: grid,
+          radius:( grid / 2) + 1,
+          // The ball is not scored at the start, so remove the flag indicating that the ball needs to be reintroduced
+          resetting: false,
+          // Serve the ball to the top right corner
+          dx: ballSpeed,
+          dy: -ballSpeed,
+        };
+        // Check whether two objects with known coordinates intersect or not
+        // More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+        function collides(obj1, obj2) {
+          return (
+            obj1.x < obj2.x + obj2.width &&
+            obj1.x + obj1.width > obj2.x &&
+            obj1.y < obj2.y + obj2.height &&
+            obj1.y + obj1.height > obj2.y
+          );
+        }
+
+        function boundary_check(paddle, top, bottom) {
+          if (paddle.y < top) {
+            paddle.y = top;
+          } else if (paddle.y > bottom) {
+            paddle.y = bottom;
+          }      
+        }
+
       // Main game loop
       function loop() {
         // Clear the game field
@@ -156,12 +141,28 @@
               winner_score = lp_count;
               loser_score = rp_count;
             }
-            gameOver();           
-            alert("Game Over. " + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
+            
+            // gameOver();           
+            alert("Game Over." + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
+            player_array.shift();
+            player_array.shift();
+            player_array.push(winner);
+            if (player_array.length == 1){
+              alert("Tournament Over. " + winner + " Wins!");
+            }
+            else{
+              alert("Next Match: " + player_array[0] + " vs " + player_array[1] + " Players remaining: " + player_array.length);
+              rp_count  = 0;
+              lp_count = 0;
+              leftplayer = player_array[0];
+              rightplayer = player_array[1];
+              animationFrameID = requestAnimationFrame(loop);
+            }
           }
         else
           animationFrameID = requestAnimationFrame(loop);
-        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
         // If the paddles were moving somewhere on the previous step, let them continue moving
         leftPaddle.y += leftPaddle.dy;
         rightPaddle.y += rightPaddle.dy;
@@ -169,11 +170,9 @@
         // check paddles stay witin the boundary
         boundary_check(leftPaddle, grid, LeftmaxPaddleY);
         boundary_check(rightPaddle, grid, RightmaxPaddleY);
-      
-        
+             
         // Draw the paddles
         context.fillStyle = "white";
-        // Each paddle is a rectangle
         context.fillRect(
           leftPaddle.x,
           leftPaddle.y,
@@ -222,19 +221,13 @@
             ball.y = canvas.height / 2;
           }, 1000);
         }
-        // If the ball touches the left paddle,
-        if (collides(ball, leftPaddle)) {
-          // send it in the opposite direction
-          ball.dx *= -1;
-          // Increase the ball's coordinates by the paddle's width to prevent a new bounce from being counted
-          ball.x = leftPaddle.x + leftPaddle.width;
-        }
-        // Check and do the same for the right paddle
+        if (collides(ball, leftPaddle)) {          
+          ball.dx *= -1;                            // send it in the opposite direction
+          ball.x = leftPaddle.x + leftPaddle.width; // Increase the ball's coordinates by the paddle's width 
+        }                                           //to prevent a new bounce from being counted
         else if (collides(ball, rightPaddle)) {
           ball.dx *= -1;
           ball.x = rightPaddle.x - rightPaddle.width;
-          // Count the bounces
-        //   count += 1;
           // If it reaches 5, activate the secret level
           if (rp_count >= 5 || lp_count >= 5) {
             secret = true;
@@ -298,8 +291,7 @@
         });
 
         // Now, watch for when someone releases a key to stop the paddle's movement
-        document.addEventListener("keyup", function (e) {
-         
+        document.addEventListener("keyup", function (e) {         
           if (e.which === 38 || e.which === 40) { // If it's the up or down arrow key,stop the right paddle
             rightPaddle.dy = 0;
           }
@@ -307,17 +299,20 @@
             leftPaddle.dy = 0;
           }
         });
+
         // Text color, size and font
         context.fillStyle = "white"; 
-        context.font = "20pt Arial";
+        context.font = "30pt Arial";
 
         // Display player scores
         context.fillText( leftplayer + ": " + lp_count, 50, 650);
         context.fillText(rightplayer + " : " + rp_count, 700, 650);
       }
+      
       // Start the game
       animationFrameID = requestAnimationFrame(loop);
     };
     </script>
+  </div>
   </body>
 </html>

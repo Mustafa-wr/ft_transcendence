@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from .models import user_profile, match_record, user_friends, Create_match_record
-from .models import user_profile, match_record, Game, Match_maker
+from .models import user_profile, match_record, Game, Match_maker, tournament
 from . import forms
 from django.utils.translation import gettext as _, gettext_lazy as _
 from django.utils.translation import get_language, activate, gettext
@@ -83,8 +83,8 @@ def game(request):
 def pong(request):
 		if (Match_maker.objects.all().count() == 0):
 				Match_maker.objects.create()
+		match_maker = Match_maker.objects.first()
 		if request.method == 'GET':
-			match_maker = Match_maker.objects.first()
 			match_maker.add_player(request.session['user_info'].get('login'))
 			if (match_maker.players.count() > 1):
 				game_instance = Game()
@@ -98,7 +98,7 @@ def pong(request):
 				}
 				return HttpResponse(template.render(context, request))
 			else:
-				return render(request, 'no_players.html')
+				return render(request, 'no_players.html')				
 		else:
 			if request.method == 'POST':
 				data = json.loads(request.body)
@@ -110,8 +110,34 @@ def pong(request):
 				match_record_instance.full_clean()
 				match_record_instance.save()
 				# return JsonResponse({'status': 'success'})
-			return redirect('home')			
-			
+			return redirect('/home/')			
+
+@authenticated_user
+def tournament(request): 
+	if (tournament.objects.all().count() == 0):
+		tournament.objects.create()
+	tournament_instance = tournament.objects.first()
+	if request.method == 'GET':
+		player_to_add = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+		tournament_instance.players.remove(player_to_add)
+		tournament_instance.players.add(player_to_add)
+		
+		player_array = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"]  # test array, comment out later
+		
+        #uncomment when you have players........
+		# player_array = []	
+		# for player in tournament_instance.players.all():
+		# 	player_array.append(player.nickname)
+		if (tournament_instance.players.count() > 1):
+			template = loader.get_template('tournament.html') 
+			context = {
+			'players': player_array,
+			}
+			return HttpResponse(template.render(context, request))
+		else:
+			return render(request, 'no_players.html')		
+    
+
 def authorize(request):
     client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
     redirect_uri = f"http://{request.get_host()}/callback"
