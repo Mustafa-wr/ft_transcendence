@@ -14,7 +14,8 @@ from django.contrib import messages
 from django.utils import translation
 from django.views.i18n import set_language
 from django.contrib.auth import logout
-
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 import json
 
 def authenticated_user(view_func):
