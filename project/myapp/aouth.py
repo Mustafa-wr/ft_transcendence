@@ -41,7 +41,7 @@ def callback(request):
                     login = user_info.get('login'),
                     nickname = user_info.get('displayname'),
                     email = user_info.get('email'),
-                    # image_link = data["image"]["link"]
+					image_link = ('avatar.png'),
                 ).save()
                 user_info = user_response.json()
                 return render(request, 'home.html', {'user_info': user_info})
