@@ -5,7 +5,7 @@
 	{% block content %}
 		<div class="page-content bg-black text-light text-center" style="min-height: 100%;">
 			<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-				<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
+				<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">{% trans "The Game" %}</legend>
 				<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
 				<p>{% trans "Players control paddles to hit the ball." %}</p>
 				<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
@@ -13,7 +13,7 @@
 			</fieldset>
 			<br><br>
 			<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-			<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
+			<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">{% trans "Ready?" %}</legend>
 			<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Computer" %}</a>
 			<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play Tournment" %}</a>
 			<a href="{% url 'game' %}" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
