@@ -126,9 +126,11 @@ def tournament(request):
 		
         #uncomment when you have players........
 		# player_array = []	
+		#tournament_instance.sort_players()
 		# for player in tournament_instance.players.all():
 		# 	player_array.append(player.nickname)
 		if (tournament_instance.players.count() > 1):
+		    # tournament_instance.clear()
 			template = loader.get_template('tournament.html') 
 			context = {
 			'players': player_array,
