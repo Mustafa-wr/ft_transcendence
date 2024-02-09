@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'myapp',
 	'debug_toolbar',
     'corsheaders',
+	'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "https://127.0.0.1:8000",
     "http://127.0.0.1:8000",
 	"http://localhost:8000",
 ]
@@ -164,3 +166,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CERTIFICATE_DIR = os.path.join(BASE_DIR, "certs")
+
+# Add or update the following settings
+DEBUG = False
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Specify the paths to the SSL certificate and key files
+SECURE_SSL_CERTIFICATE = os.path.join(CERTIFICATE_DIR, "localhost.crt")
+SECURE_SSL_KEY = os.path.join(CERTIFICATE_DIR, "localhost.key")

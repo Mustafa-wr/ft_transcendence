@@ -174,9 +174,9 @@ def pong(request):
 			
 def authorize(request):
     client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
-    redirect_uri = f"http://{request.get_host()}/callback"
+    redirect_uri = f"https://{request.get_host()}/callback"
 
-    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
+    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri=https://127.0.0.1:8000/callback&response_type=code"
 
     return redirect('/home/')
 

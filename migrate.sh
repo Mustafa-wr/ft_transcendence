@@ -9,6 +9,10 @@ echo "Running migrate.sh script..."
 python project/manage.py makemigrations myapp --noinput
 python project/manage.py migrate --noinput
 
-echo "\nMigrations completed."
+# Collect static files
+python project/manage.py collectstatic --noinput
 
-python project/manage.py runserver 0.0.0.0:8000
+# Start the server with SSL support
+python project/manage.py runsslserver 0.0.0.0:8000 --cert /code/localhost.crt --key /code/localhost.key
+
+echo "SSL enabled. Starting the server..."

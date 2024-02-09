@@ -12,7 +12,7 @@ def callback(request):
         token_url = "https://api.intra.42.fr/oauth/token"
         client_id = "u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
         client_secret = "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"
-        redirect_uri = "http://127.0.0.1:8000/callback"
+        redirect_uri = "https://127.0.0.1:8000/callback"
 
         data = {
             'grant_type': 'authorization_code',

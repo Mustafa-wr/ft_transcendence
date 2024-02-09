@@ -12,7 +12,8 @@ RUN pip install --upgrade pip \
     && pip install requests \
     && pip install psycopg2-binary \
     && pip install django-cors-headers \
-	&& pip install django-debug-toolbar
+	&& pip install django-debug-toolbar \
+	&& pip install django-sslserver
 
 RUN apt-get update && apt-get install -y dos2unix
 
@@ -21,6 +22,10 @@ COPY migrate.sh /code/migrate.sh
 
 # Make the script executable
 RUN chmod +x /code/migrate.sh
+
+# Copy the SSL key and certificate into the container
+COPY localhost.crt /code/localhost.crt
+COPY localhost.key /code/localhost.key
 
 # Run migrations before starting the server
 # RUN /code/migrate.sh
