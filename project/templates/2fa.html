@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Factor Authentication</title>
+</head>
+<body>
+    <h2>Two-Factor Authentication</h2>
+    
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" action="{% url 'verify_2fa' %}">
+        {% csrf_token %}
+        <label for="otp">Введите код подтверждения:</label>
+        <input type="text" name="otp" required>
+        <button type="submit">Подтвердить</button>
+    </form>
+</body>
+</html>

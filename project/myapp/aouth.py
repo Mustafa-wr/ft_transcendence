@@ -1,8 +1,13 @@
 import requests
-from requests.auth import HTTPBasicAuth
 from django.shortcuts import render
 from django.http import HttpResponseServerError
 from .models import user_profile
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from django.core.mail import send_mail
+from .views import verify_2fa
 
 def callback(request):
     if 'code' in request.GET:
@@ -36,15 +41,41 @@ def callback(request):
                 user_response = requests.get(user_info_url, headers=headers)
                 user_response.raise_for_status()
                 user_info = user_response.json()
-                request.session['user_info'] = user_info
-                user_profile.objects.create(
-                    login = user_info.get('login'),
-                    nickname = user_info.get('displayname'),
-                    email = user_info.get('email'),
-                    # image_link = data["image"]["link"]
-                ).save()
-                user_info = user_response.json()
-                return render(request, 'home.html', {'user_info': user_info})
+                print('---------> ', user_profile.objects.filter(login=user_info.get('login')))
+                if not user_profile.objects.filter(login=user_info.get('login')).exists():
+                    user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
+                    user_profile.objects.create(
+                        user=user_instance,
+                        login=user_info.get('login'),
+                        nickname=user_info.get('displayname'),
+                        email=user_info.get('email'),
+                    ).save()
+                    request.session['user_info'] = user_info
+                    user_info = user_response.json()
+                    return render(request, 'home.html', {'user_info': user_info})
+
+                user = user_profile.objects.get(login=user_info.get('login'))
+                if user.is_2fa_enabled:
+                    totp_device = TOTPDevice.objects.create(user=user.user, confirmed=True)
+                    totp_device.save()
+
+                    totp_code = totp_device.key
+                    print(f'TOTP Code: {totp_code}')
+
+                    email_subject = 'Confirmation 2FA'
+                    email_message = f'Code of confirmation 2FA: {totp_code}'
+                    send_mail(email_subject, email_message, 'mustafaradwan728', [user.email])
+
+                    messages.info(request, 'Your code has been sent to your main 2FA.')
+                    # if verify_2fa(request):
+                    #     request.session['user_info'] = user_info
+                    #     login(request, user.user)
+                        # return render(request, 'home.html', {'user_info': user_info})
+                    return render(request, '2fa.html', {'user_info': user_info, 'totp_device': totp_device})
+                else:
+                    request.session['user_info'] = user_info
+                    login(request, user.user)
+                    return render(request, 'home.html', {'user_info': user_info})
             else:
                 return render(request, 'error.html', {'error': 'Access token not found in the response'})
         except requests.exceptions.RequestException as e:

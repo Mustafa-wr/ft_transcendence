@@ -4,6 +4,7 @@ RUN mkdir /code
 WORKDIR /code
 
 COPY requirements.txt /code/
+RUN apt-get update && apt-get install -y dos2unix
 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \
@@ -12,9 +13,12 @@ RUN pip install --upgrade pip \
     && pip install requests \
     && pip install psycopg2-binary \
     && pip install django-cors-headers \
-	&& pip install django-debug-toolbar
+	&& pip install django-debug-toolbar \
+    && pip install djangorestframework\
+    && pip install django-otp \
+    && pip install djangorestframework-simplejwt
 
-RUN apt-get update && apt-get install -y dos2unix
+
 
 # Copy the migrate.sh script into the container
 COPY migrate.sh /code/migrate.sh
