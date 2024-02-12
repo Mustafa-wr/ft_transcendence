@@ -14,6 +14,7 @@ urlpatterns = [
     path('profile/stats', views.stats, name='stats'),
     path('profile/friends', views.friends, name='friends'),
     path('logout/', views.logout_view, name='logout_view'),
+    path('verify_2fa/', views.verify_2fa, name='verify_2fa'),
 ]
 
 

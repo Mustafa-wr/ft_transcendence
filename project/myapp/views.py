@@ -16,6 +16,10 @@ from django.views.i18n import set_language
 from django.contrib.auth import logout
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django_otp.plugins.otp_totp.models import TOTPDevice
+import secrets
+
+
 import json
 
 def authenticated_user(view_func):
@@ -209,3 +213,24 @@ def logout(request):
 def edit(request):
 	context = organizer(request)
 	return render(request, 'base.html', context)
+
+def verify_2fa(request):
+    if request.method == 'POST':
+        user = request.user
+        otp = request.POST.get('otp')
+
+        try:
+            totp_device = TOTPDevice.objects.get(user=user, confirmed=True)
+
+            if totp_device.verify_token(otp):
+                login(request, user)
+                messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
+                return redirect('home')
+            else:
+                messages.error(request, 'Неверный код подтверждения.')
+                return redirect('verify_2fa')
+        except TOTPDevice.DoesNotExist:
+            messages.error(request, 'У вас нет подтвержденных устройств Two-Factor Authentication.')
+            return redirect('home')
+    else:
+        return render(request, 'error.html', {'error': 'Invalid request method'})

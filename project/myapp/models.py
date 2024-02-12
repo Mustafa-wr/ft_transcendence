@@ -1,16 +1,20 @@
 from django.apps import AppConfig
 from django.db import models
 from django import forms
+from django.contrib.auth.models import User
 
 class user_profile(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE, default=User.objects.first())
 	login = models.CharField(max_length=100, default='default_value')
 	nickname = models.CharField(max_length=100, default='default_value')
 	email = models.EmailField(max_length=100, default='default_value')
 	image_link = models.CharField(max_length=150, default='default_value')
 	preferred_language = models.CharField(max_length=12, default='English')
-	two_factor_auth_status = models.CharField(max_length=12, default='Disabled')
+	# two_factor_auth_status = models.CharField(max_length=12, default='Disabled')
 	status = models.CharField(max_length=20, default='offline')
 	image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+	last_login = models.DateTimeField(default='2021-01-01 00:00:00')
+	is_2fa_enabled = models.BooleanField(default=True)
 	@property
 	def wins(self):
 		return self.won_matches.count()

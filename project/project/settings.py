@@ -43,6 +43,10 @@ INSTALLED_APPS = [
 	'debug_toolbar',
     'corsheaders',
 	'sslserver',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +60,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django_otp.middleware.OTPMiddleware',
+]
+
+AUTHENTICATION_CLASSES = [
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -65,6 +74,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 ROOT_URLCONF = 'project.urls'
+
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "templates/static"),
@@ -147,6 +157,24 @@ LANGUAGES = [
 ]
 
 # SECURE_SSL_REDIRECT = True
+
+
+# settings.py
+
+# Use the SMTP email backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# SMTP server settings for Gmail
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True  # Use TLS (for Gmail)
+
+# Your Gmail account credentials
+EMAIL_HOST_USER = '42pongos@gmail.com'
+EMAIL_HOST_PASSWORD = 'hazmgnmudgrzrxey'
+
+# Default "from" address for emails sent by Django
+DEFAULT_FROM_EMAIL = '42pongos@gmail.com'
 
 
 LOCALE_PATHS = [
