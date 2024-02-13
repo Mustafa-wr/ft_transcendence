@@ -6,8 +6,10 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from django.core.mail import send_mail
+from email.mime.text import MIMEText
+from django.conf import settings
 from .views import verify_2fa
+import smtplib
 
 
 def callback(request):
@@ -64,11 +66,30 @@ def callback(request):
 					totp_code = totp_device.key
 					print(f'TOTP Code: {totp_code}')
 
-					email_subject = 'Confirmation 2FA'
-					email_message = f'Code of confirmation 2FA: {totp_code}'
-					send_mail(email_subject, email_message, 'mustafaradwan728', [user.email])
-
-					messages.info(request, 'Your code has been sent to your main 2FA.')
+					# email_subject = 'Confirmation 2FA'
+					# email_message = f'Code of confirmation 2FA: {totp_code}'
+					# # EmailMessage(email_subject, email_message, 'samzhak@yahoo.com', [user.email], reply_to=['samzhak@yahoo.com'])
+					# email = EmailMessage(
+					# 	subject=email_subject,
+					# 	message=email_message,
+					# 	from_email=settings.EMAIL_HOST_USER,
+					# 	recipient_list=[settings.EMAIL_HOST_USER],
+					# 	reply_to=[settings.EMAIL_HOST_USER]
+					# )
+					# email.send(fail_silently=False)
+					msg = MIMEText(f'Code of confirmation 2FA: {totp_code}')
+					msg['Subject'] = "Confirmation 2FA"
+					msg['From'] = settings.EMAIL_HOST_USER
+					msg['To'] = user.email
+					print(user.email)
+					# debuglevel = True
+					mail = smtplib.SMTP(settings.EMAIL_HOST, 587)
+					# mail.set_debuglevel(debuglevel)
+					mail.starttls()
+					mail.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+					mail.sendmail(settings.EMAIL_HOST_USER, user.email, msg.as_string())
+					mail.quit()
+					# messages.info(request, 'Your code has been sent to your main 2FA.')
 					# if verify_2fa(request):
 						# request.session['user_info'] = user_info
 						# login(request, user.user)

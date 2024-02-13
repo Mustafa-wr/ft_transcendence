@@ -165,16 +165,13 @@ LANGUAGES = [
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # SMTP server settings for Gmail
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.mail.yahoo.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True  # Use TLS (for Gmail)
 
 # Your Gmail account credentials
-EMAIL_HOST_USER = '42pongos@gmail.com'
-EMAIL_HOST_PASSWORD = 'hazmgnmudgrzrxey'
-
-# Default "from" address for emails sent by Django
-DEFAULT_FROM_EMAIL = '42pongos@gmail.com'
+EMAIL_HOST_USER = 'zubaydullotester@yahoo.com'
+EMAIL_HOST_PASSWORD = 'iljxegvjtsatprat'
 
 
 LOCALE_PATHS = [
