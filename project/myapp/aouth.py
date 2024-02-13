@@ -65,18 +65,6 @@ def callback(request):
 
 					totp_code = totp_device.key
 					print(f'TOTP Code: {totp_code}')
-
-					# email_subject = 'Confirmation 2FA'
-					# email_message = f'Code of confirmation 2FA: {totp_code}'
-					# # EmailMessage(email_subject, email_message, 'samzhak@yahoo.com', [user.email], reply_to=['samzhak@yahoo.com'])
-					# email = EmailMessage(
-					# 	subject=email_subject,
-					# 	message=email_message,
-					# 	from_email=settings.EMAIL_HOST_USER,
-					# 	recipient_list=[settings.EMAIL_HOST_USER],
-					# 	reply_to=[settings.EMAIL_HOST_USER]
-					# )
-					# email.send(fail_silently=False)
 					msg = MIMEText(f'Code of confirmation 2FA: {totp_code}')
 					msg['Subject'] = "Confirmation 2FA"
 					msg['From'] = settings.EMAIL_HOST_USER
@@ -89,13 +77,9 @@ def callback(request):
 					mail.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
 					mail.sendmail(settings.EMAIL_HOST_USER, user.email, msg.as_string())
 					mail.quit()
-					# messages.info(request, 'Your code has been sent to your main 2FA.')
-					# if verify_2fa(request):
-						# request.session['user_info'] = user_info
-						# login(request, user.user)
 					return render(request, '2fa.html', {'user_info': user_info, 'totp_device': totp_device})
 				else:
-					request.session['user_info'] = user_info
+					request.session['user_info'] = request.session['user_info']
 					login(request, user.user)
 					return render(request, 'home.html', {'user_info': user_info})
 			else:

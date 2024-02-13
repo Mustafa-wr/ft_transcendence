@@ -16,11 +16,11 @@
         </ul>
     {% endif %}
 
-	<form method="post" action="">
-		{% csrf_token %}
-		<label for="otp">Введите код подтверждения:</label>
-		<input type="text" name="otp" required>
-		<button type="submit">Подтвердить</button>
-	</form>
+    <form method="post" action="{% url 'verify_2fa' %}">
+        {% csrf_token %}
+        <label for="otp">Enter the confirmation code:</label>
+        <input type="text" name="otp" required>
+        <button type="submit">Confirm</button>
+    </form>
 </body>
 </html>

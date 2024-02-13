@@ -247,30 +247,29 @@ def edit(request):
 	return render(request, 'base.html', context)
 
 def verify_2fa(request):
-    if request.method == 'POST':
-        if 'user_info' in request.session:
-            user_instance, created = User.objects.get_or_create(username=request.session['user_info'].get('login'))
+	if request.method == 'POST':
+		if 'user_info' in request.session:
+			user_instance, created = User.objects.get_or_create(username=request.session['user_info'].get('login'))
 
-            otp = request.POST.get('otp')
-            try:
-                totp_device = TOTPDevice.objects.filter(user=user_instance, confirmed=True).first()
-                if totp_device and totp_device.verify_token(otp):
-                    request.session['user_info'] = user_instance.username  # Update this line based on what you want to store in the session
-                    login(request, user_instance)
-                    messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
-                    return redirect('home')
-                else:
-                    messages.error(request, 'Неверный код подтверждения.')
-                    return HttpResponse('google.com')
-            except TOTPDevice.DoesNotExist:
-                messages.error(request, 'У вас нет подтвержденных устройств Two-Factor Authentication.')
-                return redirect('home')
-            except Exception as e:
-                # Log the exception for further investigation
-                print(f"Exception: {str(e)}")
-                return HttpResponseServerError("Internal Server Error ---->")
-        else:
-            messages.error(request, 'Session data missing. Please log in again.')
-            return render(request, 'login.html')  # Redirect or render your login page
-    else:
-        return render(request, 'error.html', {'error': 'Invalid request method'})
+			otp = request.POST.get('otp')
+			try:
+				totp_device = TOTPDevice.objects.filter(user=user_instance, confirmed=True).first()
+				if totp_device and totp_device.verify_token(otp):
+					request.session['user_info'] = user_info
+					login(request, user_instance)
+					messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
+					return redirect('home')
+				else:
+					messages.error(request, 'Uncorect.')
+					return HttpResponse('google.com')
+			except TOTPDevice.DoesNotExist:
+				messages.error(request, 'You dont have Two-Factor Authentication.')
+				return redirect('home')
+			except Exception as e:
+				print(f"Exception: {str(e)}")
+				return HttpResponseServerError("Internal Server Error ---->")
+		else:
+			messages.error(request, 'Session data missing. Please log in again.')
+			return render(request, 'login.html')
+	else:
+		return render(request, 'error.html', {'error': 'Invalid request method'})
