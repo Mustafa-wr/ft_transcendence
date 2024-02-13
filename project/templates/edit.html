@@ -22,7 +22,7 @@
             {% csrf_token %}
             <div class="form-group form-control-sm py-1">
                 <label for="avatar_image" class="hidden-label" style="display: none;">{% trans "Avatar" %}</label>
-                <img src="{{ user.image_link }}" alt="profile_img" class="rounded-pill" width="90px" height="90px" id="profile_img">
+                <img src="{{ user.image_link }}" alt="profile_img" class="rounded-pill" width="90px" height="90px" id="profile_img"/>
                 {{ form.image }}
             </div>
             <div class="form-group form-control-sm py-1">

@@ -14,7 +14,7 @@ RUN pip install --upgrade pip \
     && pip install psycopg2-binary \
     && pip install django-cors-headers \
 	&& pip install django-debug-toolbar \
-	&& pip install django-sslserver
+	&& pip install django-sslserver	\
     && pip install djangorestframework\
     && pip install django-otp \
     && pip install djangorestframework-simplejwt

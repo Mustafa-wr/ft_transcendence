@@ -17,6 +17,7 @@ from django.contrib.auth import logout
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from django.contrib.auth.decorators import login_required
 import secrets
 
 
@@ -36,6 +37,7 @@ def authenticated_user(view_func):
 
 def organizer(request):
 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	print(f"user infooooo{user}")
 	friends = user_friends.objects.filter(user=user).select_related('friend')
 	if request.method == 'POST':
 		if 'delete_friend_id' in request.POST:
@@ -211,26 +213,58 @@ def logout(request):
 
 @authenticated_user
 def edit(request):
-	context = organizer(request)
+	is_game = False
+	is_home_page = False
+	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	if request.method == 'POST':
+		form = UserProfileForm(request.POST, request.FILES, instance=profile)
+		if form.is_valid():
+			profile = form.save(commit=False)
+			if 'image' in request.FILES:
+				if profile.image:
+					default_storage.delete(profile.image.path)
+				image = request.FILES['image']
+				profile.image.save(image.name, ContentFile(image.read()))
+				profile.image_link = profile.image.url
+			profile.save()
+			return redirect('edit')
+	else:
+		form = UserProfileForm(instance=profile)
+		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
+	tmp = organizer(request)
+	context = {
+		'form': form,
+		'user': profile,
+		'matches': tmp['matches'],
+		'match_count': tmp['match_count'],
+		'total_wins': tmp['total_wins'],
+		'total_losses': tmp['total_losses'],
+		'success_ratio': tmp['success_ratio'],
+		'friends': tmp['friends'],
+	}
 	return render(request, 'base.html', context)
 
 def verify_2fa(request):
-    if request.method == 'POST':
-        user = request.user
-        otp = request.POST.get('otp')
-
-        try:
-            totp_device = TOTPDevice.objects.get(user=user, confirmed=True)
-
-            if totp_device.verify_token(otp):
-                login(request, user)
-                messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
-                return redirect('home')
-            else:
-                messages.error(request, 'Неверный код подтверждения.')
-                return redirect('verify_2fa')
-        except TOTPDevice.DoesNotExist:
-            messages.error(request, 'У вас нет подтвержденных устройств Two-Factor Authentication.')
-            return redirect('home')
-    else:
-        return render(request, 'error.html', {'error': 'Invalid request method'})
+	if request.method == 'POST':
+		user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+		otp = request.POST.get('otp')
+		print('user -------> ', user)
+		try:
+			totp_device = TOTPDevice.objects.get(user=user, confirmed=True)
+			print(f"am here{totp_device}")
+			if totp_device.verify_token(otp):
+				login(request, user)
+				messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
+				return redirect('home')
+			else:
+				messages.error(request, 'Неверный код подтверждения.')
+				return redirect('error.html')
+		except TOTPDevice.DoesNotExist:
+			messages.error(request, 'У вас нет подтвержденных устройств Two-Factor Authentication.')
+			return redirect('home')
+		except Exception as e:
+			# Log the exception for further investigation
+			print(f"Exception: {str(e)}")
+			return HttpResponseServerError("Internal Server Error ---->")
+	else:
+		return render(request, 'error.html', {'error': 'Invalid request method'})
