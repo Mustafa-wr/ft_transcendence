@@ -6,6 +6,7 @@ from myapp.views import index
 from myapp.views import home
 from myapp.views import game
 from myapp.views import base
+from myapp.views import verify_2fa
 from myapp.views import authorize
 from myapp.aouth import callback
 from django.conf.urls.i18n import i18n_patterns
@@ -23,6 +24,7 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('debug/', include('debug_toolbar.urls')),
     path('logout/', logout_view, name='logout_view'),
+	path('verify_2fa/', verify_2fa, name='verify_2fa'),
 ]
 
 if settings.DEBUG:

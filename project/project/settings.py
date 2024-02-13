@@ -201,7 +201,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CERTIFICATE_DIR = os.path.join(BASE_DIR, "certs")
 
 # Add or update the following settings
-DEBUG = False
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

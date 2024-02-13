@@ -1,6 +1,7 @@
 from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponseServerError
 from django.template import loader
 from .models import user_profile, match_record, user_friends, Create_match_record
 from .models import user_profile, match_record, Game, Match_maker
@@ -18,6 +19,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 import secrets
 
 
@@ -245,26 +247,30 @@ def edit(request):
 	return render(request, 'base.html', context)
 
 def verify_2fa(request):
-	if request.method == 'POST':
-		user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-		otp = request.POST.get('otp')
-		print('user -------> ', user)
-		try:
-			totp_device = TOTPDevice.objects.get(user=user, confirmed=True)
-			print(f"am here{totp_device}")
-			if totp_device.verify_token(otp):
-				login(request, user)
-				messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
-				return redirect('home')
-			else:
-				messages.error(request, 'Неверный код подтверждения.')
-				return redirect('error.html')
-		except TOTPDevice.DoesNotExist:
-			messages.error(request, 'У вас нет подтвержденных устройств Two-Factor Authentication.')
-			return redirect('home')
-		except Exception as e:
-			# Log the exception for further investigation
-			print(f"Exception: {str(e)}")
-			return HttpResponseServerError("Internal Server Error ---->")
-	else:
-		return render(request, 'error.html', {'error': 'Invalid request method'})
+    if request.method == 'POST':
+        if 'user_info' in request.session:
+            user_instance, created = User.objects.get_or_create(username=request.session['user_info'].get('login'))
+
+            otp = request.POST.get('otp')
+            try:
+                totp_device = TOTPDevice.objects.filter(user=user_instance, confirmed=True).first()
+                if totp_device and totp_device.verify_token(otp):
+                    request.session['user_info'] = user_instance.username  # Update this line based on what you want to store in the session
+                    login(request, user_instance)
+                    messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
+                    return redirect('home')
+                else:
+                    messages.error(request, 'Неверный код подтверждения.')
+                    return HttpResponse('google.com')
+            except TOTPDevice.DoesNotExist:
+                messages.error(request, 'У вас нет подтвержденных устройств Two-Factor Authentication.')
+                return redirect('home')
+            except Exception as e:
+                # Log the exception for further investigation
+                print(f"Exception: {str(e)}")
+                return HttpResponseServerError("Internal Server Error ---->")
+        else:
+            messages.error(request, 'Session data missing. Please log in again.')
+            return render(request, 'login.html')  # Redirect or render your login page
+    else:
+        return render(request, 'error.html', {'error': 'Invalid request method'})

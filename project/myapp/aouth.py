@@ -9,6 +9,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.core.mail import send_mail
 from .views import verify_2fa
 
+
 def callback(request):
 	if 'code' in request.GET:
 		code = request.GET.get('code')
@@ -41,7 +42,8 @@ def callback(request):
 				user_response = requests.get(user_info_url, headers=headers)
 				user_response.raise_for_status()
 				user_info = user_response.json()
-				user = user_profile.objects.filter(login=user_info.get('login'))
+				print('---------> ', user_profile.objects.filter(login=user_info.get('login')))
+				user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
 				if not user_profile.objects.filter(login=user_info.get('login')).exists():
 					user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
 					user_profile.objects.create(
@@ -50,13 +52,13 @@ def callback(request):
 						nickname=user_info.get('displayname'),
 						email=user_info.get('email'),
 					).save()
-
 					request.session['user_info'] = user_info
+					user_info = user_response.json()
 					return render(request, 'home.html', {'user_info': user_info})
 
-				print(f'Userrrrrrrrrrrrrr: {user.is_2fa_enabled}')
+				user = user_profile.objects.get(login=user_info.get('login'))
 				if user.is_2fa_enabled:
-					totp_device = TOTPDevice.objects.create(user=user, confirmed=True)
+					totp_device = TOTPDevice.objects.create(user=user.user, confirmed=True)
 					totp_device.save()
 
 					totp_code = totp_device.key
@@ -68,9 +70,8 @@ def callback(request):
 
 					messages.info(request, 'Your code has been sent to your main 2FA.')
 					# if verify_2fa(request):
-					#     request.session['user_info'] = user_info
-					#     login(request, user.user)
-						# return render(request, 'home.html', {'user_info': user_info})
+						# request.session['user_info'] = user_info
+						# login(request, user.user)
 					return render(request, '2fa.html', {'user_info': user_info, 'totp_device': totp_device})
 				else:
 					request.session['user_info'] = user_info
