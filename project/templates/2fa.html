@@ -1,3 +1,6 @@
+{% load static i18n %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,9 +21,9 @@
 
     <form method="post" action="{% url 'verify_2fa' %}">
         {% csrf_token %}
-        <label for="otp">Введите код подтверждения:</label>
+        <label for="otp">Enter the confirmation code:</label>
         <input type="text" name="otp" required>
-        <button type="submit">Подтвердить</button>
+        <button type="submit">Confirm</button>
     </form>
 </body>
 </html>

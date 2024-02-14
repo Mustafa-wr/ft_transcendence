@@ -1,6 +1,7 @@
 from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponseServerError
 from django.template import loader
 from .models import user_profile, match_record, user_friends, Create_match_record
 from .models import user_profile, match_record, Game, Match_maker
@@ -17,7 +18,12 @@ from django.contrib.auth import logout
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 import secrets
+import pyotp
+from datetime import datetime, timedelta
 
 
 import json
@@ -36,6 +42,7 @@ def authenticated_user(view_func):
 
 def organizer(request):
 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	print(f"user infooooo{user}")
 	friends = user_friends.objects.filter(user=user).select_related('friend')
 	if request.method == 'POST':
 		if 'delete_friend_id' in request.POST:
@@ -211,26 +218,109 @@ def logout(request):
 
 @authenticated_user
 def edit(request):
-	context = organizer(request)
+	is_game = False
+	is_home_page = False
+	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	if request.method == 'POST':
+		form = UserProfileForm(request.POST, request.FILES, instance=profile)
+		if form.is_valid():
+			profile = form.save(commit=False)
+			if 'image' in request.FILES:
+				if profile.image:
+					default_storage.delete(profile.image.path)
+				image = request.FILES['image']
+				profile.image.save(image.name, ContentFile(image.read()))
+				profile.image_link = profile.image.url
+			is_2fa_enabled_value = request.POST.get('is_2fa_enabled') == 'enable'
+			profile.is_2fa_enabled = is_2fa_enabled_value
+			
+			profile.save()
+			return redirect('edit')
+	else:
+		form = UserProfileForm(instance=profile)
+		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
+	tmp = organizer(request)
+	context = {
+		'form': form,
+		'user': profile,
+		'matches': tmp['matches'],
+		'match_count': tmp['match_count'],
+		'total_wins': tmp['total_wins'],
+		'total_losses': tmp['total_losses'],
+		'success_ratio': tmp['success_ratio'],
+		'friends': tmp['friends'],
+	}
 	return render(request, 'base.html', context)
 
+# def verify_2fa(request):
+# 	if request.method == 'POST':
+# 		if 'user_info' in request.session:
+# 			# user_instance, created = User.objects.get_or_create(username=request.session['user_info'].get('login'))
+# 			user_info = request.session.get('user_info')
+# 			user = user_profile.objects.get(login=user_info.get('login'))
+# 			otp = request.POST.get('otp')
+# 			print (f"otp is {otp}")
+			
+# 			try:
+# 				totp_device = TOTPDevice.objects.filter(user=user.user, confirmed=True).first()
+# 				print(f"totp_device: {totp_device}")
+# 				print(f"verify_token: {totp_device.verify_token(otp) if totp_device else None}")
+				
+# 				if totp_device and totp_device.verify_token(otp):
+# 					request.session['user_info'] = user_info
+# 					login(request, user_instance)
+# 					messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
+# 					return redirect('home')
+# 				else:
+# 					messages.error(request, 'Uncorect.')
+# 					return HttpResponse('google.com')
+# 			except TOTPDevice.DoesNotExist:
+# 				messages.error(request, 'You dont have Two-Factor Authentication.')
+# 				return redirect('home')
+# 			except Exception as e:
+# 				print(f"Exception: {str(e)}")
+# 				return HttpResponseServerError("Internal Server Error ---->")
+# 		else:
+# 			messages.error(request, 'Session data missing. Please log in again.')
+# 			return render(request, 'login.html')
+# 	else:
+# 		return render(request, 'error.html', {'error': 'Invalid request method'})
+
 def verify_2fa(request):
-    if request.method == 'POST':
-        user = request.user
-        otp = request.POST.get('otp')
+	if request.method == 'POST':
+		otp = request.POST.get('otp')
+		username = request.session['user_info'].get('login')
+		user = user_profile.objects.get(login=username)
 
-        try:
-            totp_device = TOTPDevice.objects.get(user=user, confirmed=True)
+		otp_secret = request.session['otp_secret_key']
+		otp_valid_until = request.session['otp_valid_until']
 
-            if totp_device.verify_token(otp):
-                login(request, user)
-                messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
-                return redirect('home')
-            else:
-                messages.error(request, 'Неверный код подтверждения.')
-                return redirect('verify_2fa')
-        except TOTPDevice.DoesNotExist:
-            messages.error(request, 'У вас нет подтвержденных устройств Two-Factor Authentication.')
-            return redirect('home')
-    else:
-        return render(request, 'error.html', {'error': 'Invalid request method'})
+		if otp_secret and otp_valid_until is not None:
+			otp_valid_until = datetime.fromisoformat(otp_valid_until)
+
+			if otp_valid_until > datetime.now():
+				totp = pyotp.TOTP(otp_secret, interval=300)
+				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHE{totp.verify(otp)}")
+				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHETTTTOOOOPPPPTTTT{totp}")
+				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHETTTT          OOOOPPPPTTTT{otp}")
+				if totp.verify(otp):
+					print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHE{totp.verify(otp)}")
+					auth_login(request, user)
+
+					del request.session['otp_secret_key']
+					del request.session['otp_valid_until']
+
+					return redirect('home')
+				else:
+					messages.error(request, 'Invalid code')
+					logout(request)
+					return redirect('login')
+			else:
+				messages.error(request, 'Code expired')
+				return redirect('login')
+		else:
+			messages.error(request, 'Session data missing')
+			return redirect('login')
+	else:
+		return render(request, 'error.html', {'error': 'Invalid request method'})
+

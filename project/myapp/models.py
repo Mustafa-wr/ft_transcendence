@@ -14,7 +14,7 @@ class user_profile(models.Model):
 	status = models.CharField(max_length=20, default='offline')
 	image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 	last_login = models.DateTimeField(default='2021-01-01 00:00:00')
-	is_2fa_enabled = models.BooleanField(default=True)
+	is_2fa_enabled = models.BooleanField(default=False)
 	@property
 	def wins(self):
 		return self.won_matches.count()

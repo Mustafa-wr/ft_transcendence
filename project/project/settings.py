@@ -135,11 +135,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
 LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
@@ -165,16 +160,13 @@ LANGUAGES = [
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # SMTP server settings for Gmail
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.mail.yahoo.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True  # Use TLS (for Gmail)
 
 # Your Gmail account credentials
-EMAIL_HOST_USER = '42pongos@gmail.com'
-EMAIL_HOST_PASSWORD = 'hazmgnmudgrzrxey'
-
-# Default "from" address for emails sent by Django
-DEFAULT_FROM_EMAIL = '42pongos@gmail.com'
+EMAIL_HOST_USER = 'zubaydullotester@yahoo.com'
+EMAIL_HOST_PASSWORD = 'iljxegvjtsatprat'
 
 
 LOCALE_PATHS = [
@@ -201,7 +193,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CERTIFICATE_DIR = os.path.join(BASE_DIR, "certs")
 
 # Add or update the following settings
-DEBUG = False
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
