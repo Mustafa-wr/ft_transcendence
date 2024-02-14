@@ -17,6 +17,7 @@ RUN pip install --upgrade pip \
 	&& pip install django-sslserver	\
     && pip install djangorestframework\
     && pip install django-otp \
+    && pip install pyotp \
     && pip install djangorestframework-simplejwt
 
 

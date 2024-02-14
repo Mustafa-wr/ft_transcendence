@@ -18,9 +18,12 @@ from django.contrib.auth import logout
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import secrets
+import pyotp
+from datetime import datetime, timedelta
 
 
 import json
@@ -228,6 +231,9 @@ def edit(request):
 				image = request.FILES['image']
 				profile.image.save(image.name, ContentFile(image.read()))
 				profile.image_link = profile.image.url
+			is_2fa_enabled_value = request.POST.get('is_2fa_enabled') == 'enable'
+			profile.is_2fa_enabled = is_2fa_enabled_value
+			
 			profile.save()
 			return redirect('edit')
 	else:
@@ -246,30 +252,75 @@ def edit(request):
 	}
 	return render(request, 'base.html', context)
 
+# def verify_2fa(request):
+# 	if request.method == 'POST':
+# 		if 'user_info' in request.session:
+# 			# user_instance, created = User.objects.get_or_create(username=request.session['user_info'].get('login'))
+# 			user_info = request.session.get('user_info')
+# 			user = user_profile.objects.get(login=user_info.get('login'))
+# 			otp = request.POST.get('otp')
+# 			print (f"otp is {otp}")
+			
+# 			try:
+# 				totp_device = TOTPDevice.objects.filter(user=user.user, confirmed=True).first()
+# 				print(f"totp_device: {totp_device}")
+# 				print(f"verify_token: {totp_device.verify_token(otp) if totp_device else None}")
+				
+# 				if totp_device and totp_device.verify_token(otp):
+# 					request.session['user_info'] = user_info
+# 					login(request, user_instance)
+# 					messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
+# 					return redirect('home')
+# 				else:
+# 					messages.error(request, 'Uncorect.')
+# 					return HttpResponse('google.com')
+# 			except TOTPDevice.DoesNotExist:
+# 				messages.error(request, 'You dont have Two-Factor Authentication.')
+# 				return redirect('home')
+# 			except Exception as e:
+# 				print(f"Exception: {str(e)}")
+# 				return HttpResponseServerError("Internal Server Error ---->")
+# 		else:
+# 			messages.error(request, 'Session data missing. Please log in again.')
+# 			return render(request, 'login.html')
+# 	else:
+# 		return render(request, 'error.html', {'error': 'Invalid request method'})
+
 def verify_2fa(request):
 	if request.method == 'POST':
-		if 'user_info' in request.session:
-			user_instance, created = User.objects.get_or_create(username=request.session['user_info'].get('login'))
+		otp = request.POST.get('otp')
+		username = request.session['user_info'].get('login')
+		user = user_profile.objects.get(login=username)
 
-			otp = request.POST.get('otp')
-			try:
-				totp_device = TOTPDevice.objects.filter(user=user_instance, confirmed=True).first()
-				if totp_device and totp_device.verify_token(otp):
-					request.session['user_info'] = user_info
-					login(request, user_instance)
-					messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
+		otp_secret = request.session['otp_secret_key']
+		otp_valid_until = request.session['otp_valid_until']
+
+		if otp_secret and otp_valid_until is not None:
+			otp_valid_until = datetime.fromisoformat(otp_valid_until)
+
+			if otp_valid_until > datetime.now():
+				totp = pyotp.TOTP(otp_secret, interval=300)
+				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHE{totp.verify(otp)}")
+				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHETTTTOOOOPPPPTTTT{totp}")
+				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHETTTT          OOOOPPPPTTTT{otp}")
+				if totp.verify(otp):
+					print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHE{totp.verify(otp)}")
+					auth_login(request, user)
+
+					del request.session['otp_secret_key']
+					del request.session['otp_valid_until']
+
 					return redirect('home')
 				else:
-					messages.error(request, 'Uncorect.')
-					return HttpResponse('google.com')
-			except TOTPDevice.DoesNotExist:
-				messages.error(request, 'You dont have Two-Factor Authentication.')
-				return redirect('home')
-			except Exception as e:
-				print(f"Exception: {str(e)}")
-				return HttpResponseServerError("Internal Server Error ---->")
+					messages.error(request, 'Invalid code')
+					logout(request)
+					return redirect('login')
+			else:
+				messages.error(request, 'Code expired')
+				return redirect('login')
 		else:
-			messages.error(request, 'Session data missing. Please log in again.')
-			return render(request, 'login.html')
+			messages.error(request, 'Session data missing')
+			return redirect('login')
 	else:
 		return render(request, 'error.html', {'error': 'Invalid request method'})
+

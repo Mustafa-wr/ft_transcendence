@@ -10,6 +10,8 @@ from email.mime.text import MIMEText
 from django.conf import settings
 from .views import verify_2fa
 import smtplib
+import pyotp
+from datetime import datetime, timedelta 
 
 
 def callback(request):
@@ -60,26 +62,30 @@ def callback(request):
 
 				user = user_profile.objects.get(login=user_info.get('login'))
 				if user.is_2fa_enabled:
-					totp_device = TOTPDevice.objects.create(user=user.user, confirmed=True)
-					totp_device.save()
 
-					totp_code = totp_device.key
-					print(f'TOTP Code: {totp_code}')
-					msg = MIMEText(f'Code of confirmation 2FA: {totp_code}')
+					totp = pyotp.TOTP(pyotp.random_base32(), interval=300)
+					otp = totp.now()
+					request.session['otp_secret_key'] = totp.secret
+
+					valid_until = datetime.now() + timedelta(seconds=300)
+					request.session['otp_valid_until'] = str(valid_until)
+
+
+					msg = MIMEText(f'Code of confirmation 2FA: {otp}')
 					msg['Subject'] = "Confirmation 2FA"
-					msg['From'] = settings.EMAIL_HOST_USER
+					msg['From'] = settings.EMAIL_HOST_USER 
 					msg['To'] = user.email
 					print(user.email)
-					# debuglevel = True
 					mail = smtplib.SMTP(settings.EMAIL_HOST, 587)
-					# mail.set_debuglevel(debuglevel)
 					mail.starttls()
 					mail.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
 					mail.sendmail(settings.EMAIL_HOST_USER, user.email, msg.as_string())
 					mail.quit()
-					return render(request, '2fa.html', {'user_info': user_info, 'totp_device': totp_device})
+					request.session['user_info'] = user_info
+					
+					return render(request, '2fa.html', {'user_info': user_info})
 				else:
-					request.session['user_info'] = request.session['user_info']
+					request.session['user_info'] = user_info
 					login(request, user.user)
 					return render(request, 'home.html', {'user_info': user_info})
 			else:
