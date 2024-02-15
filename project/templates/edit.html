@@ -1,50 +1,36 @@
-{% load static i18n %}
+{% load static %}
 
 {% block content %}
 <div class="page-content p-0 bg-black text-light text-center" id="editPage">
-	<form id="languageForm" action="{% url 'set_language' %}" method="post" class="form-control-sm d-flex justify-content-end">
-		{% csrf_token %}
-		<input name="next" type="hidden" value="{{ redirect_to }}">
-		<select name="language" onchange="document.getElementById('languageForm').submit()" class="form-select form-select-sm" style="width: 120px;">
-			{% get_current_language as LANGUAGE_CODE %}
-			{% get_available_languages as LANGUAGES %}
-			{% get_language_info_list for LANGUAGES as languages %}
-			{% for language in languages %}
-				<option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
-					{{ language.name_local }}
-				</option>
-			{% endfor %}
-		</select>
-	</form><br>	
 	<fieldset class="border rounded-5 p-2 mb-3 text-light text-break text-start d-inline-block">
-        <legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">{% trans "User Profile" %}</legend>
+        <legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">User Profile</legend>
         <form method="post" enctype="multipart/form-data" class="d-inline-block">
             {% csrf_token %}
             <div class="form-group form-control-sm py-1">
-                <label for="avatar_image" class="hidden-label" style="display: none;">{% trans "Avatar" %}</label>
+                <label for="avatar_image" class="hidden-label" style="display: none;">Avatar</label>
                 <img src="{{ user.image_link }}" alt="profile_img" class="rounded-pill" width="90px" height="90px" id="profile_img"/>
                 {{ form.image }}
             </div>
             <div class="form-group form-control-sm py-1">
-                <label for="username">{% trans "Username" %}</label>
+                <label for="username">Username</label>
                 <input type="text" class="form-control" id="usernameForm" placeholder="{{ user.login }}" readonly>
             </div>
             <div class="form-group form-control-sm py-1">
-                <label for="email">{% trans "Email" %}</label>
+                <label for="email">Email</label>
                 <input type="email" class="form-control" id="emailForm" placeholder="{{ user.email }}" readonly>
             </div>
             <div class="form-group form-control-sm py-1">
-                <label for="alias">{% trans "Nickname for Tournaments" %}</label><br>
+                <label for="alias">Nickname for Tournaments</label><br>
                 <input type="text" class="form-control" id="id_nickname" name="nickname" value="{{ form.nickname.value }}" />
             </div>
             <div class="form-group form-control-sm py-1">
-                <label for="exampleFormControlSelect1">{% trans "Two-Factor Authentication (2FA)" %}</label>
+                <label for="exampleFormControlSelect1">Two-Factor Authentication (2FA)</label>
                 <select class="form-select" id="exampleFormControlSelect1" name="is_2fa_enabled">
-                    <option value="disable" {% if not user.is_2fa_enabled %} selected {% endif %}>{% trans "disable" %}</option>
-                    <option value="enable" {% if user.is_2fa_enabled %} selected {% endif %}>{% trans "enable" %}</option>
+                    <option value="disable" {% if not user.is_2fa_enabled %} selected {% endif %}>disable</option>
+                    <option value="enable" {% if user.is_2fa_enabled %} selected {% endif %}>enable</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-info m-2">{% trans "Save" %}</button>
+            <button type="submit" class="btn btn-info m-2">Save</button>
         </form>	
 	</fieldset>
 </div>

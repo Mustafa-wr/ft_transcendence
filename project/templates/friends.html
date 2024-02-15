@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static %}
 
 {% block content %}
 <div class="page-content p-5 bg-black text-light text-center" style="min-height: 100%;" id="friendsPage">
@@ -6,7 +6,7 @@
     <form method="post" action="{% url 'friends' %}">
       {% csrf_token %}
       <input type="text" name="search_query" placeholder="Enter friend's login">
-      <button type="submit" class="btn btn-info">{% trans "Add Friend" %}</button>
+      <button type="submit" class="btn btn-info">Add Friend</button>
     </form>
   </div>
   {% if messages %}
@@ -15,13 +15,13 @@
     </div>
   {% endif %}
   <br>
-  <h1 class="display-6" style="color:fuchsia;">{% trans "List of Friends" %}</h1>
+  <h1 class="display-6" style="color:fuchsia;">List of Friends</h1>
   {% if friends %}
     <table class="table table-responsive table-dark rounded-4 overflow-hidden">
       <thead class="border-bottom-0 table-secondary">
         <tr>
-          <th scope="col">{% trans "USER" %}</th>
-          <th scope="col">{% trans "STATUS" %}</th>
+          <th scope="col">USER</th>
+          <th scope="col">STATUS</th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -29,8 +29,14 @@
         {% for friend in friends %}
           <tr>
             <th scope="row" class="border-bottom-1" style="font-weight: normal;">{{ friend.friend.login }}</th>
-            <td><img src="{% static friend.friend.current_status|lower ~ '.png' %}"></td>
             <td>
+              {% if friend.friend.current_status == "online" %}
+                  <img src="{% static 'online.png' %}">
+              {% else %}
+                  <img src="{% static 'offline.png' %}">
+              {% endif %}
+            </td>
+      <td>
 				<form method="post" action="{% url 'friends' %}" style="display:inline;">
                     {% csrf_token %}
                     <input type="hidden" name="delete_friend_id" value="{{ friend.id }}">
@@ -44,7 +50,7 @@
       </tbody>
     </table>
   {% else %}
-    <p>{% trans "No friends!" %}</p>
+    <p>No friends!</p>
   {% endif %}
 </div>
 

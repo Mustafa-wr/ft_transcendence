@@ -93,7 +93,6 @@ def organizer(request):
 			return redirect('edit')
 	else:
 		form = UserProfileForm(instance=profile)
-		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
 	return {
 		'form': form,
 		'user': profile,
@@ -242,7 +241,6 @@ def edit(request):
 			return redirect('edit')
 	else:
 		form = UserProfileForm(instance=profile)
-		form.fields['nickname'].widget.attrs.update({'class': 'form-control'})
 	tmp = organizer(request)
 	context = {
 		'form': form,

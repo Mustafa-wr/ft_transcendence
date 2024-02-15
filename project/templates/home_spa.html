@@ -1,20 +1,20 @@
-{% load static i18n %}
+{% load static %}
 {% block content %}
 <div class="page-content bg-black text-light text-center" style="min-height: 100%;">
 	<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-		<legend class="display-6 float-none w-auto p-3">{% trans "The Game" %}</legend>
-		<p>{% trans "Pong is a 2D game simulating table tennis." %}</p>
-		<p>{% trans "Players control paddles to hit the ball back and forth." %}</p>
-		<p>{% trans "Points are earned when one fails to return the ball to the other side." %}</p>
-		<p>{% trans "The goal is to reach 11 points before the opponent." %}</p>
+		<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">The Game</legend>
+		<p>Pong is a 2D game simulating table tennis.</p>
+		<p>Players control paddles to hit the ball.</p>
+		<p>Points are earned when one fails to return the ball to the other side.</p>
+		<p>The goal is to reach 11 points before the opponent.</p>
 	</fieldset>
 	<br><br>
 	<fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
-		<legend class="display-6 float-none w-auto p-3">{% trans "Ready?" %}</legend>
-		<a id="vs_comp" class="btn btn-info">{% trans "Play vs Computer" %}</a>
-		<a class="btn btn-info">{% trans "Play Tournament" %}</a>
-		<a id="multi_player" class="btn btn-info">{% trans "Play vs Online Player" %}</a>
-		<a id="multi_player4" class="btn btn-info">{% trans "Multi Player 4" %}</a>
+		<legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">Ready?</legend>
+		<a id="vs_comp" class="btn btn-info mb-3">Play vs Computer</a>
+		<a class="btn btn-info mb-3">Play Tournament</a>
+		<a id="multi_player" class="btn btn-info mb-3">2 Players Online</a>
+		<a id="multi_player4" class="btn btn-info mb-3">4 Players Online</a>
 		<br><br>
 	</fieldset>
 </div>

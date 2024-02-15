@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static %}
 
 {% block navbar %}
 <nav class="navbar bg-black navbar-dark container-fluid p-0 m-0">
@@ -9,18 +9,18 @@
     <div class="nav-item px-3 dropdown ms-auto">
         <a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
             <span class="navbar-text small">{{ user.login }}</span>
-            {% if user.image_link %}
-                <img src="{{ user.image_link }}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
+            {% if user.image %}
+                <img src="{{ user.image_link }}" alt="avatar1" class="rounded-pill" width="35px" height="35px" id="avatar_img">
             {% else %}
-                <img src="{% static 'avatar.png' %}" alt="avatar" class="rounded-pill" width="35px" height="35px" id="avatar_img">
+                <img src="{% static 'avatar.png' %}" alt="avatar2" class="rounded-pill" width="35px" height="35px" id="avatar_img">
             {% endif %}
         </a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
-                <li><a class="dropdown-item" href="{% url 'edit' %}">{% trans "Edit Profile" %}</a></li>
-                <li><a class="dropdown-item" href="{% url 'friends' %}">{% trans "Friends" %}</a></li>
-                <li><a class="dropdown-item" href="{% url 'stats' %}">{% trans "Stats" %}</a></li>
+                <li><a class="dropdown-item" href="{% url 'edit' %}">Edit Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'friends' %}">Friends</a></li>
+                <li><a class="dropdown-item" href="{% url 'stats' %}">Stats</a></li>
                 <li class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="{% url 'logout_view' %}">{% trans "Logout" %}</a></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'logout_view' %}">Logout</a></li>
             </ul>
     </div>
 </nav>
