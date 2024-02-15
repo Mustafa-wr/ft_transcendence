@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ping</title>
+    <!-- Apply styles for the entire document -->
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      canvas {
+        width: 80%; /* Set canvas width to 80% of the viewport */
+        max-width: 750px; /* Limit maximum canvas width */
+        height: 80%; /* Allow canvas height to adjust proportionally */
+        max-height: 585px;
+        border: 2px solid white; 
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Render the game field -->
+    <canvas width="750" height="585" id="game"></canvas>
+    <script>
+      window.onload = function () {
+      // Access the game field from the document
+      const canvas = document.getElementById("game");
+      // Make the field two-dimensional
+      const context = canvas.getContext("2d");
+      // Size of the game grid
+      const grid = 15;
+      // Height of the paddle
+      const paddleHeight = grid * 5; // 80
+      // Set the maximum distance the paddles can move downwards
+      const LeftmaxPaddleY = canvas.height - grid - paddleHeight * 2;
+
+      const TopRightmaxPaddleY = canvas.height / 2  - paddleHeight ; 
+      const BottomRightmaxPaddleY = canvas.height - grid - paddleHeight ; 
+
+      // // set the maximum distance the paddles can move upwards need to define got lower right paddle
+      const BottomRightminPaddleY = canvas.height / 2  ;
+
+      // Paddle speed
+      var paddleSpeed = 6;
+      // Ball speed
+      var ballSpeed = 4;
+      // Record
+      var record = 0;
+      // Score
+      var count = 0;
+      // Activate secret level
+      var secret = false;
+      // Number of bounces in secret mode
+      var secret_count = 0;
+      // Ball color, initially white
+      ballColor = "blue";
+      // Get the size of storage
+      var Storage_size = localStorage.length;
+      // If there's something in the storage...
+      if (Storage_size > 0) {
+        // Get the current record from there
+        record = localStorage.getItem("record");
+        // If there's nothing there...
+      } else {
+        // Create a new entry and set it to zero - no record yet
+        localStorage.setItem("record", 0);
+      }
+      // Describe the left paddle
+      const leftPaddle = {
+        // Place it in the center
+        x: grid * 2,
+        y: canvas.height / 2 - paddleHeight / 2,
+        // Width - one grid cell
+        width: grid,
+        // Take the height from the constant
+        height: paddleHeight * 2,
+        // The paddle doesn't move at the start
+        dy: 0,
+      };
+      // Describe the right paddles
+
+      const topRightPaddle = {
+        // Place it in the center on the right side
+        x: canvas.width - grid * 2,
+        y: (canvas.height / 4) - paddleHeight / 2,
+        // Set the same width and height
+        width: grid,
+        height: paddleHeight,
+        // The right paddle also doesn't move at the start
+        dy: 0,
+      };
+
+      // Describe the right paddle
+      const bottomRightPaddle = {
+        // Place it in the center on the right side
+        x: canvas.width - grid * 2,
+        y: (canvas.height * 3 / 4) - paddleHeight / 2,
+        // Set the same width and height
+        width: grid,
+        height: paddleHeight,
+        // The right paddle also doesn't move at the start
+        dy: 0,
+      };
+
+      // Describe the ball
+      const ball = {
+        // It appears in the center of the field
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        // Square, the size of a grid cell
+        width: grid,
+        height: grid,
+        // At the start, the ball isn't scored, so remove the flag indicating that the ball needs to be reintroduced to the game
+        resetting: false,
+        // Serve the ball to the top right corner
+        dx: ballSpeed,
+        dy: -ballSpeed,
+      };
+      // Check whether two objects with known coordinates intersect or not
+      // More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+      function collides(obj1, obj2) {
+        return (
+          obj1.x < obj2.x + obj2.width &&
+          obj1.x + obj1.width > obj2.x &&
+          obj1.y < obj2.y + obj2.height &&
+          obj1.y + obj1.height > obj2.y
+        );
+      }
+      // Main game loop
+      function loop() {
+        // Clear the game field
+        requestAnimationFrame(loop);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        // If the paddles were moving on the previous step, let them continue moving
+        leftPaddle.y += leftPaddle.dy;
+        topRightPaddle.y += topRightPaddle.dy;
+        bottomRightPaddle.y += bottomRightPaddle.dy;
+        // If the left paddle tries to go beyond the game field ,
+        if (leftPaddle.y < grid) {
+          // then keep it in place
+          leftPaddle.y = grid;
+        }
+        // Check the same for bottom
+        else if (leftPaddle.y > LeftmaxPaddleY) {
+          leftPaddle.y = LeftmaxPaddleY;
+        }
+        // If the right paddle tries to go beyond the game field 
+
+       
+
+        if (topRightPaddle.y < grid) {
+          // then keep it in place
+          topRightPaddle.y = grid;
+        }
+        // Check the same for bottom
+        else if (topRightPaddle.y > TopRightmaxPaddleY) {
+          topRightPaddle.y = TopRightmaxPaddleY;
+        }
+
+        if (bottomRightPaddle.y <BottomRightminPaddleY) 
+          // then keep it in place
+            bottomRightPaddle.y = BottomRightminPaddleY;
+        else if (bottomRightPaddle.y > BottomRightmaxPaddleY) 
+          bottomRightPaddle.y = BottomRightmaxPaddleY;
+       
+        // Draw the paddles in white
+        context.fillStyle = "white";
+        // Each paddle is a rectangle
+        context.fillRect(
+          leftPaddle.x,
+          leftPaddle.y,
+          leftPaddle.width,
+          leftPaddle.height
+        );
+
+        context.fillRect(
+          topRightPaddle.x,
+          topRightPaddle.y,
+          topRightPaddle.width,
+          topRightPaddle.height
+        );
+
+        context.fillRect(
+          bottomRightPaddle.x,
+          bottomRightPaddle.y,
+          bottomRightPaddle.width,
+          bottomRightPaddle.height
+        );
+
+        // If the ball was moving on the previous step, let it continue moving
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+        // Let the left paddle move just like the ball
+        leftPaddle.dy = ball.dy;
+        // If the ball touches the bottom wall, change its direction on the Y axis
+        if (ball.y < grid) {
+          ball.y = grid;
+          ball.dy *= -1;
+        }
+        // Do the same if the ball touches the top wall
+        else if (ball.y + grid > canvas.height - grid) {
+          ball.y = canvas.height - grid * 2;
+          ball.dy *= -1;
+        }
+        // If the ball goes off the game field to the left or right, restart it
+        if ((ball.x < 0 || ball.x > canvas.width) && !ball.resetting) {
+          // Mark that the ball is restarted to avoid looping
+          ball.resetting = true;
+          // If the player has scored more than the record, set it as the new record
+          if (count > record) {
+            record = count;
+          }
+          // Reset the player's score to zero
+          count = 0;
+          // Put the record value in the browser's storage
+          localStorage.setItem("record", record);
+          // Give a second to prepare for the players
+          setTimeout(() => {
+            // Ball is back in the game
+            ball.resetting = false;
+            // Start it again from the center
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+          }, 1000);
+        }
+        // If the ball touches the left paddle,
+        if (collides(ball, leftPaddle)) {
+          // send it in the opposite direction
+          ball.dx *= -1;
+          // Increase the ball's coordinates by the paddle's width to avoid counting a new bounce
+          ball.x = leftPaddle.x + leftPaddle.width;
+        }
+        // Check and do the same for the right paddle
+        else if (collides(ball, topRightPaddle) || collides(ball, bottomRightPaddle)) {
+          ball.dx *= -1;
+          if (collides(ball, topRightPaddle))
+            ball.x = topRightPaddle.x - ball.width;
+          else
+            ball.x = bottomRightPaddle.x - ball.width;
+          // count bounces
+          count += 1;
+          // if it reaches 10 - activate the secret level
+          if (count >= 10) {
+            secret = true;
+          }
+          // here's the secret level
+          if (secret) {
+            // increase new bounces
+            secret_count += 1;
+            // if this number is divisible by 3...
+            if (secret_count % 3 == 0) {
+              // increase the ball speed by one
+              if (ball.dx > 0) {
+                ball.dx += 1;
+              } else {
+                ball.dx -= 1;
+              }
+              if (ball.dy > 0) {
+                ball.dy += 1;
+              } else {
+                ball.dy -= 1;
+              }
+              // randomly color the ball
+              ballColor =
+                "#" +
+                (Math.random().toString(16) + "000000")
+                  .substring(2, 8)
+                  .toUpperCase();
+            }
+          }
+        }
+        // Draw the ball with the appropriate color
+        context.fillStyle = ballColor;
+        context.fillRect(ball.x, ball.y, ball.width, ball.height);
+        // Draw the walls
+        context.fillStyle = "lightgrey";
+        context.fillRect(0, 0, canvas.width, grid);
+        context.fillRect(0, canvas.height - grid, canvas.width, canvas.height);
+        // Draw the grid in the middle
+        for (let i = grid; i < canvas.height - grid; i += grid * 2) {
+          context.fillRect(canvas.width / 2 - grid / 2, i, grid, grid);
+        }
+        // Track key presses
+        
+        
+          document.addEventListener("keydown", function (e) {
+            // If the up arrow is pressed,
+            if (e.which === 87) {
+              // move the right paddle up (87 is the 'w' key code)
+              topRightPaddle.dy = -paddleSpeed;
+            }
+            // If the down arrow is pressed,
+            else if (e.which === 83) {
+              // move the right paddle down (83 is the 's' key code)
+              topRightPaddle.dy = paddleSpeed;
+            }
+            else if (e.which === 38) {
+              bottomRightPaddle.dy = -paddleSpeed;
+            }
+            else if (e.which === 40) {
+              bottomRightPaddle.dy = paddleSpeed;
+            }
+        });
+
+      // And now, listen for when someone releases a key to stop the paddle's movement
+          document.addEventListener("keyup", function (e) {
+            // If it's the up or down arrow or 'w' or 's',
+            if (e.which === 87 || e.which === 83) {
+              // stop the right paddle
+              topRightPaddle.dy = 0;
+            }
+            else if (e.which === 38 || e.which === 40) {
+              bottomRightPaddle.dy = 0;
+            }
+          });
+        // Track mouse movements  
+        // Text color
+        context.fillStyle = "#ff0000";
+        // Set the size and font
+        context.font = "20pt Courier";
+        // First, display the record
+        context.fillText("Record: " + record, 150, 550);
+        // Then, display the score
+        context.fillText(count, 450, 550);
+      }
+      // Start the game
+      requestAnimationFrame(loop);
+    };
+    </script>
+  </body>
+</html>
