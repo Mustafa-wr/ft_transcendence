@@ -1,10 +1,14 @@
 #!/bin/bash
 
 python -m pip install Pillow
+python -m pip install django-debug-toolbar
 
 sleep 5
 
 echo "Running migrate.sh script..."
+
+python project/manage.py makemigrations --noinput
+python project/manage.py migrate --noinput
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /code/localhost.key \
@@ -14,8 +18,6 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 cp localhost.crt /code/project/certs/localhost.crt
 cp localhost.key /code/project/certs/localhost.key
 
-python project/manage.py makemigrations myapp --noinput
-python project/manage.py migrate --noinput
 
 # Collect static files
 python project/manage.py collectstatic --noinput

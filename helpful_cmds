@@ -4,3 +4,5 @@ SELECT * FROM myapp_user_profile;
 
 -----> cmds for docker..
 docker system prune --all --force
+-----> remove all volumes
+docker volume rm $(docker volume ls -q)
