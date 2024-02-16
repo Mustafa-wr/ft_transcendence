@@ -4,7 +4,7 @@
 <div class="page-content p-0 bg-black text-light text-center" id="editPage">
 	<fieldset class="border rounded-5 p-2 mb-3 text-light text-break text-start d-inline-block">
         <legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">User Profile</legend>
-        <form method="post" enctype="multipart/form-data" class="d-inline-block">
+        <form id="the_form" method="post" enctype="multipart/form-data" class="d-inline-block">
             {% csrf_token %}
             <div class="form-group form-control-sm py-1">
                 <label for="avatar_image" class="hidden-label" style="display: none;">Avatar</label>
@@ -30,8 +30,8 @@
                     <option value="enable" {% if user.is_2fa_enabled %} selected {% endif %}>enable</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-info m-2">Save</button>
-        </form>	
+            <button id="save_btn" type="submit" class="btn btn-info m-2">Save</button>
+        </form>
 	</fieldset>
 </div>
 
