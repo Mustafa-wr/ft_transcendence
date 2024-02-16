@@ -116,16 +116,13 @@ def base(request):
 
 def login(request):
 	# Check if the user is already authenticated
-	if request.method == 'GET':
-		print(f"am heeree{request.user.is_authenticated}")
 	if request.user.is_authenticated:
 		return redirect('/home')
 	user_info = request.session.get('user_info')
-	print(f"am heeree{user_info}")
 	if user_info:
 		# If already authenticated, redirect to home or dashboard
 		return redirect('home')
-	return render(request, 'login.html')
+	return render(request, 'login.html', )
 
     # Your login logic goes here...
     # If the login is successful and the user is authenticated:
@@ -327,6 +324,7 @@ def edit(request):
 def verify_2fa(request):
 	if request.method == 'POST':
 		otp = request.POST.get('otp')
+		print (f"otp is {otp}")
 		username = request.session['user_info'].get('login')
 		user = user_profile.objects.get(login=username)
 
@@ -338,11 +336,7 @@ def verify_2fa(request):
 
 			if otp_valid_until > datetime.now():
 				totp = pyotp.TOTP(otp_secret, interval=300)
-				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHE{totp.verify(otp)}")
-				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHETTTTOOOOPPPPTTTT{totp}")
-				print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHETTTT          OOOOPPPPTTTT{otp}")
 				if totp.verify(otp):
-					print (f" HEHHEHEHEHHEHHHEHEHHEHEHEHEHHE{totp.verify(otp)}")
 					auth_login(request, user)
 
 					del request.session['otp_secret_key']

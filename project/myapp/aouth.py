@@ -83,7 +83,7 @@ def callback(request):
 					mail.quit()
 					request.session['user_info'] = user_info
 					
-					return render(request, '2fa.html', {'user_info': user_info})
+					return render(request, 'login.html', {'user_info': user_info, 'otp_required': True})
 				else:
 					request.session['user_info'] = user_info
 					login(request, user.user)
