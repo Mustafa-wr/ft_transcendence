@@ -208,7 +208,43 @@ def logout_view(request):
 
 @authenticated_user
 def friends(request):
-	context = organizer(request)
+	is_home_page = False
+	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	friends = user_friends.objects.filter(user=user).select_related('friend')
+	if request.method == 'POST':
+		if 'delete_friend_id' in request.POST:
+			friend_id = request.POST.get('delete_friend_id')
+			friend_to_delete = user_friends.objects.filter(id=friend_id, user=user).first()
+			if friend_to_delete:
+				friend_to_delete.delete()
+				messages.success(request, f"{friend_to_delete.friend.login} has been removed from friends.")
+			else:
+				messages.error(request, "Friend could not be found.")
+			return redirect('friends')
+		search_query = request.POST.get('search_query', '').strip()
+		if search_query:
+			potential_friend = user_profile.objects.filter(login=search_query).first()
+			if user.login == search_query:
+				messages.error(request, 'You cannot add yourself as a friend.')
+			elif potential_friend and potential_friend != user:
+				if not user_friends.objects.filter(user=user, friend=potential_friend).exists():
+					user_friends.objects.create(user=user, friend=potential_friend)
+					messages.success(request, f"{potential_friend.login} added as friend.")
+				else:
+					messages.warning(request, "Already friends.")
+			else:
+				messages.error(request, "User not found.")
+	temp = organizer(request)
+	context = {
+		'friends': friends,
+		'user': user,
+		'form': temp['form'],
+		'matches': temp['matches'],
+		'match_count': temp['match_count'],
+		'total_wins': temp['total_wins'],
+		'total_losses': temp['total_losses'],
+		'success_ratio': temp['success_ratio'],
+	}
 	return render(request, 'base.html', context)
 
 @authenticated_user
