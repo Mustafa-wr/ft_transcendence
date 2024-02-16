@@ -40,6 +40,7 @@
 
         if (!refreshFlag) {
             setTimeout(function(){
+				console.log("reloading");
                 localStorage.setItem('refreshFlag', 'true');
                 location.reload();
             }, 100);
@@ -68,7 +69,7 @@
 				const friends_content = `{% include 'friends.html' %}`;
 				contentContainer.innerHTML = friends_content;
 				return;
-			} else if(lastPart == 'logout')
+			} else if(lastPart == 'logout' || lastPart == 'login')
 			{
 				setTimeout(function(){
                 location.reload();
@@ -143,6 +144,7 @@
 			const friends_content = `{% include 'friends.html' %}`;
 			contentContainer.innerHTML = friends_content;
 		} else if (initialUrl.endsWith('/logout/') || initialUrl.endsWith('/logout')) {
+			refreshFlag = false;
 			setTimeout(function(){
 				location.reload();
 			}, 100);
