@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -29,11 +29,10 @@
   </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   </head>
-  {% csrf_token %}
-
-    <!-- Drawing the game field -->
-    <canvas width="1050" height="750" id="game"></canvas>
-    <script>
+  
+  <!-- Drawing the game field -->
+  <canvas width="1050" height="750" id="game"></canvas>
+  <script>
 
       var animationFrameID;
       window.onload = function () {
@@ -326,5 +325,4 @@
     </script>
   </body>
 </html>
-{% endblock %}
 

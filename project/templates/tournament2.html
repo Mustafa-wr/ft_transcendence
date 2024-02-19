@@ -1,41 +1,89 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Ping</title>
-    <!-- Setting styles for the entire document -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
     <style>
-      html,
-      body {
-          height: 100%;
-          margin: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: black;
-      }
-  
-      canvas {
-          display: block;
-          margin: 0;
-          padding:0%;
-          width: 100%;
-          max-width: 1050px;
-          height: 100%;
-          max-height: 750px;
-          background: black;
-      }
-           
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            align-items: left;
+            justify-content: left;
+            /* background-color: white; */
+            background-image: linear-gradient(to bottom right, rgb(8, 50, 104) , rgb(193, 187, 234));
+        }
+        
+        .flex-container {
+            display: flex;
+            /* flex-wrap: wrap; */
+            flex-flow: row wrap;
+            justify-content: space-around;
+            align-items: left;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .tournament-players,
+        .upcoming-matches {
+          text-align: left;
+          width: 20%; /* Each section takes up half of the container width */
+          padding: 0%; /* Add padding for spacing */
+          align-items: left;
+        }
 
-  </style>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  
-  </head>
-  <body>
-    <!-- Drawing the game field -->
-    <canvas width="1050" height="750" id="game"></canvas>
+        canvas {  
+            outline-color: rgb(85, 24, 182);
+            outline-style: solid;         
+            display: block;
+            margin: 20px;
+            padding:30px;
+            width:100%;
+            max-width: 750px;
+            height: 100%;
+            max-height: 500px;
+            /* height: auto; */
+            background: #333;
+        }
+        /* @media (min-width: 768px) {
+            .tournament-players, 
+            .upcoming-matches {
+                width: 100%;
+                max-width: 50%; */
+            /* }
+        }
+         */
+        #player-list {
+            display: none;
+        }
+        
+        .upcoming-matches {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+  <div class="flex-container">
+    <div class="tournament-players">
+        <h2>Tournament Players List</h2>
+        <ul id="player-list"></ul>
+        <h2>Add a player</h2>
+        <input type="text" id="player-name" placeholder="Enter player name">
+        <button id="add-player" onclick="addPlayer()">Add player</button>
+        <button id="start-tournament" onclick="startTournament()">Start Tournament</button>
+    </div>
+    <div class="upcoming-matches">
+        <h2>Upcoming Matches</h2>
+        <ul id="match-list"></ul>
+    </div>
+    <canvas width="750" height="500" id="game"></canvas>
+  </div>
+        
+<script>
     
-    <script>
-      var animationFrameID;
+    var animationFrameID;
       var leftplayer;
       var rightplayer;
       
@@ -44,17 +92,11 @@
       const context = canvas.getContext("2d");
       const grid = 15;
       const paddleHeight = grid * 5; // 80
-      
-      window.onload = function () {
-        // Score
+
         var rp_count = 0;
         var lp_count = 0; 
         
-        //  Retrieving user names         
-          var player_array = ["{{players.0}}", "{{players.1}}", "{{players.2}}", "{{players.3}}", "{{players.4}}", "{{players.5}}", "{{players.6}}", "{{players.7}}"];
-          leftplayer = player_array[0];
-          rightplayer = player_array[1];
-      
+            
         // Setting the maximum distance the paddles can move downwards
           const LeftmaxPaddleY = canvas.height - grid - paddleHeight ;
           const RightmaxPaddleY = canvas.height - grid - paddleHeight;
@@ -103,28 +145,66 @@
           dx: ballSpeed,
           dy: -ballSpeed,
         };
-        // Check whether two objects with known coordinates intersect or not
-        // More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-        function collides(obj1, obj2) {
-          return (
-            obj1.x < obj2.x + obj2.width &&
-            obj1.x + obj1.width > obj2.x &&
-            obj1.y < obj2.y + obj2.height &&
-            obj1.y + obj1.height > obj2.y
-          );
-        }
 
-        function boundary_check(paddle, top, bottom) {
-          if (paddle.y < top) {
-            paddle.y = top;
-          } else if (paddle.y > bottom) {
-            paddle.y = bottom;
-          }      
-        }
-        
+    function addPlayer(){
+        var player_name = document.getElementById("player-name").value;
+        if(player_name.trim()!= "") {
+            var player_list = document.getElementById("player-list");
+            var new_player = document.createElement("li");
+            new_player.innerHTML = player_name;
+            player_list.appendChild(new_player);
+            document.getElementById("player-name").value = "";
+            document.getElementById("player-list").style.display = "block";
 
-      // Main game loop
-      function loop() {
+            var players = JSON.parse(localStorage.getItem("players")) || [];
+            if (players.length < 8) {
+                players.push(player_name);
+                localStorage.setItem("players", JSON.stringify(players));
+            }
+            else {
+                alert("You have reached the maximum number of players allowed in a tournament");
+            }
+        }
+        else {
+            alert("Please enter a player name");
+            }
+    }
+
+    function startTournament(){
+        var players = JSON.parse(localStorage.getItem("players")) || [];
+        if (players.length < 2){
+            alert("You need at least 2 players to start a tournament");
+        }
+        else {
+            players = players.sort(() => Math.random() - 0.5);
+            localStorage.setItem("players" , JSON.stringify(players))
+            var matches = [];
+            for(let i = 0; i < players.length; i += 2){
+                let player1 = players[i];
+                let player2 = players[i + 1] || "";
+                matches.push(player1 + " vs " + player2);
+            }
+            alert("tornnament starts now !! we have " + players[0] + " vs " + players[1] + " players");
+            alert(matches[0]);
+            var elements = document.querySelectorAll(".tournament-players");
+            elements.forEach(function(element){
+                element.style.display = "none";
+            });
+            var match_list = document.getElementById("match-list")
+            matches.forEach(function(match){
+                var new_match = document.createElement("li");
+                new_match.innerHTML = match;
+                match_list.appendChild(new_match);
+            });
+            if (matches.length > 0){
+                var match_display = document.querySelectorAll(".upcoming-matches");
+                match_display.forEach(function(element){
+                    element.style.display = "block" ;
+                });
+            }
+            leftplayer = players[0];
+            rightplayer = players[1];
+            function loop() {
         // Clear the game field
         
         if (rp_count == 3 || lp_count == 3) {
@@ -144,18 +224,19 @@
             
             // gameOver();           
             alert("Game Over." + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
-            player_array.shift();
-            player_array.shift();
-            player_array.push(winner);
-            if (player_array.length == 1){
+            players.shift();
+            players.shift();
+            players.push(winner);
+            if (players.length == 1){
               alert("Tournament Over. " + winner + " Wins!");
+              localStorage.removeItem("players");
             }
             else{
-              alert("Next Match: " + player_array[0] + " vs " + player_array[1] + " Players remaining: " + player_array.length);
+              alert("Next Match: " + players[0] + " vs " + players[1] );
               rp_count  = 0;
               lp_count = 0;
-              leftplayer = player_array[0];
-              rightplayer = player_array[1];
+              leftplayer = players[0];
+              rightplayer = players[1];
               animationFrameID = requestAnimationFrame(loop);
             }
           }
@@ -308,10 +389,31 @@
         context.fillText( leftplayer + ": " + lp_count, 50, 650);
         context.fillText(rightplayer + " : " + rp_count, 700, 650);
       }
-      
-      // Start the game
-      animationFrameID = requestAnimationFrame(loop);
-    };
-    </script>
-  </body>
+            animationFrameID = requestAnimationFrame(loop);
+            // localStorage.removeItem("players");
+        }
+    }
+
+    // Check whether two objects with known coordinates intersect or not
+        // More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+        function collides(obj1, obj2) {
+          return (
+            obj1.x < obj2.x + obj2.width &&
+            obj1.x + obj1.width > obj2.x &&
+            obj1.y < obj2.y + obj2.height &&
+            obj1.y + obj1.height > obj2.y
+          );
+        }
+
+        function boundary_check(paddle, top, bottom) {
+          if (paddle.y < top) {
+            paddle.y = top;
+          } else if (paddle.y > bottom) {
+            paddle.y = bottom;
+          }      
+        }
+
+
+</script>
+</body>
 </html>
