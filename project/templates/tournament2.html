@@ -3,66 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tournament</title>
     <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            /* background-color: white; */
-            background-image: linear-gradient(to bottom right, rgb(8, 50, 104) , rgb(193, 187, 234));
-			background-repeat: no-repeat;
-        }
-        
-        .flex-container {
-            display: flex;
-            /* flex-wrap: wrap; */
-            flex-flow: row wrap;
-            justify-content: space-around;
-            align-items: left;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .tournament-players,
-        .upcoming-matches {
-          text-align: left;
-          width: 20%; /* Each section takes up half of the container width */
-          padding: 0%; /* Add padding for spacing */
-          align-items: left;
-        }
+	html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
 
-        canvas {  
-            outline-color: rgb(85, 24, 182);
-            outline-style: solid;         
-            display: block;
-            margin: 20px;
-            padding:30px;
-            width:100%;
-            max-width: 750px;
-            height: 100%;
-            max-height: 500px;
-            /* height: auto; */
-            background: #333;
-        }
-        /* @media (min-width: 768px) {
-            .tournament-players, 
-            .upcoming-matches {
-                width: 100%;
-                max-width: 50%; */
-            /* }
-        }
-         */
-        #player-list {
-            display: none;
-        }
-        
-        .upcoming-matches {
-            display: none;
-        }
+	body {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-image: linear-gradient(to bottom right, rgb(8, 50, 104) , rgb(193, 187, 234));
+		background-repeat: no-repeat;
+	}
+	
+	.flex-container {
+		display: flex;
+		/* flex-wrap: wrap; */
+		flex-flow: row wrap;
+		justify-content: space-around;
+		align-items: left;
+		margin: 0;
+		padding: 0;
+	}
+	
+	.tournament-players,
+	.upcoming-matches {
+		text-align: left;
+		width: 20%; /* Each section takes up half of the container width */
+		padding: 0%; /* Add padding for spacing */
+		align-items: left;
+	}
+
+	canvas {  
+		outline-color: rgb(85, 24, 182);
+		outline-style: solid;         
+		display: block;
+		margin: 20px;
+		padding:30px;
+		width:100%;
+		max-width: 750px;
+		height: 100%;
+		max-height: 500px;
+		/* height: auto; */
+		background: #333;
+	}
+	/* @media (min-width: 768px) {
+		.tournament-players, 
+		.upcoming-matches {
+			width: 100%;
+			max-width: 50%; */
+		/* }
+	}
+		*/
+	#player-list {
+		display: none;
+	}
+	
+	.upcoming-matches {
+		display: none;
+	}
     </style>
 </head>
 <body>
@@ -71,7 +73,7 @@
         <h2>Tournament Players List</h2>
         <ul id="player-list"></ul>
         <h2>Add a player</h2>
-        <input type="text" id="player-name" placeholder="Enter player name">
+        <input type="text" id="player-name" placeholder="Register player">
         <button id="add-player" onclick="addPlayer()">Add player</button>
         <button id="start-tournament" onclick="startTournament()">Start Tournament</button>
     </div>
@@ -185,7 +187,7 @@
                 let player2 = players[i + 1] || "";
                 matches.push(player1 + " vs " + player2);
             }
-            alert("tornnament starts now !! we have " + players[0] + " vs " + players[1] + " players");
+            alert("tornnament starts now !! ");
             alert(matches[0]);
             var elements = document.querySelectorAll(".tournament-players");
             elements.forEach(function(element){
