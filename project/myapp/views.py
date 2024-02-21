@@ -9,7 +9,6 @@ from . import forms
 from django.utils.translation import gettext as _, gettext_lazy as _
 from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Q
 from .forms import UserProfileForm
 from django.contrib import messages
 from django.utils import translation
@@ -72,7 +71,7 @@ def organizer(request):
 	if not current_users.exists():
 		return render(request, 'stats.html', {'matches': [], 'match_count': 0})
 	current_user = current_users.first()
-	matches = match_record.objects.filter(Q(match_winner=current_user) | Q(match_loser=current_user))
+	matches = match_record.objects.all()
 	match_count = matches.count()
 	total_wins = matches.filter(match_winner=current_user).count()
 	total_losses = matches.filter(match_loser=current_user).count()
@@ -181,8 +180,8 @@ def pong(request):
 				match_record_instance.loser_score = data['loser_score']
 				match_record_instance.save()
 				# return JsonResponse({'status': 'success'})
-			return redirect('home')			
-			
+			return redirect('home')
+
 def authorize(request):
     client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
     redirect_uri = f"https://{request.get_host()}/callback"
@@ -198,7 +197,7 @@ def home(request):
 
 def logout_view(request):
     logout(request)
-    
+
     request.session.flush()
 
     return redirect('login')
@@ -269,7 +268,7 @@ def edit(request):
 				profile.image_link = profile.image.url
 			is_2fa_enabled_value = request.POST.get('is_2fa_enabled') == 'enable'
 			profile.is_2fa_enabled = is_2fa_enabled_value
-			
+
 			profile.save()
 			return redirect('edit')
 	else:
@@ -295,12 +294,12 @@ def edit(request):
 # 			user = user_profile.objects.get(login=user_info.get('login'))
 # 			otp = request.POST.get('otp')
 # 			print (f"otp is {otp}")
-			
+
 # 			try:
 # 				totp_device = TOTPDevice.objects.filter(user=user.user, confirmed=True).first()
 # 				print(f"totp_device: {totp_device}")
 # 				print(f"verify_token: {totp_device.verify_token(otp) if totp_device else None}")
-				
+
 # 				if totp_device and totp_device.verify_token(otp):
 # 					request.session['user_info'] = user_info
 # 					login(request, user_instance)
