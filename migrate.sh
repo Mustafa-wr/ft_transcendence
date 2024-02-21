@@ -3,11 +3,9 @@
 python -m pip install Pillow
 python -m pip install django-debug-toolbar
 
-sleep 5
-
 echo "Running migrate.sh script..."
 
-python project/manage.py makemigrations --noinput
+python project/manage.py makemigrations myapp --noinput
 python project/manage.py migrate --noinput
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
