@@ -140,6 +140,10 @@ def doubles(request):
 	return render(request, 'doubles.html')
 
 @authenticated_user
+def tournament(request):
+	return render(request, 'tournament.html')
+
+@authenticated_user
 def game(request):
     is_home_page = False
     is_game = True
