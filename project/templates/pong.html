@@ -25,7 +25,10 @@
           background-color: black;
           border: 2px solid slateblue;
       }
-           
+    
+	  button{
+        user-select: none;
+      }
 
   </style>
   
@@ -35,6 +38,21 @@
    
     <!-- Drawing the game field -->
     <canvas width="1050" height="750" id="game"></canvas>
+	<button id="leftButton" style="position: absolute; left: 10px; top: 100px; width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 5px; font-size: 16px;">W</button>
+
+	<button id="rightButton" style="position: absolute; left: 10px; right: 10px; top: 400px; width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 5px; font-size: 16px;">S</button>
+
+	<button id="upButton" style="position: absolute; left: auto; right: 10px; top: 100px; width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 5px; font-size: 16px;">↑</button>
+
+	<button id="downButton" style="position: absolute; left: auto; right: 10px; top: 400px; width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 5px; font-size: 16px;">↓</button>
+
+	<div id="customization">
+		<label for="paddleSpeed">Paddle Speed:</label>
+		<input type="range" id="paddleSpeed" min="1" max="10" value="6">
+		
+		<label for="ballSpeed">Ball Speed:</label>
+		<input type="range" id="ballSpeed" min="1" max="10" value="6">
+	</div>
     <script>
       var animationFrameID;
       window.onload = function () {
@@ -68,6 +86,70 @@
           // }
         }
 
+		const leftButton = document.getElementById('leftButton');
+		const rightButton = document.getElementById('rightButton');
+		const upButton = document.getElementById('upButton');
+		const downButton = document.getElementById('downButton');
+	
+		function startMovingLeft() {
+		  leftPaddle.dy = -paddleSpeed;
+		}
+	
+		function startMovingRight() {
+		  leftPaddle.dy = paddleSpeed;
+		}
+	
+		function startMovingUp() {
+		  rightPaddle.dy = -paddleSpeed;
+		}
+	
+		function startMovingDown() {
+		  rightPaddle.dy = paddleSpeed;
+		}
+	
+		function stopMoving() {
+		  leftPaddle.dy = 0;
+		  rightPaddle.dy = 0;
+		}
+	
+		leftButton.addEventListener('mousedown', startMovingLeft);
+		leftButton.addEventListener('touchstart', startMovingLeft);
+	
+		rightButton.addEventListener('mousedown', startMovingRight);
+		rightButton.addEventListener('touchstart', startMovingRight);
+	
+		upButton.addEventListener('mousedown', startMovingUp);
+		upButton.addEventListener('touchstart', startMovingUp);
+	
+		downButton.addEventListener('mousedown', startMovingDown);
+		downButton.addEventListener('touchstart', startMovingDown);
+	
+		// Button release events for both click and touch
+		document.addEventListener('mouseup', stopMoving);
+		document.addEventListener('touchend', stopMoving);
+
+
+		// Retrieve customization options
+
+		const paddleSpeedInput = document.getElementById('paddleSpeed');
+		const ballSpeedInput = document.getElementById('ballSpeed');
+	  
+		// Apply customization options
+		paddleSpeedInput.addEventListener('input', function () {
+		  paddleSpeed = parseInt(paddleSpeedInput.value);
+		});
+	  
+		ballSpeedInput.addEventListener('input', function () {
+		  ballSpeed = parseInt(ballSpeedInput.value);
+		});
+
+		ballSpeedInput.addEventListener('input', function () {
+			ballSpeed = parseInt(ballSpeedInput.value);
+			ball.dx = (ball.dx > 0) ? ballSpeed : -ballSpeed;
+			ball.dy = (ball.dy > 0) ? ballSpeed : -ballSpeed;
+		  });
+
+        // Button release events
       
       const canvas = document.getElementById("game");
       const context = canvas.getContext("2d");
@@ -257,16 +339,8 @@
             // If this number is divisible by 3 without a remainder...
             if (secret_count % 3 == 0) {
               // Increase the ball speed by one
-              if (ball.dx > 0) {
-                ball.dx += 1;
-              } else {
-                ball.dx -= 1;
-              }
-              if (ball.dy > 0) {
-                ball.dy += 1;
-              } else {
-                ball.dy -= 1;
-              }
+			  ball.dx = (ball.dx > 0) ? ballSpeed : -ballSpeed;
+			  ball.dy = (ball.dy > 0) ? ballSpeed : -ballSpeed;
               // Color the ball randomly
               ballColor =
                 "#" +
@@ -334,6 +408,28 @@
       // Start the game
       animationFrameID = requestAnimationFrame(loop);
     };
+
+	const leftButton = document.getElementById('leftButton');
+	const rightButton = document.getElementById('rightButton');
+	const upButton = document.getElementById('upButton');
+	const downButton = document.getElementById('downButton');
+	
+	leftButton.addEventListener('click', function(){
+		leftPaddle.dy = -paddleSpeed;
+	});
+
+	rightButton.addEventListener('click', function(){
+		leftPaddle.dy = paddleSpeed;
+	});
+
+	upButton.addEventListener('click', function(){
+		rightPaddle.dy = -paddleSpeed;
+	});
+
+	downButton.addEventListener('click', function(){
+		rightPaddle.dy = paddleSpeed;
+	});
+
     </script>
   </body>
 </html>
