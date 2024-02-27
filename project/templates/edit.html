@@ -1,22 +1,32 @@
 {% load static %}
 
 {% block content %}
-<div class="page-content p-0 bg-black text-light text-center" id="editPage">
+
+<div class="page-content p-0 bg-black text-light text-center id="editPage">
 	<fieldset class="border rounded-5 p-2 mb-3 text-light text-break text-start d-inline-block">
         <legend class="display-6 float-none w-auto p-0" style="color:fuchsia;">User Profile</legend>
         <form id="the_form" method="post" enctype="multipart/form-data" class="d-inline-block">
             {% csrf_token %}
+            <!-- <div class="form-group form-control-sm py-1">
+                <label for="avatar_image" class="hidden-label" style="display: none;">Avatar</label>
+                <img src="{{ user.image_link }}" alt="profile_img" class="rounded-pill" width="90px" height="90px" id="profile_img"/>
+                {{ form.image }}
+            </div> -->
             <div class="form-group form-control-sm py-1">
-                <label for="username">Username</label>
+                <label for="usernameForm">Username</label>
                 <input type="text" class="form-control" id="usernameForm" placeholder="{{ user.login }}" readonly>
             </div>
             <div class="form-group form-control-sm py-1">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="emailForm" placeholder="{{ user.email }}" readonly>
+                <label for="emailForm">Email</label>
+                <input type="email" class="form-control" id="emailForm" placeholder="{{ user.email }}" readonly style="width: 300px;">
             </div>
+            <!-- <div class="form-group form-control-sm py-1">
+                <label for="alias">Nickname for Tournaments</label><br>
+                <input type="text" class="form-control" id="id_nickname" name="nickname" value="{{ form.nickname.value }}" />
+            </div> -->
             <div class="form-group form-control-sm py-1">
-                <label for="exampleFormControlSelect1">Two-Factor Authentication (2FA)</label>
-                <select class="form-select" id="exampleFormControlSelect1" name="is_2fa_enabled">
+                <label for="2faForm">Two-Factor Authentication (2FA)</label>
+                <select class="form-select" id="2faForm" name="is_2fa_enabled">
                     <option value="disable" {% if not user.is_2fa_enabled %} selected {% endif %}>disable</option>
                     <option value="enable" {% if user.is_2fa_enabled %} selected {% endif %}>enable</option>
                 </select>

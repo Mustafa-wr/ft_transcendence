@@ -9,11 +9,7 @@
     <div class="nav-item px-3 dropdown ms-auto">
         <a class="nav-link" href="#" id="profileDropdown" type="button" data-bs-toggle="dropdown">
             <span class="navbar-text small">{{ user.login }}</span>
-            {% if user.image %}
-                <img src="{{ user.image_link }}" alt="avatar1" class="rounded-pill" width="35px" height="35px" id="avatar_img">
-            {% else %}
-                <img src="{% static 'avatar.png' %}" alt="avatar2" class="rounded-pill" width="35px" height="35px" id="avatar_img">
-            {% endif %}
+            <img src="{% static 'avatar_icon.jpg' %}" alt="avatar2" class="rounded-pill" width="35px" height="35px" id="avatar_img">
         </a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-end">
                 <li><a class="dropdown-item" href="{% url 'edit' %}">Edit Profile</a></li>

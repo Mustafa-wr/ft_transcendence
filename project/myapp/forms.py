@@ -6,4 +6,4 @@ class UserProfileForm(forms.ModelForm):
 	image = ImageField(widget=FileInput)
 	class Meta:
 		model = user_profile
-		fields = ['nickname', 'image']
+		fields = ['is_2fa_enabled']
