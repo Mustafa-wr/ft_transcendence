@@ -1,5 +1,4 @@
 .DS_Store
-.env
 project/myapp/__pycache__
 project/myapp/migrations
 project/__pycache__
