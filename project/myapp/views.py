@@ -21,10 +21,11 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import secrets
+from django.contrib.auth.decorators import login_required
 import pyotp
 from datetime import datetime, timedelta
 
-
+import requests
 import json
 
 def authenticated_user(view_func):
@@ -32,6 +33,10 @@ def authenticated_user(view_func):
 		user_info = request.session.get('user_info')
 		if user_info:
 			# User is authenticated, allow access to the view
+			# if user_info.get('is_2fa_enabled'):
+			# 	if user.is_2fa_enabled:
+			# 		# User has 2FA enabled, redirect to 2FA verification page
+			# 		return redirect('verify_2fa')
 			return view_func(request, *args, **kwargs)
 		else:
 			print("not authenticated")
@@ -151,36 +156,37 @@ def game(request):
 
 @authenticated_user
 def pong(request):
-		if (Match_maker.objects.all().count() == 0):
-				Match_maker.objects.create()
-		if request.method == 'GET':
-			match_maker = Match_maker.objects.first()
-			match_maker.players.remove(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
-			match_maker.players.add(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
-			if (match_maker.players.count() > 1):
-				game_instance = Game()
-				game_instance.player_1 = match_maker.players.all().first()
-				match_maker.players.remove(game_instance.player_1)
-				game_instance.player_2 = match_maker.players.all().first()
-				match_maker.players.remove(game_instance.player_2)
-				template = loader.get_template('pong.html')
-				context = {
-					'game': game_instance,
-				}
-				return HttpResponse(template.render(context, request))
-			else:
-				return render(request, 'no_players.html')
-		else:
-			if request.method == 'POST':
-				data = json.loads(request.body)
-				match_record_instance = match_record()
-				match_record_instance.match_winner = user_profile.objects.filter(login=data['match_winner']).first()
-				match_record_instance.match_loser = user_profile.objects.filter(login=data['match_loser']).first()
-				match_record_instance.winner_score = data['winner_score']
-				match_record_instance.loser_score = data['loser_score']
-				match_record_instance.save()
-				# return JsonResponse({'status': 'success'})
-			return redirect('home')
+	return render(request, 'pong.html')
+		# if (Match_maker.objects.all().count() == 0):
+		# 		Match_maker.objects.create()
+		# if request.method == 'GET':
+		# 	match_maker = Match_maker.objects.first()
+		# 	match_maker.players.remove(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
+		# 	match_maker.players.add(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
+		# 	if (match_maker.players.count() > 1):
+		# 		game_instance = Game()
+		# 		game_instance.player_1 = match_maker.players.all().first()
+		# 		match_maker.players.remove(game_instance.player_1)
+		# 		game_instance.player_2 = match_maker.players.all().first()
+		# 		match_maker.players.remove(game_instance.player_2)
+		# 		template = loader.get_template('pong.html')
+		# 		context = {
+		# 			'game': game_instance,
+		# 		}
+		# 		return HttpResponse(template.render(context, request))
+		# 	else:
+		# 		return render(request, 'no_players.html')
+		# else:
+		# 	if request.method == 'POST':
+		# 		data = json.loads(request.body)
+		# 		match_record_instance = match_record()
+		# 		match_record_instance.match_winner = user_profile.objects.filter(login=data['match_winner']).first()
+		# 		match_record_instance.match_loser = user_profile.objects.filter(login=data['match_loser']).first()
+		# 		match_record_instance.winner_score = data['winner_score']
+		# 		match_record_instance.loser_score = data['loser_score']
+		# 		match_record_instance.save()
+		# 		# return JsonResponse({'status': 'success'})
+		# 	return redirect('home')
 
 def authorize(request):
     client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
@@ -201,6 +207,10 @@ def logout_view(request):
     request.session.flush()
 
     return redirect('login')
+
+@authenticated_user
+def tournament(request):
+	return render(request, 'tournament.html')
 
 @authenticated_user
 def friends(request):
@@ -345,7 +355,8 @@ def verify_2fa(request):
 				else:
 					messages.error(request, 'Invalid code')
 					logout(request)
-					return redirect('login')
+					print("Invalid codeddddddddddddd")
+					return redirect('logout_view')
 			else:
 				messages.error(request, 'Code expired')
 				return redirect('login')

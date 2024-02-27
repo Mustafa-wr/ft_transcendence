@@ -1,114 +1,138 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Ping</title>
-    <!-- Apply styles for the entire document -->
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-      }
-      body {
-        background: black;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      canvas {
-        width: 80%; /* Set canvas width to 80% of the viewport */
-        max-width: 750px; /* Limit maximum canvas width */
-        height: 80%; /* Allow canvas height to adjust proportionally */
-        max-height: 585px;
-        border: 2px solid white; 
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Render the game field -->
-    <canvas width="750" height="585" id="game"></canvas>
-    <script>
-      window.onload = function () {
-      // Access the game field from the document
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tournament</title>
+  <style>
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: linear-gradient(to bottom right, #4a9ee7 , #ff00ff);
+      background-repeat: no-repeat; 
+    }
+
+    .flex-container {
+      display: flex;
+      width: 25%;
+      /* flex-wrap: wrap; */
+      flex-flow: column wrap;
+      justify-content: space-around;
+      align-items: left;
+      margin: 0;
+      padding: 0;
+    }
+    
+   /* .tournament-players,
+    .upcoming-matches {
+      text-align: left;
+      width: 20%; 
+      padding: 0%; 
+      align-items: left;
+    } */
+    
+    canvas {  
+      outline-color: rgb(85, 24, 182);
+      outline-style: solid;         
+      display: block;
+      margin: 20px;
+      padding:30px;
+      width:75%;
+      max-width: 1050px;
+      height: 100%;
+      max-height: 750px;
+      /* height: auto; */
+      background: black;
+    }
+    /* @media (min-width: 768px) {
+      .tournament-players, 
+      .upcoming-matches {
+        width: 100%;
+        max-width: 50%; */
+      /* }
+    }
+      */
+    #player-list {
+      display: none;
+    }
+    
+    /*.upcoming-matches {
+      display: none;
+    }*/
+  </style>
+</head>
+<body>
+  <div class="flex-container">
+      <div class="tournament-players">
+          <h2>Tournament Players List</h2>
+          <ul id="player-list"></ul>
+          <input type="text" id="player-name" placeholder="Register player">
+          <button id="add-player" onclick="addPlayer()">Add player</button>
+          <button id="start-tournament" onclick="startTournament()">Start Tournament</button>
+      </div>
+      <div class="upcoming-matches">
+          <h2>Upcoming Matches</h2>
+          <ul id="match-list"></ul>
+      </div>
+    </div>
+  <canvas width="750" height="500" id="game"></canvas>
+        
+<script>
+      var animationFrameID;
+      var leftplayer;
+      var rightplayer;
+      
+      // Get the canvas and context      
       const canvas = document.getElementById("game");
-      // Make the field two-dimensional
       const context = canvas.getContext("2d");
-      // Size of the game grid
       const grid = 15;
-      // Height of the paddle
-      const paddleHeight = grid * 5; // 80
-      // Set the maximum distance the paddles can move downwards
-      const LeftmaxPaddleY = canvas.height - grid - paddleHeight * 2;
+      const paddleHeight = grid * 5; // 75
 
-      const TopRightmaxPaddleY = canvas.height / 2  - paddleHeight ; 
-      const BottomRightmaxPaddleY = canvas.height - grid - paddleHeight ; 
-
-      // // set the maximum distance the paddles can move upwards need to define got lower right paddle
-      const BottomRightminPaddleY = canvas.height / 2  ;
-
-      // Paddle speed
-      var paddleSpeed = 6;
-      // Ball speed
-      var ballSpeed = 4;
-      // Record
-      var record = 0;
-      // Score
-      var count = 0;
-      // Activate secret level
-      var secret = false;
-      // Number of bounces in secret mode
-      var secret_count = 0;
-      // Ball color, initially white
-      ballColor = "blue";
-      // Get the size of storage
-      var Storage_size = localStorage.length;
-      // If there's something in the storage...
-      if (Storage_size > 0) {
-        // Get the current record from there
-        record = localStorage.getItem("record");
-        // If there's nothing there...
-      } else {
-        // Create a new entry and set it to zero - no record yet
-        localStorage.setItem("record", 0);
-      }
+      var rp_count = 0;
+      var lp_count = 0; 
+      
+          
+      // Setting the maximum distance the paddles can move downwards
+        const LeftmaxPaddleY = canvas.height - grid - paddleHeight ;
+        const RightmaxPaddleY = canvas.height - grid - paddleHeight;
+    
+        var paddleSpeed = 6;
+        var ballSpeed = 4;
+  
+        // Activate secret level
+        var secret = false;
+        // Number of bounces in secret mode
+        var secret_count = 0;
+        ballColor = "white";
+  
       // Describe the left paddle
       const leftPaddle = {
-        // Place it in the center
+        // Position it in the center
         x: grid * 2,
         y: canvas.height / 2 - paddleHeight / 2,
-        // Width - one grid cell
-        width: grid,
-        // Take the height from the constant
-        height: paddleHeight * 2,
-        // The paddle doesn't move at the start
-        dy: 0,
-      };
-      // Describe the right paddles
-
-      const topRightPaddle = {
-        // Place it in the center on the right side
-        x: canvas.width - grid * 2,
-        y: (canvas.height / 4) - paddleHeight / 2,
-        // Set the same width and height
         width: grid,
         height: paddleHeight,
-        // The right paddle also doesn't move at the start
+        // The paddle doesn't move anywhere at the start
         dy: 0,
       };
-
-      // Describe the right paddle
-      const bottomRightPaddle = {
-        // Place it in the center on the right side
-        x: canvas.width - grid * 2,
-        y: (canvas.height * 3 / 4) - paddleHeight / 2,
-        // Set the same width and height
+        // Describe the right paddle
+      const rightPaddle = {
+        // Position it in the center on the right side
+        x: canvas.width - grid * 3,
+        y: canvas.height / 2 - paddleHeight / 2,
         width: grid,
         height: paddleHeight,
-        // The right paddle also doesn't move at the start
+        // The right paddle doesn't move anywhere initially
         dy: 0,
       };
-
-      // Describe the ball
+        // Describe the ball
       const ball = {
         // It appears in the center of the field
         x: canvas.width / 2,
@@ -116,146 +140,203 @@
         // Square, the size of a grid cell
         width: grid,
         height: grid,
-        // At the start, the ball isn't scored, so remove the flag indicating that the ball needs to be reintroduced to the game
+        radius:( grid / 2) + 1,
+        // The ball is not scored at the start, so remove the flag indicating that the ball needs to be reintroduced
         resetting: false,
         // Serve the ball to the top right corner
         dx: ballSpeed,
         dy: -ballSpeed,
       };
-      // Check whether two objects with known coordinates intersect or not
-      // More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-      function collides(obj1, obj2) {
-        return (
-          obj1.x < obj2.x + obj2.width &&
-          obj1.x + obj1.width > obj2.x &&
-          obj1.y < obj2.y + obj2.height &&
-          obj1.y + obj1.height > obj2.y
-        );
+    
+      function display_matches(matches){
+        var elements = document.querySelectorAll(".tournament-players");
+        elements.forEach(function(element){
+            element.style.display = "none";
+        });
+        var match_list = document.getElementById("match-list")  
+        match_list.style.display = "block";       
+        var match_display = document.querySelectorAll(".upcoming-matches");
+        match_display.style.display = "block";
+        match_display.forEach(function(element){
+            element.style.display = "block" ;
+        });            
+    }
+    function addPlayer(){
+      var player_name = document.getElementById("player-name").value;
+      if(player_name.trim()!= "") {
+          var player_list = document.getElementById("player-list");
+          var new_player = document.createElement("li");
+          new_player.innerHTML = player_name;
+          player_list.appendChild(new_player);
+          document.getElementById("player-name").value = "";
+          document.getElementById("player-list").style.display = "block";
+
+          var players = JSON.parse(localStorage.getItem("players")) || [];
+          if (players.length < 8) {
+              players.push(player_name);
+              localStorage.setItem("players", JSON.stringify(players));
+          }
+          else {
+              alert("You have reached the maximum number of players allowed in a tournament");
+          }
       }
-      // Main game loop
-      function loop() {
+      else {
+          alert("Please enter a player name");
+          }
+    }
+    
+    function startTournament(){
+        var players = JSON.parse(localStorage.getItem("players")) || [];
+        if (players.length < 2){
+            alert("You need at least 2 players to start a tournament");
+        }
+        else {
+            players = players.sort(() => Math.random() - 0.5);
+            localStorage.setItem("players" , JSON.stringify(players))
+            var matches = [];
+            for(let i = 0; i < players.length; i += 2){
+                let player1 = players[i];
+                let player2 = players[i + 1] || "";
+                matches.push(player1 + " vs " + player2);
+            }
+            localStorage.setItem("matches", JSON.stringify(matches))            
+            var elements = document.querySelectorAll(".tournament-players");
+            elements.forEach(function(element){
+                element.style.display = "none";
+            });
+            var match_list = document.getElementById("match-list")
+            matches.forEach(function(match){
+                var new_match = document.createElement("li");
+                new_match.innerHTML = match;
+                match_list.appendChild(new_match);
+            });
+            if (matches.length > 0){
+                var match_display = document.querySelectorAll(".upcoming-matches");
+                match_display.forEach(function(element){
+                    element.style.display = "block" ;
+                });
+              }
+            alert("tornnament starts now !! " + matches[0]);            
+            leftplayer = players[0];
+            rightplayer = players[1];
+            function loop() {
         // Clear the game field
-        requestAnimationFrame(loop);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        // If the paddles were moving on the previous step, let them continue moving
+        
+        if (rp_count == 3 || lp_count == 3) {
+            cancelAnimationFrame(animationFrameID);
+            if(rp_count == 3){            
+              winner = rightplayer;
+              loser = leftplayer;
+              winner_score = rp_count;
+              loser_score = lp_count;
+            }
+            else{
+              winner = leftplayer;
+              loser = rightplayer;
+              winner_score = lp_count;
+              loser_score = rp_count;
+            }
+            
+            // gameOver();           
+            alert("Game Over." + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
+            players.shift();
+            players.shift();
+            players.push(winner);
+            matches.shift();
+            if (players.length == 1){
+              alert("Tournament Over. " + winner + " Wins!");
+              localStorage.removeItem("players");
+              localStorage.removeItem("matches");
+            }
+            else{
+              alert("Next Match: " + players[0] + " vs " + players[1] );
+              rp_count  = 0;
+              lp_count = 0;
+              leftplayer = players[0];
+              rightplayer = players[1];
+              animationFrameID = requestAnimationFrame(loop);
+            }
+          }
+        else
+          animationFrameID = requestAnimationFrame(loop);
+
+        context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+        // If the paddles were moving somewhere on the previous step, let them continue moving
         leftPaddle.y += leftPaddle.dy;
-        topRightPaddle.y += topRightPaddle.dy;
-        bottomRightPaddle.y += bottomRightPaddle.dy;
-        // If the left paddle tries to go beyond the game field ,
-        if (leftPaddle.y < grid) {
-          // then keep it in place
-          leftPaddle.y = grid;
-        }
-        // Check the same for bottom
-        else if (leftPaddle.y > LeftmaxPaddleY) {
-          leftPaddle.y = LeftmaxPaddleY;
-        }
-        // If the right paddle tries to go beyond the game field 
+        rightPaddle.y += rightPaddle.dy;
 
-       
-
-        if (topRightPaddle.y < grid) {
-          // then keep it in place
-          topRightPaddle.y = grid;
-        }
-        // Check the same for bottom
-        else if (topRightPaddle.y > TopRightmaxPaddleY) {
-          topRightPaddle.y = TopRightmaxPaddleY;
-        }
-
-        if (bottomRightPaddle.y <BottomRightminPaddleY) 
-          // then keep it in place
-            bottomRightPaddle.y = BottomRightminPaddleY;
-        else if (bottomRightPaddle.y > BottomRightmaxPaddleY) 
-          bottomRightPaddle.y = BottomRightmaxPaddleY;
-       
-        // Draw the paddles in white
+        // check paddles stay witin the boundary
+        boundary_check(leftPaddle, grid, LeftmaxPaddleY);
+        boundary_check(rightPaddle, grid, RightmaxPaddleY);
+             
+        // Draw the paddles
         context.fillStyle = "white";
-        // Each paddle is a rectangle
         context.fillRect(
           leftPaddle.x,
           leftPaddle.y,
           leftPaddle.width,
           leftPaddle.height
         );
-
         context.fillRect(
-          topRightPaddle.x,
-          topRightPaddle.y,
-          topRightPaddle.width,
-          topRightPaddle.height
+          rightPaddle.x,
+          rightPaddle.y,
+          rightPaddle.width,
+          rightPaddle.height
         );
-
-        context.fillRect(
-          bottomRightPaddle.x,
-          bottomRightPaddle.y,
-          bottomRightPaddle.width,
-          bottomRightPaddle.height
-        );
-
-        // If the ball was moving on the previous step, let it continue moving
+          // If the ball was moving somewhere on the previous step, let it continue moving
         ball.x += ball.dx;
         ball.y += ball.dy;
-        // Let the left paddle move just like the ball
-        leftPaddle.dy = ball.dy;
-        // If the ball touches the bottom wall, change its direction on the Y axis
+
+        //check for wall hits
         if (ball.y < grid) {
           ball.y = grid;
           ball.dy *= -1;
         }
-        // Do the same if the ball touches the top wall
         else if (ball.y + grid > canvas.height - grid) {
           ball.y = canvas.height - grid * 2;
           ball.dy *= -1;
         }
-        // If the ball goes off the game field to the left or right, restart it
+
+        // If the ball flew off the game field to the left or right, restart it
         if ((ball.x < 0 || ball.x > canvas.width) && !ball.resetting) {
           // Mark that the ball is restarted to avoid looping
           ball.resetting = true;
-          // If the player has scored more than the record, set it as the new record
-          if (count > record) {
-            record = count;
+          if (ball.x < 0) {
+            // If the ball flew off to the left, the right player scores
+            rp_count += 1;
           }
-          // Reset the player's score to zero
-          count = 0;
-          // Put the record value in the browser's storage
-          localStorage.setItem("record", record);
-          // Give a second to prepare for the players
+          else {
+            // If the ball flew off to the right, the left player scores
+            lp_count += 1;
+          }   
+         
+          // Give a second for players to prepare
           setTimeout(() => {
-            // Ball is back in the game
+            // Ball is in play again
             ball.resetting = false;
-            // Start it again from the center
+            // Launch it again from the center
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
           }, 1000);
         }
-        // If the ball touches the left paddle,
-        if (collides(ball, leftPaddle)) {
-          // send it in the opposite direction
+        if (collides(ball, leftPaddle)) {          
+          ball.dx *= -1;                            // send it in the opposite direction
+          ball.x = leftPaddle.x + leftPaddle.width; // Increase the ball's coordinates by the paddle's width 
+        }                                           //to prevent a new bounce from being counted
+        else if (collides(ball, rightPaddle)) {
           ball.dx *= -1;
-          // Increase the ball's coordinates by the paddle's width to avoid counting a new bounce
-          ball.x = leftPaddle.x + leftPaddle.width;
-        }
-        // Check and do the same for the right paddle
-        else if (collides(ball, topRightPaddle) || collides(ball, bottomRightPaddle)) {
-          ball.dx *= -1;
-          if (collides(ball, topRightPaddle))
-            ball.x = topRightPaddle.x - ball.width;
-          else
-            ball.x = bottomRightPaddle.x - ball.width;
-          // count bounces
-          count += 1;
-          // if it reaches 10 - activate the secret level
-          if (count >= 10) {
+          ball.x = rightPaddle.x - rightPaddle.width;
+          // If it reaches 5, activate the secret level
+          if (rp_count >= 5 || lp_count >= 5) {
             secret = true;
           }
-          // here's the secret level
+          // Here is the secret level itself
           if (secret) {
-            // increase new bounces
+            // Increase new bounces
             secret_count += 1;
-            // if this number is divisible by 3...
+            // If this number is divisible by 3 without a remainder...
             if (secret_count % 3 == 0) {
-              // increase the ball speed by one
+              // Increase the ball speed by one
               if (ball.dx > 0) {
                 ball.dx += 1;
               } else {
@@ -266,7 +347,7 @@
               } else {
                 ball.dy -= 1;
               }
-              // randomly color the ball
+              // Color the ball randomly
               ballColor =
                 "#" +
                 (Math.random().toString(16) + "000000")
@@ -275,63 +356,100 @@
             }
           }
         }
-        // Draw the ball with the appropriate color
+        // Draw the ball in the appropriate color
         context.fillStyle = ballColor;
-        context.fillRect(ball.x, ball.y, ball.width, ball.height);
+        context.beginPath();
+        context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+        context.fill();
         // Draw the walls
-        context.fillStyle = "lightgrey";
+        context.fillStyle = "white";
         context.fillRect(0, 0, canvas.width, grid);
         context.fillRect(0, canvas.height - grid, canvas.width, canvas.height);
         // Draw the grid in the middle
         for (let i = grid; i < canvas.height - grid; i += grid * 2) {
           context.fillRect(canvas.width / 2 - grid / 2, i, grid, grid);
         }
-        // Track key presses
-        
-        
-          document.addEventListener("keydown", function (e) {
-            // If the up arrow is pressed,
-            if (e.which === 87) {
-              // move the right paddle up (87 is the 'w' key code)
-              topRightPaddle.dy = -paddleSpeed;
-            }
-            // If the down arrow is pressed,
-            else if (e.which === 83) {
-              // move the right paddle down (83 is the 's' key code)
-              topRightPaddle.dy = paddleSpeed;
-            }
-            else if (e.which === 38) {
-              bottomRightPaddle.dy = -paddleSpeed;
-            }
-            else if (e.which === 40) {
-              bottomRightPaddle.dy = paddleSpeed;
-            }
+
+        // Text color, size and font
+        context.fillStyle = "#ff00ff" 
+        context.font = "20pt Arial";
+
+        // Display player scores
+        context.fillText( leftplayer + ": " + lp_count, 50, 50);
+        context.fillText(rightplayer + " : " + rp_count, 450, 50);
+        // Monitor key presses
+        document.addEventListener("keydown", function (e) {
+          // If the up arrow key is pressed,
+          switch (e.which) {
+            case 87: // W key move the left paddle up
+              leftPaddle.dy = -paddleSpeed;
+              break;
+            case 83: // S key move the left paddle down
+              leftPaddle.dy = paddleSpeed;
+              break;
+            case 38: // up arrow move the right paddle up
+             rightPaddle.dy = -paddleSpeed;
+              break;
+            case 40: // down arrow move the right paddle down
+              rightPaddle.dy = paddleSpeed;
+              break;
+          }
         });
 
-      // And now, listen for when someone releases a key to stop the paddle's movement
-          document.addEventListener("keyup", function (e) {
-            // If it's the up or down arrow or 'w' or 's',
-            if (e.which === 87 || e.which === 83) {
-              // stop the right paddle
-              topRightPaddle.dy = 0;
-            }
-            else if (e.which === 38 || e.which === 40) {
-              bottomRightPaddle.dy = 0;
-            }
-          });
-        // Track mouse movements  
-        // Text color
-        context.fillStyle = "#ff0000";
-        // Set the size and font
-        context.font = "20pt Courier";
-        // First, display the record
-        context.fillText("Record: " + record, 150, 550);
-        // Then, display the score
-        context.fillText(count, 450, 550);
+        // Now, watch for when someone releases a key to stop the paddle's movement
+        document.addEventListener("keyup", function (e) {         
+          if (e.which === 38 || e.which === 40) { // If it's the up or down arrow key,stop the right paddle
+            rightPaddle.dy = 0;
+          }
+          if (e.which === 87 || e.which === 83) { //if its 'W' or 'S' keys, stop the left paddle
+            leftPaddle.dy = 0;
+          }
+        });
+
       }
-      // Start the game
-      requestAnimationFrame(loop);
-    };
-    </script>
-  </body>
+      animationFrameID = requestAnimationFrame(loop);
+          // localStorage.removeItem("players");
+      }
+    }
+
+// Check whether two objects with known coordinates intersect or not
+// More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+function collides(obj1, obj2) {
+    return (
+    obj1.x < obj2.x + obj2.width &&
+    obj1.x + obj1.width > obj2.x &&
+    obj1.y < obj2.y + obj2.height &&
+    obj1.y + obj1.height > obj2.y
+    );
+}
+
+function boundary_check(paddle, top, bottom) {
+    if (paddle.y < top) {
+    paddle.y = top;
+    } else if (paddle.y > bottom) {
+    paddle.y = bottom;
+    }      
+}
+
+function display_players(players){
+    var player_list = document.getElementById("player-list");
+    players.forEach(function(player){
+      var new_player = document.createElement("li");
+      new_player.textContent = player;
+      alert(new_player.textContent)
+      player_list.appendChild(new_player);
+    });
+    player_list.style.display = "block";    
+    var elements = document.querySelectorAll(".tournament-players");
+    elements.forEach(function(element){
+        element.style.display = "block";
+    });
+}
+
+window.onbeforeunload = function() {
+  localStorage.removeItem("players");
+  localStorage.removeItem("matches");
+}
+</script>
+</body>
 </html>

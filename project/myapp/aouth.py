@@ -12,6 +12,7 @@ from .views import verify_2fa
 import smtplib
 import pyotp
 from datetime import datetime, timedelta 
+import os
 
 
 def callback(request):
@@ -19,10 +20,10 @@ def callback(request):
 		code = request.GET.get('code')
 		print(f"Received authorization code: {code}")
 
-		token_url = "https://api.intra.42.fr/oauth/token"
-		client_id = "u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
-		client_secret = "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"
-		redirect_uri = "https://127.0.0.1:8000/callback"
+		token_url = os.environ.get('TOKEN_URL')
+		client_id = os.environ.get('CLIENT_ID')
+		client_secret = os.environ.get('CLIENT_SECRET')
+		redirect_uri = os.environ.get('REDIRECT_URI')
 
 		data = {
 			'grant_type': 'authorization_code',
@@ -41,7 +42,7 @@ def callback(request):
 				token = token_data['access_token']
 				print(f"Received access token: {token}")
 
-				user_info_url = "https://api.intra.42.fr/v2/me"
+				user_info_url = os.environ.get('USER_INFO_URL')
 				headers = {'Authorization': f'Bearer {token}'}
 				user_response = requests.get(user_info_url, headers=headers)
 				user_response.raise_for_status()

@@ -43,6 +43,7 @@ RUN chmod +x /code/migrate.sh
 # COPY localhost.key /code/localhost.key
 # Copy the rest of your project files
 COPY . /code/
+COPY .env /code/.env
 
 RUN rm -rf /code/migrations
 

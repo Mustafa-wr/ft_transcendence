@@ -171,8 +171,10 @@
 			} else if (event.target.id == 'multi_player4') {
 				event.preventDefault();
 				openMulti4Window();
-			}
-			else if (event.target.id === 'logout') {
+			} else if (event.target.id == 'tournament') {
+				event.preventDefault();
+				tournament_window();
+			} else if (event.target.id === 'logout') {
 				event.preventDefault();
 				localStorage.removeItem('refreshFlag');
 			} else if (event.target.id === 'the_form' || event.target.id == "save_btn") {
@@ -247,6 +249,32 @@
         }
     }
 	
+
+	async function tournament_window() {
+        // Perform a fetch request to the 'pong' URL
+        const response = await fetch('{% url 'tournament' %}', {
+            method: 'GET', // or 'POST' if your view expects a POST request
+            headers: {
+                'Content-Type': 'application/json',
+                // Include any other headers your request needs
+            },
+            // Include body if your request method is POST
+            // body: JSON.stringify({ key: 'value' })
+        });
+
+        if (response.ok) {
+            const data = await response.text();
+            // Process the response data as needed
+            // For example, you could open a new window with the response data
+            const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
+            multiWindow.document.write(data);
+            multiWindow.document.close(); // Ensure the document is fully written
+            multiWindow.focus();
+        } else {
+            console.error('Fetch error:', response.statusText);
+            // Handle fetch error
+        }
+    }
 
 	async function openMultiWindow() {
         // Perform a fetch request to the 'pong' URL

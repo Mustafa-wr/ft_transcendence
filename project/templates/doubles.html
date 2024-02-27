@@ -1,33 +1,49 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Ping</title>
+    <title>PingPong</title>
     <!-- Apply styles for the entire document -->
     <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
+      
+	  body {
+		height: 100%;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-image: linear-gradient(to bottom right, #4a9ee7 , #ff00ff);
+      	background-repeat: no-repeat; 
       }
-      body {
-        background: black;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      canvas {
-        width: 80%; /* Set canvas width to 80% of the viewport */
-        max-width: 750px; /* Limit maximum canvas width */
-        height: 80%; /* Allow canvas height to adjust proportionally */
-        max-height: 585px;
-        border: 2px solid white; 
-      }
+
+      canvas {  
+      outline-color: rgb(85, 24, 182);
+      outline-style: solid;         
+      display: block;
+      margin: 20px;
+      padding:30px;
+      width:75%;
+      max-width: 1050px;
+      height: 100%;
+      max-height: 750px;
+      /* height: auto; */
+      background: black;
+    }
+
     </style>
   </head>
   <body>
+	
     <!-- Render the game field -->
-    <canvas width="750" height="585" id="game"></canvas>
+    <canvas width="1050" height="750" id="game"></canvas>
+	<div id="customization">
+		<label for="paddleSpeed">Paddle Speed:</label>
+		<input type="range" id="paddleSpeed" min="1" max="10" value="6">
+		
+		<label for="ballSpeed">Ball Speed:</label>
+		<input type="range" id="ballSpeed" min="1" max="10" value="6">
+	</div>
     <script>
+		var animationFrameID;
       window.onload = function () {
       // Access the game field from the document
       const canvas = document.getElementById("game");
@@ -48,31 +64,40 @@
       const BottomLeftminPaddleY = canvas.height / 2  ;
       const BottomRightminPaddleY = canvas.height / 2  ;
 
-      // Paddle speed
-      var paddleSpeed = 6;
-      // Ball speed
+      // Paddle  and ball speed
+      var paddleSpeed = 6;  
       var ballSpeed = 4;
-      // Record
-      var record = 0;
+
       // Score
-      var count = 0;
+      var left_score = 0;
+	  var right_score = 0;
+
       // Activate secret level
       var secret = false;
       // Number of bounces in secret mode
       var secret_count = 0;
       // Ball color, initially white
-      ballColor = "blue";
-      // Get the size of storage
-      var Storage_size = localStorage.length;
-      // If there's something in the storage...
-      if (Storage_size > 0) {
-        // Get the current record from there
-        record = localStorage.getItem("record");
-        // If there's nothing there...
-      } else {
-        // Create a new entry and set it to zero - no record yet
-        localStorage.setItem("record", 0);
-      }
+      ballColor = "white";
+      
+	  const paddleSpeedInput = document.getElementById('paddleSpeed');
+		const ballSpeedInput = document.getElementById('ballSpeed');
+	  
+		// Apply customization options
+		paddleSpeedInput.addEventListener('input', function () {
+		  paddleSpeed = parseInt(paddleSpeedInput.value);
+		});
+	  
+		ballSpeedInput.addEventListener('input', function () {
+		  ballSpeed = parseInt(ballSpeedInput.value);
+		});
+
+		ballSpeedInput.addEventListener('input', function () {
+			ballSpeed = parseInt(ballSpeedInput.value);
+			ball.dx = (ball.dx > 0) ? ballSpeed : -ballSpeed;
+			ball.dy = (ball.dy > 0) ? ballSpeed : -ballSpeed;
+		  });
+
+      
       // Describe the left paddles
       const topLeftPaddle = {
         // Place it in the center
@@ -87,14 +112,10 @@
       };
 
       const bottomLeftPaddle = {
-        // Place it in the center
         x: grid * 2,
         y: (canvas.height * 3 / 4) - paddleHeight / 2,
-        // Width - one grid cell
         width: grid,
-        // Take the height from the constant
         height: paddleHeight,
-        // The paddle doesn't move at the start
         dy: 0,
       };
 
@@ -102,24 +123,18 @@
       // Describe the right paddles
 
       const topRightPaddle = {
-        // Place it in the center on the right side
-        x: canvas.width - grid * 2,
+        x: canvas.width - grid * 3,
         y: (canvas.height / 4) - paddleHeight / 2,
-        // Set the same width and height
         width: grid,
         height: paddleHeight,
-        // The right paddle also doesn't move at the start
         dy: 0,
       };
 
       const bottomRightPaddle = {
-        // Place it in the center on the right side
-        x: canvas.width - grid * 2,
+        x: canvas.width - grid * 3,
         y: (canvas.height * 3 / 4) - paddleHeight / 2,
-        // Set the same width and height
         width: grid,
         height: paddleHeight,
-        // The right paddle also doesn't move at the start
         dy: 0,
       };
 
@@ -147,16 +162,35 @@
           obj1.y + obj1.height > obj2.y
         );
       }
+
+	//   function boundary_check(paddle, top, bottom) {
+    //     if (paddle.y < top) {
+    //       paddle.y = top;
+    //     } else if (paddle.y > bottom) {
+    //       paddle.y = bottom;
+    //     }    
+    //   }
+
       // Main game loop
       function loop() {
         // Clear the game field
-        requestAnimationFrame(loop);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-       
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		if (left_score == 11 || right_score == 11){
+			cancelAnimationFrame(animationFrameID);
+			if (left_score == 11){
+				alert("Game Over. Team left wins. !!");
+			}
+			else 
+				alert("Game Over. Team right wins!!");
+		}
+		else
+			animationFrameID = requestAnimationFrame(loop);
+
         topLeftPaddle.y += topLeftPaddle.dy;
         bottomLeftPaddle.y += bottomLeftPaddle.dy;
         topRightPaddle.y += topRightPaddle.dy;
         bottomRightPaddle.y += bottomRightPaddle.dy;
+		
         // If the left paddle tries to go beyond the game field ,
         if (topLeftPaddle.y < grid) {
           // then keep it in place
@@ -179,7 +213,6 @@
         else if (topRightPaddle.y > TopRightmaxPaddleY) {       // Check the same for bottom
           topRightPaddle.y = TopRightmaxPaddleY;
         }
-
         if (bottomRightPaddle.y < BottomRightminPaddleY) 
             bottomRightPaddle.y = BottomRightminPaddleY;
         else if (bottomRightPaddle.y > BottomRightmaxPaddleY) 
@@ -233,15 +266,13 @@
         if ((ball.x < 0 || ball.x > canvas.width) && !ball.resetting) {
           // Mark that the ball is restarted to avoid looping
           ball.resetting = true;
-          // If the player has scored more than the record, set it as the new record
-          if (count > record) {
-            record = count;
-          }
-          // Reset the player's score to zero
-          count = 0;
-          // Put the record value in the browser's storage
-          localStorage.setItem("record", record);
-          // Give a second to prepare for the players
+		  if (ball.x < 0){
+			right_score += 1;
+		  }
+		  else {
+			left_score += 1;
+		  }          
+          
           setTimeout(() => {
             // Ball is back in the game
             ball.resetting = false;
@@ -266,10 +297,9 @@
             ball.x = topRightPaddle.x - ball.width;
           else
             ball.x = bottomRightPaddle.x - ball.width;
-          // count bounces
-          count += 1;
+         
           // if it reaches 10 - activate the secret level
-          if (count >= 10) {
+          if (left_score >= 5 || right_score >= 5) {
             secret = true;
           }
           // here's the secret level
@@ -302,7 +332,7 @@
         context.fillStyle = ballColor;
         context.fillRect(ball.x, ball.y, ball.width, ball.height);
         // Draw the walls
-        context.fillStyle = "lightgrey";
+        context.fillStyle = "white";
         context.fillRect(0, 0, canvas.width, grid);
         context.fillRect(0, canvas.height - grid, canvas.width, canvas.height);
         // Draw the grid in the middle
@@ -360,13 +390,13 @@
         });
         // Track mouse movements  
         // Text color
-        context.fillStyle = "#ff0000";
+        context.fillStyle = "#ff00ff";
         // Set the size and font
         context.font = "20pt Courier";
         // First, display the record
-        context.fillText("Record: " + record, 150, 550);
-        // Then, display the score
-        context.fillText(count, 450, 550);
+        context.fillText( left_score, 50, 650);
+        // Display right player score
+        context.fillText(right_score, 700, 650);
       }
       // Start the game
       requestAnimationFrame(loop);
