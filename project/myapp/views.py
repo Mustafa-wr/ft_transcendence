@@ -204,6 +204,7 @@ def logout(request):
     # if request.session.get('oauth_access_token'):
         # revoke_token * -> we need to revoke the token to logout
     request.session.clear()
+	
     return redirect('login')
 
 @authenticated_user
@@ -222,9 +223,7 @@ def edit(request):
 	}
 	return render(request, 'base.html', context)
 
-def get_2fa_status(request):
-	user_profile = UserProfile.objects.get(user=request.user)
-	return JsonResponse({'is_2fa_enabled': user_profile.is_2fa_enabled})
+
 
 # def verify_2fa(request):
 # 	if request.method == 'POST':
@@ -289,10 +288,10 @@ def verify_2fa(request):
 					return redirect('logout_view')
 			else:
 				messages.error(request, 'Code expired')
-				return redirect('login')
+				return redirect('logout_view')
 		else:
 			messages.error(request, 'Session data missing')
-			return redirect('login')
+			return redirect('logout_view')
 	else:
 		return render(request, 'error.html', {'error': 'Invalid request method'})
 
