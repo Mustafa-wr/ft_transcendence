@@ -148,18 +148,26 @@
         dy: -ballSpeed,
       };
     
-      function display_matches(matches){
-        var elements = document.querySelectorAll(".tournament-players");
-        elements.forEach(function(element){
-            element.style.display = "none";
-        });
+      function display_matches(){
+        var matches = [];
+        var players = JSON.parse(localStorage.getItem("players")) || [];
+        for(let i = 0; i < players.length; i += 2){
+            let player1 = players[i];
+            let player2 = players[i + 1] || "";
+            matches.push(player1 + " vs " + player2);
+        }
         var match_list = document.getElementById("match-list")  
-        match_list.style.display = "block";       
+        match_list.innerHTML = "";
+        matches.forEach(function(match){
+          var new_match = document.createElement("li");
+          new_match.innerHTML = match;
+          match_list.appendChild(new_match);
+        });  
         var match_display = document.querySelectorAll(".upcoming-matches");
-        match_display.style.display = "block";
         match_display.forEach(function(element){
-            element.style.display = "block" ;
-        });            
+          element.style.display = "block" ;
+        });  
+
     }
     function addPlayer(){
       var player_name = document.getElementById("player-name").value;
@@ -199,7 +207,8 @@
                 let player2 = players[i + 1] || "";
                 matches.push(player1 + " vs " + player2);
             }
-            localStorage.setItem("matches", JSON.stringify(matches))            
+            localStorage.setItem("matches", JSON.stringify(matches))
+            // localStorage.setItem("players", JSON.stringify(players));            
             var elements = document.querySelectorAll(".tournament-players");
             elements.forEach(function(element){
                 element.style.display = "none";
@@ -210,15 +219,11 @@
                 new_match.innerHTML = match;
                 match_list.appendChild(new_match);
             });
-            if (matches.length > 0){
-                var match_display = document.querySelectorAll(".upcoming-matches");
-                match_display.forEach(function(element){
-                    element.style.display = "block" ;
-                });
-              }
-            alert("tornnament starts now !! " + matches[0]);            
+            alert("tornnament starts now !! \n" + matches[0]);            
             leftplayer = players[0];
             rightplayer = players[1];
+
+
             function loop() {
         // Clear the game field
         
@@ -243,12 +248,15 @@
             players.shift();
             players.push(winner);
             matches.shift();
+            localStorage.setItem("matches", JSON.stringify(matches))
+            localStorage.setItem("players", JSON.stringify(players));            
             if (players.length == 1){
               alert("Tournament Over. " + winner + " Wins!");
               localStorage.removeItem("players");
               localStorage.removeItem("matches");
             }
             else{
+              display_matches();
               alert("Next Match: " + players[0] + " vs " + players[1] );
               rp_count  = 0;
               lp_count = 0;
@@ -405,7 +413,6 @@
             leftPaddle.dy = 0;
           }
         });
-
       }
       animationFrameID = requestAnimationFrame(loop);
           // localStorage.removeItem("players");
