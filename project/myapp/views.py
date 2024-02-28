@@ -149,14 +149,12 @@ def home(request):
 	context = organizer(request)
 	return render(request, 'base.html', context)
 
+@authenticated_user
 def logout_view(request):
-    logout(request)
-    response = redirect('login')  # Redirect to login page after logout
-    response.delete_cookie('sessionid')  # Delete sessionid cookie
-    response.delete_cookie('csrftoken')  # Delete csrftoken cookie
-    request.session.flush()
-    request.session.clear()  # Clear session data
-    return response
+	logout(request)
+	request.session.clear()
+	request.session.flush()
+	return redirect('login')
 
 @authenticated_user
 def tournament(request):
