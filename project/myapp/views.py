@@ -1,7 +1,7 @@
 from django.shortcuts import render #http://157.245.40.149:30655
 from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError, HttpResponseRedirect
 from django.template import loader
 from .models import user_profile, match_record, user_friends, Create_match_record
 from .models import user_profile, match_record, Game, Match_maker
@@ -22,6 +22,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import secrets
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login
 import pyotp
 from datetime import datetime, timedelta
 
@@ -73,7 +74,7 @@ def login(request):
 	if user_info:
 		# If already authenticated, redirect to home or dashboard
 		return redirect('home')
-	return render(request, 'login.html', )
+	return render(request, 'login.html' )
 
     # Your login logic goes here...
     # If the login is successful and the user is authenticated:
@@ -150,8 +151,12 @@ def home(request):
 
 def logout_view(request):
     logout(request)
+    response = redirect('login')  # Redirect to login page after logout
+    response.delete_cookie('sessionid')  # Delete sessionid cookie
+    response.delete_cookie('csrftoken')  # Delete csrftoken cookie
     request.session.flush()
-    return redirect('login')
+    request.session.clear()  # Clear session data
+    return response
 
 @authenticated_user
 def tournament(request):
@@ -198,14 +203,6 @@ def friends(request):
 	}
 	return render(request, 'base.html', context)
 
-@authenticated_user
-def logout(request):
-    # Revoke the OAuth2 token
-    # if request.session.get('oauth_access_token'):
-        # revoke_token * -> we need to revoke the token to logout
-    request.session.clear()
-	
-    return redirect('login')
 
 @authenticated_user
 def edit(request):
@@ -216,6 +213,7 @@ def edit(request):
 		is_2fa_enabled_value = request.POST.get('is_2fa_enabled') == 'enable'
 		profile.is_2fa_enabled = is_2fa_enabled_value
 		profile.save()
+		messages.success(request, "data saved")
 		return redirect('edit')
 	tmp = organizer(request)
 	context = {
