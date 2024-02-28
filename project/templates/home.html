@@ -10,16 +10,15 @@
             <p>Players control paddles to hit the ball.</p>
             <p>Points are earned when one fails to return the ball to the other side.</p>
             <p>The goal is to reach 11 points before the opponent.</p>
+        </fieldset>
+        <br><br>
+        <fieldset class="border rounded-5 px-3 text-light text-break text-center d-inline-block">
+            <legend class="display-6 float-none w-auto p-3" style="color:fuchsia;">Ready?</legend>
             <a id="tournament" class="btn btn-info mb-3">Tournament</a>
             <a id="multi_player" class="btn btn-info mb-3">2 Players</a>
             <a id="multi_player4" class="btn btn-info mb-3">4 Players</a>
-            <br>
+            <br><br>
         </fieldset>
-        <br><br>
-        <fieldset class="px-3 text-light text-break text-center d-inline-block">
-            <a id="editButton" class="btn btn-light btn-lg mb-3" href="{% url 'edit' %}">Edit Profile</a>
-        </fieldset>
-        <br><br>
     </div>
 		<script> 
 			// Check if the URL contains a code and redirect to the home page without query parameters
