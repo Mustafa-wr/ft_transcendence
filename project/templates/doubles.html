@@ -60,6 +60,7 @@
 
     <script>
 		var animationFrameID;
+		localStorage.setItem('gamesFlag', 'true')
       window.onload = function () {
       // Access the game field from the document
       const canvas = document.getElementById("game");
@@ -198,6 +199,7 @@
 			}
 			else 
 				alert("Game Over. Team right wins!!");
+			localStorage.setItem('gamesFlag', 'false');
 		}
 		else
 			animationFrameID = requestAnimationFrame(loop);
@@ -416,6 +418,11 @@
       // Start the game
       requestAnimationFrame(loop);
     };
+
+	
+	window.addEventListener('beforeunload', function() {
+		localStorage.setItem('gamesFlag', 'false');
+	  });
     </script>
 
 

@@ -37,7 +37,7 @@
 
 	<script>
 		var refreshFlag = localStorage.getItem('refreshFlag');
-
+		localStorage.setItem('gamesFlag', 'false');
         if (!refreshFlag) {
             setTimeout(function(){
 				console.log("reloading");
@@ -165,13 +165,13 @@
 			if (event.target.id === 'vs_comp') {
 				event.preventDefault();
 				openGameWindow();
-			} else if (event.target.id === 'multi_player') {
+			} else if (event.target.id === 'multi_player' && localStorage.getItem('gamesFlag') == 'false'){
 				event.preventDefault();
 				openMultiWindow();
-			} else if (event.target.id == 'multi_player4') {
+			} else if (event.target.id == 'multi_player4' && localStorage.getItem('gamesFlag') == 'false') {
 				event.preventDefault();
 				openMulti4Window();
-			} else if (event.target.id == 'tournament') {
+			} else if (event.target.id == 'tournament' && localStorage.getItem('gamesFlag') == 'false') {
 				event.preventDefault();
 				tournament_window();
 			} else if (event.target.id === 'logout') {

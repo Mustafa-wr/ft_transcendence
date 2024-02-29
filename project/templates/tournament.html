@@ -88,6 +88,7 @@
       var animationFrameID;
       var leftplayer;
       var rightplayer;
+	  localStorage.setItem('gamesFlag', 'true');
       
       // Get the canvas and context      
       const canvas = document.getElementById("game");
@@ -456,7 +457,12 @@ function display_players(players){
 window.onbeforeunload = function() {
   localStorage.removeItem("players");
   localStorage.removeItem("matches");
+  localStorage.setItem('gamesFlag', 'false');
 }
+
+window.addEventListener('beforeunload', function() {
+	localStorage.setItem('gamesFlag', 'false');
+  });
 </script>
 </body>
 </html>
