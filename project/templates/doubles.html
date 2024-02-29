@@ -1,60 +1,101 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>PingPong</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- Apply styles for the entire document -->
-    <style>
-      
-	  body {
-    overflow: hidden;		
-    height: 100vh;
-		margin: 0;
-    padding: 0;
-		align-items: center;
-		justify-content: center;
-		background-image: linear-gradient(to top right, #6e31be , #ff00ff);
-    background-repeat: no-repeat;
+<head>
+  <title>Pong 4 players</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <!-- Apply styles for the entire document -->
+  <style>
+
+    .selector-for-some-widget {
+        box-sizing: content-box;
     }
 
-    canvas {  
-      outline-color: rgb(85, 24, 182);
-      outline-style: solid;         
+    body {
+      height: 100vh;
       margin: 0;
       padding: 0;
-		  align-items: center;
-		  justify-content: center;
-      width:100vw;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      background-color:violet;     
+    }
+
+    canvas {
+      outline-color: rgb(85, 24, 182);
+      outline-style: solid;    
+      margin: 0;
+      padding: 0px;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
       max-width: 100%;
-      height: calc(100vh - 120px);
+      height: calc(100vh - 100px);
       max-height: 100%;
       background: black;
     }
 
     custom {
-      height: 120px;
+      height: 100px;
     }
 
-  
-    </style>
-  </head>
+    .divider {
+    width: 100%;
+    margin-top: 5px; /* Adjust margin as needed */
+    margin-bottom: 5px; /* Adjust margin as needed */
+  }
+
+  </style>
+</head>
   <body>
-	<div class="container-fluid text-center">
-    <div class="text-center " id="custom" >
-      <div id="paddleSpeedButton">
-      <label for="paddleSpeed">Paddle Speed:</label><br>
-      <input type="range" id="paddleSpeed" min="1" max="10" value="6">
+	
+  <!-- The games customs ball speed and paddle speed -->
+  <div class="container-fluid text-center">
+    <div class="row" id="custom">
+      <div class="col" id="paddleSpeedButton">
+        <label for="paddleSpeed">Paddle Speed: </label><br>
+        <input type="range" id="paddleSpeed" min="1" max="10" value="7">
       </div>
-      <div id="ballSpeedButton">
-      <label for="ballSpeed">Ball Speed:</label><br>
-      <input type="range" id="ballSpeed" min="1" max="10" value="6">
+      <div class="col" id="ballSpeedButton">
+        <label for="ballSpeed">Ball Speed: </label><br>
+        <input type="range" id="ballSpeed" min="1" max="10" value="7">
       </div>
     </div>
-    <!-- Render the game field -->
-    <div class="text-center" id="canvas">
-      <canvas width="1050" height="750" id="game" class=""></canvas>
+        
+    <div id="bigCanvas">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-3 col-sm-1 d-flex flex-column justify-content-between align-items-center text-center">
+              <div class="btn-group-vertical" style="width: 30px; height: 100px;">
+                <button id="leftTopButton" class="btn btn-info btn-lg p-0 m-0 btn-control">w</button>
+                <div class="divider"></div>
+                <button id="leftDownButton" class="btn btn-info btn-lg p-0 m-0 btn-control">s</button>
+              </div>
+              <div class="btn-group-vertical mt-auto" style="width: 30px; height: 100px;">
+                <button id="leftTopButton2" class="btn btn-info btn-lg p-0 m-0 btn-control">t</button>
+                <div class="divider"></div>
+                <button id="leftDownButton2" class="btn btn-info btn-lg p-0 m-0 btn-control">g</button>
+              </div>
+            </div>
+            <div class="col-6 col-sm-10 d-flex justify-content-center align-items-center text-center">
+              <canvas width="1050" height="750" id="game"></canvas>
+            </div>
+            <div class="col-3 col-sm-1 d-flex flex-column justify-content-between align-items-center text-center">
+              <div class="btn-group-vertical" style="width: 30px; height: 100px;">       
+              <button id="rightTopButton" class="btn btn-info btn-lg p-0 m-0 btn-control">i</button>
+              <div class="divider"></div>
+              <button id="rightDownButton" class="btn btn-info btn-lg p-0 m-0 btn-control">k</button>
+              </div>
+              <div class="btn-group-vertical mt-auto" style="width: 30px; height: 100px;">       
+                <button id="rightTopButton2" class="btn btn-info btn-lg p-0 m-0 btn-control">↑</button>
+                <div class="divider"></div>
+                <button id="rightDownButton2" class="btn btn-info btn-lg p-0 m-0 btn-control">↓</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
 
