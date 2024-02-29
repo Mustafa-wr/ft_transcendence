@@ -29,18 +29,17 @@ import requests
 import json
 
 def authenticated_user(view_func):
-	def wrapper(request, *args, **kwargs):
-		user_info = request.session.get('user_info')
-		is_2fa_verified = request.session.get('is_2fa_verified', False)
+    def wrapper(request, *args, **kwargs):
+        user_info = request.session.get('user_info')
+        is_2fa_verified = request.session.get('is_2fa_verified', False)
 
-		print(f"2FA verified: {is_2fa_verified}")
+        if user_info and (is_2fa_verified):
+            return view_func(request, *args, **kwargs)
+        else:
+            print("not authenticated")
+            return redirect('login')
 
-		if user_info and is_2fa_verified:
-			return view_func(request, *args, **kwargs)
-		else:
-			print("not authenticated")
-			return redirect('login')
-	return wrapper
+    return wrapper
 
 def login(request):
 	user_info = request.session.get('user_info')
@@ -52,6 +51,12 @@ def login(request):
 
 @authenticated_user
 def home(request):
+    user_info = request.session.get('user_info')
+    is_2fa_verified = request.session.get('is_2fa_verified', False)
+
+    if not is_2fa_verified:
+        return redirect('logout_view')
+
     context = organizer(request)
     return render(request, 'base.html', context)
 
@@ -200,6 +205,12 @@ def edit(request):
 	is_game = False
 	is_home_page = False
 	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
+	user_info = request.session.get('user_info')
+	is_2fa_verified = request.session.get('is_2fa_verified', False)
+
+	if not is_2fa_verified:
+		return redirect('logout_view')
+
 	if request.method == 'POST':
 		is_2fa_enabled_value = request.POST.get('is_2fa_enabled') == 'enable'
 		profile.is_2fa_enabled = is_2fa_enabled_value

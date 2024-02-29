@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
 ]
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
 MIDDLEWARE = [
 	'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',

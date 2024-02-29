@@ -88,6 +88,7 @@ def callback(request):
                     return render(request, 'home.html', {'user_info': user_info})
 
                 user = user_profile.objects.get(login=user_info.get('login'))
+
                 if user.is_2fa_enabled:
                     
                     otp = create_otp(request)
@@ -100,6 +101,7 @@ def callback(request):
                     
                     return render(request, 'login.html', {'user_info': user_info, 'otp_required': True})
                 else:
+                    request.session['is_2fa_verified'] = True
                     request.session['user_info'] = user_info
                     login(request, user.user)
                     return render(request, 'home.html', {'user_info': user_info})
