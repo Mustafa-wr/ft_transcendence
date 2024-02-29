@@ -138,6 +138,7 @@ def authorize(request):
     return redirect('/home/')
 
 
+@authenticated_user
 def logout_view(request):
 	logout(request)
 	response = redirect('login')  # Redirect to login page after logout
