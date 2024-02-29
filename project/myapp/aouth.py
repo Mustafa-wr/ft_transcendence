@@ -94,8 +94,9 @@ def callback(request):
                     
                     send_message_to_email(user, otp)
                     
+                    request.session['is_2fa_verified'] = False
+                    
                     request.session['user_info'] = user_info
-
                     
                     return render(request, 'login.html', {'user_info': user_info, 'otp_required': True})
                 else:

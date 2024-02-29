@@ -16,7 +16,6 @@ from django.views.i18n import set_language
 from django.contrib.auth import logout
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -32,22 +31,33 @@ import json
 def authenticated_user(view_func):
 	def wrapper(request, *args, **kwargs):
 		user_info = request.session.get('user_info')
-		if user_info:
-			# User is authenticated, allow access to the view
-			# if user_info.get('is_2fa_enabled'):
-			# 	if user.is_2fa_enabled:
-			# 		# User has 2FA enabled, redirect to 2FA verification page
-			# 		return redirect('verify_2fa')
+		is_2fa_verified = request.session.get('is_2fa_verified', False)
+
+		print(f"2FA verified: {is_2fa_verified}")
+
+		if user_info and is_2fa_verified:
 			return view_func(request, *args, **kwargs)
 		else:
 			print("not authenticated")
-			# User is not authenticated, redirect to the login page
 			return redirect('login')
 	return wrapper
 
+def login(request):
+	user_info = request.session.get('user_info')
+	is_2fa_verified = request.session.get('is_2fa_verified', False)
+	if user_info and is_2fa_verified:
+		return redirect('home')
+	print("Login view rendering login.html")
+	return render(request, 'login.html', {'user_info': user_info, 'otp_required': False})
+
+@authenticated_user
+def home(request):
+    context = organizer(request)
+    return render(request, 'base.html', context)
+
+
 def organizer(request):
 	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-	print(f"user infooooo{profile}")
 	if request.method == 'POST':
 		is_2fa_enabled_value = request.POST.get('is_2fa_enabled') == 'enable'
 		profile.is_2fa_enabled = is_2fa_enabled_value
@@ -65,23 +75,6 @@ def stats(request):
 
 def base(request):
 	return render(request, 'base.html')
-
-def login(request):
-	# Check if the user is already authenticated
-	if request.user.is_authenticated:
-		return redirect('/home')
-	user_info = request.session.get('user_info')
-	if user_info:
-		# If already authenticated, redirect to home or dashboard
-		return redirect('home')
-	return render(request, 'login.html' )
-
-    # Your login logic goes here...
-    # If the login is successful and the user is authenticated:
-    # Set the user_info in the session
-    # request.session['user_info'] = user_info  # Replace with your authenticated user info
-
-    # Then redirect to home or dashboard
 
 @authenticated_user
 def index(request):
@@ -144,19 +137,16 @@ def authorize(request):
 
     return redirect('/home/')
 
-@authenticated_user
-def home(request):
-	context = organizer(request)
-	return render(request, 'base.html', context)
 
 def logout_view(request):
-    logout(request)
-    response = redirect('login')  # Redirect to login page after logout
-    response.delete_cookie('sessionid')  # Delete sessionid cookie
-    response.delete_cookie('csrftoken')  # Delete csrftoken cookie
-    request.session.flush()
-    request.session.clear()  # Clear session data
-    return response
+	logout(request)
+	response = redirect('login')  # Redirect to login page after logout
+	response.delete_cookie('sessionid')  # Delete sessionid cookie
+	response.delete_cookie('csrftoken')  # Delete csrftoken cookie
+	request.session.flush()
+	request.session.clear()  # Clear session data
+	request.session['is_2fa_verified'] = False
+	return response
 
 @authenticated_user
 def tournament(request):
@@ -222,41 +212,6 @@ def edit(request):
 	return render(request, 'base.html', context)
 
 
-
-# def verify_2fa(request):
-# 	if request.method == 'POST':
-# 		if 'user_info' in request.session:
-# 			# user_instance, created = User.objects.get_or_create(username=request.session['user_info'].get('login'))
-# 			user_info = request.session.get('user_info')
-# 			user = user_profile.objects.get(login=user_info.get('login'))
-# 			otp = request.POST.get('otp')
-# 			print (f"otp is {otp}")
-
-# 			try:
-# 				totp_device = TOTPDevice.objects.filter(user=user.user, confirmed=True).first()
-# 				print(f"totp_device: {totp_device}")
-# 				print(f"verify_token: {totp_device.verify_token(otp) if totp_device else None}")
-
-# 				if totp_device and totp_device.verify_token(otp):
-# 					request.session['user_info'] = user_info
-# 					login(request, user_instance)
-# 					messages.success(request, 'Two-Factor Authentication успешно подтверждена.')
-# 					return redirect('home')
-# 				else:
-# 					messages.error(request, 'Uncorect.')
-# 					return HttpResponse('google.com')
-# 			except TOTPDevice.DoesNotExist:
-# 				messages.error(request, 'You dont have Two-Factor Authentication.')
-# 				return redirect('home')
-# 			except Exception as e:
-# 				print(f"Exception: {str(e)}")
-# 				return HttpResponseServerError("Internal Server Error ---->")
-# 		else:
-# 			messages.error(request, 'Session data missing. Please log in again.')
-# 			return render(request, 'login.html')
-# 	else:
-# 		return render(request, 'error.html', {'error': 'Invalid request method'})
-
 def verify_2fa(request):
 	if request.method == 'POST':
 		otp = request.POST.get('otp')
@@ -277,6 +232,8 @@ def verify_2fa(request):
 
 					del request.session['otp_secret_key']
 					del request.session['otp_valid_until']
+
+					request.session['is_2fa_verified'] = True
 
 					return redirect('home')
 				else:
