@@ -61,13 +61,11 @@
 				const edit_content = `{% include 'edit.html' %}`;
 				contentContainer.innerHTML = edit_content;
 				return;
-			} else if (lastPart === 'stats') {
-				const stats_content = `{% include 'stats.html' %}`;
-				contentContainer.innerHTML = stats_content;
+			} else if (lastPart === 'pong') {
+				openMultiWindow();
 				return;
-			} else if (lastPart == 'friends') {
-				const friends_content = `{% include 'friends.html' %}`;
-				contentContainer.innerHTML = friends_content;
+			} else if (lastPart == 'doubles') {
+				openMulti4Window();
 				return;
 			} else if(lastPart == 'logout' || lastPart == 'login')
 			{
@@ -137,13 +135,13 @@
 		} else if (initialUrl.endsWith('/edit/') || initialUrl.endsWith('/edit')) {
 			const edit_content = `{% include 'edit.html' %}`;
 			contentContainer.innerHTML = edit_content;
-		} else if (initialUrl.endsWith('/stats/') || initialUrl.endsWith('/stats')) {
-			const stats_content = `{% include 'stats.html' %}`;
-			contentContainer.innerHTML = stats_content;
-		} else if (initialUrl.endsWith('/friends/') || initialUrl.endsWith('/friends')) {
-			const friends_content = `{% include 'friends.html' %}`;
-			contentContainer.innerHTML = friends_content;
-		} else if (initialUrl.endsWith('/logout/') || initialUrl.endsWith('/logout')) {
+		} else if(initialUrl.endsWith('/pong/') || initialUrl.endsWith('/pong')) {
+			event.preventDefault();
+			openMultiWindow();
+		} else if (initialUrl.endsWith('/doubles/') || initialUrl.endsWith('/doubles')){
+			event.preventDefault();
+			openMulti4Window();
+	    } else if (initialUrl.endsWith('/logout/') || initialUrl.endsWith('/logout')) {
 			refreshFlag = false;
 			setTimeout(function(){
 				location.reload();
@@ -223,30 +221,34 @@
         gameWindow.focus();
     }
 
-	async function openMulti4Window() {
-        // Perform a fetch request to the 'pong' URL
-        const response = await fetch('{% url 'doubles' %}', {
-            method: 'GET', // or 'POST' if your view expects a POST request
-            headers: {
-                'Content-Type': 'application/json',
-                // Include any other headers your request needs
-            },
-            // Include body if your request method is POST
-            // body: JSON.stringify({ key: 'value' })
-        });
+	function openMulti4Window() {
 
-        if (response.ok) {
-            const data = await response.text();
-            // Process the response data as needed
-            // For example, you could open a new window with the response data
-            const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
-            multiWindow.document.write(data);
-            multiWindow.document.close(); // Ensure the document is fully written
-            multiWindow.focus();
-        } else {
-            console.error('Fetch error:', response.statusText);
-            // Handle fetch error
-        }
+		if (!document.querySelector('script[src="{% static 'doubles.js' %}"]')) {
+			const script = document.createElement('script');
+			script.src = "{% static 'doubles.js' %}";
+			document.body.appendChild(script);
+		}
+
+
+		const currentState = window.history.state;
+		if (!currentState || currentState.url !== '{% url 'doubles' %}') {
+			window.history.pushState({ url: '{% url 'doubles' %}' }, "", '{% url 'doubles' %}');
+		}
+
+        fetch('{% url 'doubles' %}', { credentials: "same-origin" })
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			return response.text();
+		})
+		.then((html) => {
+			contentContainer.innerHTML = html;
+			const script = document.createElement('script');
+			script.src = "{% static 'doubles.js' %}";
+			document.body.appendChild(script);
+		})
+		.catch((error) => console.error("Error loading content:", error));
     }
 	
 
@@ -276,30 +278,34 @@
         }
     }
 
-	async function openMultiWindow() {
-        // Perform a fetch request to the 'pong' URL
-        const response = await fetch('{% url 'pong' %}', {
-            method: 'GET', // or 'POST' if your view expects a POST request
-            headers: {
-                'Content-Type': 'application/json',
-                // Include any other headers your request needs
-            },
-            // Include body if your request method is POST
-            // body: JSON.stringify({ key: 'value' })
-        });
+	function openMultiWindow() {
 
-        if (response.ok) {
-            const data = await response.text();
-            // Process the response data as needed
-            // For example, you could open a new window with the response data
-            const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
-            multiWindow.document.write(data);
-            multiWindow.document.close(); // Ensure the document is fully written
-            multiWindow.focus();
-        } else {
-            console.error('Fetch error:', response.statusText);
-            // Handle fetch error
-        }
+		if (!document.querySelector('script[src="{% static 'pong.js' %}"]')) {
+			const script = document.createElement('script');
+			script.src = "{% static 'pong.js' %}";
+			document.body.appendChild(script);
+		}
+
+
+		const currentState = window.history.state;
+		if (!currentState || currentState.url !== '{% url 'pong' %}') {
+			window.history.pushState({ url: '{% url 'pong' %}' }, "", '{% url 'pong' %}');
+		}
+
+        fetch('{% url 'pong' %}', { credentials: "same-origin" })
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			return response.text();
+		})
+		.then((html) => {
+			contentContainer.innerHTML = html;
+			const script = document.createElement('script');
+			script.src = "{% static 'pong.js' %}";
+			document.body.appendChild(script);
+		})
+		.catch((error) => console.error("Error loading content:", error));
     }
 
 
