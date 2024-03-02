@@ -104,7 +104,9 @@
       var rightplayer;
 	  localStorage.setItem('gamesFlag', 'true');
       
-      // Get the canvas and context      
+
+    
+    // Get the canvas and context      
       const canvas = document.getElementById("game");
       const context = canvas.getContext("2d");
       const grid = 15;
@@ -184,34 +186,39 @@
         });  
 
     }
-    function addPlayer(){
-      var player_name = document.getElementById("player-name").value;
-      if(player_name.trim()!= "") {
-          var player_list = document.getElementById("player-list");
-          var new_player = document.createElement("li");
-          new_player.innerHTML = player_name;
-          player_list.appendChild(new_player);
-          document.getElementById("player-name").value = "";
-          document.getElementById("player-list").style.display = "block";
 
-          var players = JSON.parse(localStorage.getItem("players")) || [];
-          if (players.length < 8) {
-              players.push(player_name);
-              localStorage.setItem("players", JSON.stringify(players));
-          }
-          else {
-              alert("You have reached the maximum number of players allowed in a tournament");
-          }
-      }
-      else {
-          alert("Please enter a player name");
-          }
+    function addPlayer(){
+    var player_name = document.getElementById("player-name").value.trim(); // Trim whitespace
+    if(player_name !== "" && player_name.length <= 10) { // Check if not empty and length <= 10
+        var players = JSON.parse(localStorage.getItem("players")) || [];
+
+        if (players.includes(player_name)) { // Check if nickname is already in use
+            alert("\nNickname already in use.");
+        } else {
+            var player_list = document.getElementById("player-list");
+            var new_player = document.createElement("li");
+            new_player.innerHTML = player_name;
+            player_list.appendChild(new_player);
+            document.getElementById("player-name").value = "";
+            document.getElementById("player-list").style.display = "block";
+
+            if (players.length < 8) {
+                players.push(player_name);
+                localStorage.setItem("players", JSON.stringify(players));
+            } else {
+                alert("\nYou have reached the maximum number of players allowed in a tournament");
+            }
+        }
+    } else {
+        alert("\nPlease enter a player name, 1 to 10 characters long.");
     }
+}
+
     
     function startTournament(){
         var players = JSON.parse(localStorage.getItem("players")) || [];
         if (players.length < 2){
-            alert("You need at least 2 players to start a tournament");
+            alert("\nYou need at least 2 players to start a tournament");
         }
         else {
             players = players.sort(() => Math.random() - 0.5);
@@ -234,7 +241,7 @@
                 new_match.innerHTML = match;
                 match_list.appendChild(new_match);
             });
-            alert("tornnament starts now !! \n" + matches[0]);            
+            alert("\nReady?\nTournament starts now !! \n" + matches[0]);            
             leftplayer = players[0];
             rightplayer = players[1];
 
@@ -258,7 +265,7 @@
             }
             
             // gameOver();           
-            alert("Game Over." + winner + " Wins!\n" + loser + " Scores: " + loser_score + "\n" +  winner +" Scores: " + winner_score);
+            alert("\nGame Over.\n" + winner + " Wins!\n" + loser + " had scored: " + loser_score + "\n" +  winner +" had scored: " + winner_score);
             players.shift();
             players.shift();
             players.push(winner);
@@ -266,13 +273,13 @@
             localStorage.setItem("matches", JSON.stringify(matches))
             localStorage.setItem("players", JSON.stringify(players));            
             if (players.length == 1){
-              alert("Tournament Over. " + winner + " Wins!");
+              alert("\nTournament Over! \n\n" + winner + " is the Winner !!");
               localStorage.removeItem("players");
               localStorage.removeItem("matches");
             }
             else{
               display_matches();
-              alert("Next Match: " + players[0] + " vs " + players[1] );
+              alert("\nNext Match: " + players[0] + " vs " + players[1] );
               rp_count  = 0;
               lp_count = 0;
               leftplayer = players[0];
@@ -394,6 +401,7 @@
         }
 
         // Text color, size and font
+        context.textAlign = "center";
         context.fillStyle = "#ff00ff" 
         context.font = "bold 20pt courier new";
 
