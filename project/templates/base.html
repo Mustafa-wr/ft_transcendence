@@ -242,6 +242,7 @@
             const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
             multiWindow.document.write(data);
             multiWindow.document.close(); // Ensure the document is fully written
+			multiWindow.location.href = '{% url 'doubles' %}';
             multiWindow.focus();
         } else {
             console.error('Fetch error:', response.statusText);
@@ -269,6 +270,7 @@
             const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
             multiWindow.document.write(data);
             multiWindow.document.close(); // Ensure the document is fully written
+			multiWindow.location.href = '{% url 'tournament' %}';
             multiWindow.focus();
         } else {
             console.error('Fetch error:', response.statusText);
@@ -295,6 +297,7 @@
             const multiWindow = window.open('', 'Multiplayer Window', 'width=800, height=600');
             multiWindow.document.write(data);
             multiWindow.document.close(); // Ensure the document is fully written
+			multiWindow.location.href = '{% url 'pong' %}';
             multiWindow.focus();
         } else {
             console.error('Fetch error:', response.statusText);
