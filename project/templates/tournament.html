@@ -4,86 +4,100 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tournament</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
   <style>
-    * {
-      box-sizing: border-box
+    
+    .selector-for-some-widget {
+        box-sizing: content-box;
     }
 
     body {
-      height: 100%;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-image: linear-gradient(to bottom right, #4a9ee7 , #ff00ff);
-      background-repeat: no-repeat; 
+      height: 100vh;
+      background-color:violet;
     }
 
-    .flex-container {
-      display: flex;
-      width: 25%;
-      /* flex-wrap: wrap; */
-      flex-flow: column wrap;
-      justify-content: space-around;
-      align-items: left;
-      margin: 0;
-      padding: 0;
-    }
-    
-   /* .tournament-players,
-    .upcoming-matches {
-      text-align: left;
-      width: 20%; 
-      padding: 0%; 
-      align-items: left;
-    } */
-    
-    canvas {  
+    canvas {
       outline-color: rgb(85, 24, 182);
-      outline-style: solid;         
-      display: block;
-      margin: 20px;
-      padding:30px;
-      width:75%;
-      max-width: 1050px;
-      height: 100%;
-      max-height: 750px;
-      /* height: auto; */
+      outline-style: solid;    
+      margin: 0;
+      padding: 0px;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      max-width: 100%;
+      height: calc(100vh - 160px);
+      max-height: 100%;
       background: black;
     }
-    /* @media (min-width: 768px) {
-      .tournament-players, 
-      .upcoming-matches {
-        width: 100%;
-        max-width: 50%; */
-      /* }
+
+    custom {
+      height: 80px;
     }
-      */
+
+    .divider {
+    width: 100%;
+    margin-top: 5px; /* Adjust margin as needed */
+    margin-bottom: 5px; /* Adjust margin as needed */
+  }
+
     #player-list {
       display: none;
     }
     
-    /*.upcoming-matches {
-      display: none;
-    }*/
   </style>
 </head>
 <body>
-  <div class="flex-container">
-      <div class="tournament-players">
-          <h2>Tournament Players List</h2>
+  <div class="container-fluid d-flex align-items-center justify-content-center">
+      <div class="tournament-players ps-2">
+          <h2 class="display-6 pt-5">Players List</h2>
           <ul id="player-list"></ul>
-          <input type="text" id="player-name" placeholder="Register player">
-          <button id="add-player" onclick="addPlayer()">Add player</button>
-          <button id="start-tournament" onclick="startTournament()">Start Tournament</button>
+          <input type="text" id="player-name" class="form-control" placeholder="nickname">
+          <button id="add-player" onclick="addPlayer()" class="btn btn-light text-start">Add Player</button><br><br>
+          <button id="start-tournament" onclick="startTournament()" class="btn btn-info text-start">Start Tournament</button><br>
+          <div class="upcoming-matches">
+            <p>Upcoming Matches...</p>
+            <ul id="match-list"></ul>
+          </div>
       </div>
-      <div class="upcoming-matches">
-          <h2>Upcoming Matches</h2>
-          <ul id="match-list"></ul>
-      </div>
+
+      <div class="bigCanvas container-fluid text-center" id="gameScreenCanvas" style="display: none;">
+        <div class="row py-4 text-center" id="custom">
+          <div class="col" id="paddleSpeedButton">
+            <label for="paddleSpeed">Paddle Speed: </label><br>
+            <input type="range" id="paddleSpeed" min="1" max="10" value="7">
+          </div>
+          <div class="col" id="ballSpeedButton">
+            <label for="ballSpeed">Ball Speed: </label><br>
+            <input type="range" id="ballSpeed" min="1" max="10" value="7">
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-3 col-sm-1 d-flex justify-content-center align-items-center text-center ">
+              <div class="btn-group-vertical" style="width: 30px; height: 100px; " id="leftButtons">
+                <button id="leftTopButton" class="btn btn-info btn-lg p-0 m-0 btn-control">w</button>
+                <div class="divider"></div>
+                <button id="leftDownButton" class="btn btn-info btn-lg p-0 m-0 btn-control">s</button>
+              </div>
+            </div>
+            <div class="col-6 col-sm-10 d-flex justify-content-center align-items-center text-center">
+              <canvas width="1050" height="750" id="game" ></canvas>
+            </div>
+            <div class="col-3 col-sm-1 d-flex justify-content-center align-items-center text-center">
+              <div class="btn-group-vertical" style="width: 30px; height: 100px; " id="rightButtons" >       
+              <button id="rightTopButton" class="btn btn-info btn-lg p-0 m-0 btn-control">↑</button>
+              <div class="divider"></div>
+              <button id="rightDownButton" class="btn btn-info btn-lg p-0 m-0 btn-control">↓</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
-  <canvas width="750" height="500" id="game"></canvas>
-        
+
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 <script>
       var animationFrameID;
       var leftplayer;
@@ -381,11 +395,12 @@
 
         // Text color, size and font
         context.fillStyle = "#ff00ff" 
-        context.font = "20pt Arial";
+        context.font = "bold 20pt courier new";
 
         // Display player scores
-        context.fillText( leftplayer + ": " + lp_count, 50, 50);
-        context.fillText(rightplayer + " : " + rp_count, 450, 50);
+        context.fillText( leftplayer + ": " + lp_count, canvas.width /4, 50);
+        context.fillText(rightplayer + " : " + rp_count, canvas.width *3/4, 50);
+
         // Monitor key presses
         document.addEventListener("keydown", function (e) {
           // If the up arrow key is pressed,
@@ -418,6 +433,9 @@
       animationFrameID = requestAnimationFrame(loop);
           // localStorage.removeItem("players");
       }
+      // Make the buttons visible when the tournament starts, cris included these 3 lines for styling
+      document.getElementById("gameScreenCanvas").style.display = "inline";
+
     }
 
 // Check whether two objects with known coordinates intersect or not
