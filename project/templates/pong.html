@@ -14,7 +14,13 @@
 
     body {
       height: 100vh;
-      background-color:violet;   
+    }
+
+    .bg-image {
+      background-image: linear-gradient(to right, #7c01ac , #d203d2); 
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      min-height: 100%;
     }
 
     canvas {
@@ -45,7 +51,7 @@
 </head>
 <body>
   <!-- The games customs ball speed and paddle speed -->
-  <div class="container-fluid text-center">
+  <div class="container-fluid text-center bg-image">
     <div class="row py-4" id="custom">
       <div class="col" id="paddleSpeedButton">
         <label for="paddleSpeed">Paddle Speed: </label><br>

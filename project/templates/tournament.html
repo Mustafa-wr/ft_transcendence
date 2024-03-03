@@ -14,7 +14,13 @@
 
     body {
       height: 100vh;
-      background-color:violet;
+    }
+
+    .bg-image {
+      background-image: linear-gradient(to right, #7c01ac , #d203d2); 
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      min-height: 100%;
     }
 
     canvas {
@@ -48,53 +54,53 @@
   </style>
 </head>
 <body>
-  <div class="container-fluid d-flex align-items-center justify-content-center">
-      <div class="tournament-players ps-2">
+  <div class="container-fluid d-flex align-items-start justify-content-center bg-image">
+      <div class="tournament-players p-0">
           <h2 class="display-6 pt-5">Players List</h2>
           <ul id="player-list"></ul>
           <input type="text" id="player-name" class="form-control" placeholder="nickname">
           <button id="add-player" onclick="addPlayer()" class="btn btn-light text-start">Add Player</button><br><br>
           <button id="start-tournament" onclick="startTournament()" class="btn btn-info text-start">Start Tournament</button><br>
-          <div class="upcoming-matches">
-            <p>Upcoming Matches...</p>
-            <ul id="match-list"></ul>
-          </div>
-      </div>
-
-      <div class="bigCanvas container-fluid text-center" id="gameScreenCanvas" style="display: none;">
-        <div class="row py-4 text-center" id="custom">
-          <div class="col" id="paddleSpeedButton">
+        </div>
+        
+        <div class="bigCanvas container-fluid text-center" id="gameScreenCanvas" style="display: none;">
+          <div class="row py-4 text-center" id="custom">
+            <div class="col col-md-5 justify-content-center id="paddleSpeedButton">
             <label for="paddleSpeed">Paddle Speed: </label><br>
             <input type="range" id="paddleSpeed" min="1" max="10" value="7">
           </div>
-          <div class="col" id="ballSpeedButton">
+          <div class="col col-md-5 justify-content-center id="ballSpeedButton">
             <label for="ballSpeed">Ball Speed: </label><br>
             <input type="range" id="ballSpeed" min="1" max="10" value="7">
           </div>
         </div>
-        <div class="container">
+        <div class="container-fluid">
           <div class="row">
-            <div class="col-3 col-sm-1 d-flex justify-content-center align-items-center text-center ">
+            <div class="col-12 col-md-2 order-last justify-content-start align-items-center upcoming-matches">
+              <br><p style="font-weight: bold;">Upcoming Matches:</p>
+              <p id="match-list"></p>
+            </div>
+            <div class="col-3 col-md-1 d-flex justify-content-end align-items-center text-center ">
               <div class="btn-group-vertical" style="width: 30px; height: 100px; " id="leftButtons">
                 <button id="leftTopButton" class="btn btn-info btn-lg p-0 m-0 btn-control">w</button>
                 <div class="divider"></div>
                 <button id="leftDownButton" class="btn btn-info btn-lg p-0 m-0 btn-control">s</button>
               </div>
             </div>
-            <div class="col-6 col-sm-10 d-flex justify-content-center align-items-center text-center">
+            <div class="col-6 col-md-8 d-flex justify-content-center align-items-center text-center">
               <canvas width="1050" height="750" id="game" ></canvas>
             </div>
-            <div class="col-3 col-sm-1 d-flex justify-content-center align-items-center text-center">
+            <div class="col-3 col-md-1 d-flex justify-content-start align-items-center text-center">
               <div class="btn-group-vertical" style="width: 30px; height: 100px; " id="rightButtons" >       
-              <button id="rightTopButton" class="btn btn-info btn-lg p-0 m-0 btn-control">↑</button>
-              <div class="divider"></div>
-              <button id="rightDownButton" class="btn btn-info btn-lg p-0 m-0 btn-control">↓</button>
+                <button id="rightTopButton" class="btn btn-info btn-lg p-0 m-0 btn-control">↑</button>
+                <div class="divider"></div>
+                <button id="rightDownButton" class="btn btn-info btn-lg p-0 m-0 btn-control">↓</button>
               </div>
             </div>
           </div>
         </div>
-    </div>
-
+      </div>
+      
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
@@ -188,26 +194,27 @@
     }
 
     function addPlayer(){
-    var player_name = document.getElementById("player-name").value.trim(); // Trim whitespace
-    if(player_name !== "" && player_name.length <= 10) { // Check if not empty and length <= 10
+    var player_name = document.getElementById("player-name").value.trim();
+    var player_list = document.getElementById("player-list");
+    
+    if (player_name !== "" && player_name.length <= 10) {
         var players = JSON.parse(localStorage.getItem("players")) || [];
 
-        if (players.includes(player_name)) { // Check if nickname is already in use
-            alert("\nNickname already in use.");
-        } else {
-            var player_list = document.getElementById("player-list");
-            var new_player = document.createElement("li");
-            new_player.innerHTML = player_name;
-            player_list.appendChild(new_player);
-            document.getElementById("player-name").value = "";
-            document.getElementById("player-list").style.display = "block";
-
+        if (!players.includes(player_name)) {
             if (players.length < 8) {
+                var new_player = document.createElement("li");
+                new_player.textContent = player_name;
+                player_list.appendChild(new_player);
+                document.getElementById("player-name").value = "";
+                player_list.style.display = "block";
+
                 players.push(player_name);
                 localStorage.setItem("players", JSON.stringify(players));
             } else {
                 alert("\nYou have reached the maximum number of players allowed in a tournament");
             }
+        } else {
+            alert("\nNickname already in use.");
         }
     } else {
         alert("\nPlease enter a player name, 1 to 10 characters long.");
@@ -219,6 +226,7 @@
         var players = JSON.parse(localStorage.getItem("players")) || [];
         if (players.length < 2){
             alert("\nYou need at least 2 players to start a tournament");
+            return;
         }
         else {
             players = players.sort(() => Math.random() - 0.5);
