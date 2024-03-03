@@ -24,10 +24,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 import pyotp
 from datetime import datetime, timedelta
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
 import requests
 import json
 
+@permission_classes([IsAuthenticated])
 def authenticated_user(view_func):
     def wrapper(request, *args, **kwargs):
         user_info = request.session.get('user_info')
@@ -50,6 +53,7 @@ def login(request):
 	return render(request, 'login.html', {'user_info': user_info, 'otp_required': False})
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def home(request):
     user_info = request.session.get('user_info')
     is_2fa_verified = request.session.get('is_2fa_verified', False)
@@ -59,7 +63,6 @@ def home(request):
 
     context = organizer(request)
     return render(request, 'base.html', context)
-
 
 def organizer(request):
 	profile = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
@@ -71,25 +74,29 @@ def organizer(request):
 	return {
 		'user': profile,
 	}
-
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def stats(request):
 	is_home_page = False
 	context = organizer(request)
 	return render(request, 'base.html', context)
 
+@permission_classes([IsAuthenticated])
 def base(request):
 	return render(request, 'base.html')
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def index(request):
     return render(request, 'index.html')
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def doubles(request):
 	return render(request, 'doubles.html')
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def game(request):
     is_home_page = False
     is_game = True
@@ -101,6 +108,7 @@ def game(request):
 # 	return render(request, 'pong.html', {'user': user})
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def pong(request):
 	return render(request, 'pong.html')
 		# if (Match_maker.objects.all().count() == 0):
@@ -142,8 +150,8 @@ def authorize(request):
 
     return redirect('/home/')
 
-
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def logout_view(request):
 	logout(request)
 	response = redirect('login')  # Redirect to login page after logout
@@ -155,10 +163,12 @@ def logout_view(request):
 	return response
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def tournament(request):
 	return render(request, 'tournament.html')
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def friends(request):
 	is_home_page = False
 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
@@ -201,6 +211,7 @@ def friends(request):
 
 
 @authenticated_user
+@permission_classes([IsAuthenticated])
 def edit(request):
 	is_game = False
 	is_home_page = False
@@ -222,6 +233,7 @@ def edit(request):
 		'user': profile,
 	}
 	return render(request, 'base.html', context)
+
 
 
 def verify_2fa(request):

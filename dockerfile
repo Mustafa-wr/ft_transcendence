@@ -18,7 +18,8 @@ RUN pip install --upgrade pip \
     && pip install djangorestframework\
     && pip install django-otp \
     && pip install pyotp \
-    && pip install djangorestframework-simplejwt
+    && pip install rest_framework_simplejwt \
+    && pip install djangorestframework-simplejwt[crypto]
 
 
 

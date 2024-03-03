@@ -76,7 +76,6 @@ def callback(request):
                 request.session['access_token'] = access_token
 
                 if not user_profile.objects.filter(login=user_info.get('login')).exists():
-                    # Your existing code for creating user_profile
                     user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
                     user_profile.objects.create(
                         user=user_instance,

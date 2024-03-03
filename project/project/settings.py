@@ -78,13 +78,22 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=14),
     'SLIDING_TOKEN_LIFETIME': timedelta(days=14),
-    # other settings...
 }
 
 CORS_ALLOWED_ORIGINS = [
     "https://127.0.0.1:8000",
     "http://127.0.0.1:8000",
 	"http://localhost:8000",
+]
+
+CORS_ALLOWED_HEADERS = [
+    'Accept',
+    'Accept-Charset',
+    'Accept-Encoding',
+    'Authorization',
+    'Content-Type',
+    'Origin',
+    'X-Requested-With',
 ]
 
 ROOT_URLCONF = 'project.urls'
