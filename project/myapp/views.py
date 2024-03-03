@@ -36,7 +36,7 @@ def authenticated_user(view_func):
         user_info = request.session.get('user_info')
         is_2fa_verified = request.session.get('is_2fa_verified', False)
 
-        if user_info and (is_2fa_verified):
+        if user_info and is_2fa_verified:
             return view_func(request, *args, **kwargs)
         else:
             print("not authenticated")

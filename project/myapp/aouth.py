@@ -36,77 +36,78 @@ def create_otp(request):
     
 
 def callback(request):
-    if 'code' in request.GET:
-        code = request.GET.get('code')
-        print(f"Received authorization code: {code}")
+	if 'code' in request.GET:
+		code = request.GET.get('code')
+		print(f"Received authorization code: {code}")
 
-        token_url = os.environ.get('TOKEN_URL')
-        client_id = os.environ.get('CLIENT_ID')
-        client_secret = os.environ.get('CLIENT_SECRET')
-        redirect_uri = os.environ.get('REDIRECT_URI')
+		token_url = os.environ.get('TOKEN_URL')
+		client_id = os.environ.get('CLIENT_ID')
+		client_secret = os.environ.get('CLIENT_SECRET')
+		redirect_uri = os.environ.get('REDIRECT_URI')
 
-        data = {
-            'grant_type': 'authorization_code',
-            'client_id': client_id,
-            'client_secret': client_secret,
-            'code': code,
-            'redirect_uri': redirect_uri,
-        }
+		data = {
+			'grant_type': 'authorization_code',
+			'client_id': client_id,
+			'client_secret': client_secret,
+			'code': code,
+			'redirect_uri': redirect_uri,
+		}
 
-        try:
-            response = requests.post(token_url, data=data)
-            response.raise_for_status()
-            token_data = response.json()
+		try:
+			response = requests.post(token_url, data=data)
+			response.raise_for_status()
+			token_data = response.json()
 
-            if 'access_token' in token_data:
-                token = token_data['access_token']
+			if 'access_token' in token_data:
+				token = token_data['access_token']
 
-                user_info_url = os.environ.get('USER_INFO_URL')
-                headers = {'Authorization': f'Bearer {token}'}
-                user_response = requests.get(user_info_url, headers=headers)
-                user_response.raise_for_status()
-                user_info = user_response.json()
+				user_info_url = os.environ.get('USER_INFO_URL')
+				headers = {'Authorization': f'Bearer {token}'}
+				user_response = requests.get(user_info_url, headers=headers)
+				user_response.raise_for_status()
+				user_info = user_response.json()
 
-                user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
+				user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
 
-                refresh = RefreshToken.for_user(user_instance)
-                access_token = str(refresh.access_token)
-                print(f' ACCESS TOKEN JWT {access_token}')
+				refresh = RefreshToken.for_user(user_instance)
+				access_token = str(refresh.access_token)
+				print(f' ACCESS TOKEN JWT {access_token}')
 
-                request.session['access_token'] = access_token
+				request.session['access_token'] = access_token
+				request.session['is_2fa_verified'] = True
 
-                if not user_profile.objects.filter(login=user_info.get('login')).exists():
-                    user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
-                    user_profile.objects.create(
-                        user=user_instance,
-                        login=user_info.get('login'),
-                        nickname=user_info.get('displayname'),
-                        email=user_info.get('email'),
-                    ).save()
-                    request.session['user_info'] = user_info
-                    return render(request, 'home.html', {'user_info': user_info})
+				if not user_profile.objects.filter(login=user_info.get('login')).exists():
+					user_instance, created = User.objects.get_or_create(username=user_info.get('login'))
+					user_profile.objects.create(
+						user=user_instance,
+						login=user_info.get('login'),
+						nickname=user_info.get('displayname'),
+						email=user_info.get('email'),
+					).save()
+					request.session['user_info'] = user_info
+					return render(request, 'home.html', {'user_info': user_info})
 
-                user = user_profile.objects.get(login=user_info.get('login'))
+				user = user_profile.objects.get(login=user_info.get('login'))
 
-                if user.is_2fa_enabled:
-                    
-                    otp = create_otp(request)
-                    
-                    send_message_to_email(user, otp)
-                    
-                    request.session['is_2fa_verified'] = False
-                    
-                    request.session['user_info'] = user_info
-                    
-                    return render(request, 'login.html', {'user_info': user_info, 'otp_required': True})
-                else:
-                    request.session['is_2fa_verified'] = True
-                    request.session['user_info'] = user_info
-                    login(request, user.user)
-                    return render(request, 'home.html', {'user_info': user_info})
-            else:
-                return render(request, 'error.html', {'error': 'Access token not found in the response'})
-        except requests.exceptions.RequestException as e:
-            return HttpResponseServerError(f"An error occurred: {e}")
-    else:
-        return render(request, 'error.html', {'error': 'Authorization code is missing'})
+				if user.is_2fa_enabled:
+					
+					otp = create_otp(request)
+					
+					send_message_to_email(user, otp)
+					
+					request.session['is_2fa_verified'] = False
+					
+					request.session['user_info'] = user_info
+					
+					return render(request, 'login.html', {'user_info': user_info, 'otp_required': True})
+				else:
+					request.session['is_2fa_verified'] = True
+					request.session['user_info'] = user_info
+					login(request, user.user)
+					return render(request, 'home.html', {'user_info': user_info})
+			else:
+				return render(request, 'error.html', {'error': 'Access token not found in the response'})
+		except requests.exceptions.RequestException as e:
+			return HttpResponseServerError(f"An error occurred: {e}")
+	else:
+		return render(request, 'error.html', {'error': 'Authorization code is missing'})
