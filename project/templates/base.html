@@ -63,7 +63,10 @@
 				contentContainer.innerHTML = edit_content;
 				optionContent = document.getElementById('2faForm');
 				console.log(val);
-				optionContent.value = val;
+				if(val != null)
+					optionContent.value = val;
+				else
+					optionContent.value = 'enable';
 				return;
 			} else if (lastPart === 'stats') {
 				const stats_content = `{% include 'stats.html' %}`;
@@ -144,7 +147,10 @@
 			contentContainer.innerHTML = edit_content;
 			optionContent = document.getElementById('2faForm');
 			console.log(val);
-			optionContent.value = val;
+			if(val != null)
+				optionContent.value = val;
+			else
+				optionContent.value = 'enable';
 		} else if (initialUrl.endsWith('/stats/') || initialUrl.endsWith('/stats')) {
 			const stats_content = `{% include 'stats.html' %}`;
 			contentContainer.innerHTML = stats_content;
