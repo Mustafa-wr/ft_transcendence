@@ -221,6 +221,50 @@
     }
 }
 
+
+
+		const leftTopButton = document.getElementById('leftTopButton');
+		const leftDownButton = document.getElementById('leftDownButton');
+		const rightTopButton = document.getElementById('rightTopButton');
+		const rightDownButton = document.getElementById('rightDownButton');
+
+		function startMovingLeft() {
+		leftPaddle.dy = -paddleSpeed;
+		}
+
+		function startMovingRight() {
+		leftPaddle.dy = paddleSpeed;
+		}
+
+		function startMovingUp() {
+		rightPaddle.dy = -paddleSpeed;
+		}
+
+		function startMovingDown() {
+		rightPaddle.dy = paddleSpeed;
+		}
+
+		function stopMoving() {
+		leftPaddle.dy = 0;
+		rightPaddle.dy = 0;
+		}
+
+		leftTopButton.addEventListener('mousedown', startMovingLeft);
+		leftTopButton.addEventListener('touchstart', startMovingLeft);
+
+		leftDownButton.addEventListener('mousedown', startMovingRight);
+		leftDownButton.addEventListener('touchstart', startMovingRight);
+
+		rightTopButton.addEventListener('mousedown', startMovingUp);
+		rightTopButton.addEventListener('touchstart', startMovingUp);
+
+		rightDownButton.addEventListener('mousedown', startMovingDown);
+		rightDownButton.addEventListener('touchstart', startMovingDown);
+
+
+		document.addEventListener('mouseup', stopMoving);
+		document.addEventListener('touchend', stopMoving);
+
     
     function startTournament(){
         var players = JSON.parse(localStorage.getItem("players")) || [];

@@ -11,14 +11,8 @@ urlpatterns = [
     path('pong', views.pong, name='pong'),
     path('profile/', views.edit, name='edit'),
     path('profile/edit', views.edit, name='edit'),
-    path('profile/stats', views.stats, name='stats'),
-    path('profile/friends', views.friends, name='friends'),
     path('logout/', views.logout_view, name='logout_view'),
     path('verify_2fa/', views.verify_2fa, name='verify_2fa'),
 	path('doubles/', views.doubles, name='doubles'),
 	path('tournament/', views.tournament, name='tournament'),
 ]
-
-
-
-

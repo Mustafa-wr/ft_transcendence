@@ -29,6 +29,7 @@ from rest_framework.decorators import permission_classes
 
 import requests
 import json
+import os
 
 @permission_classes([IsAuthenticated])
 def authenticated_user(view_func):
@@ -74,21 +75,7 @@ def organizer(request):
 	return {
 		'user': profile,
 	}
-@authenticated_user
-@permission_classes([IsAuthenticated])
-def stats(request):
-	is_home_page = False
-	context = organizer(request)
-	return render(request, 'base.html', context)
 
-@permission_classes([IsAuthenticated])
-def base(request):
-	return render(request, 'base.html')
-
-@authenticated_user
-@permission_classes([IsAuthenticated])
-def index(request):
-    return render(request, 'index.html')
 
 @authenticated_user
 @permission_classes([IsAuthenticated])
@@ -102,48 +89,13 @@ def game(request):
     is_game = True
     return render(request, 'game.html', {'is_home_page': is_home_page, 'is_game': is_game})
 
-# @authenticated_user
-# def pong(request):
-# 	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-# 	return render(request, 'pong.html', {'user': user})
-
 @authenticated_user
 @permission_classes([IsAuthenticated])
 def pong(request):
 	return render(request, 'pong.html')
-		# if (Match_maker.objects.all().count() == 0):
-		# 		Match_maker.objects.create()
-		# if request.method == 'GET':
-		# 	match_maker = Match_maker.objects.first()
-		# 	match_maker.players.remove(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
-		# 	match_maker.players.add(user_profile.objects.filter(login=request.session['user_info'].get('login')).first())
-		# 	if (match_maker.players.count() > 1):
-		# 		game_instance = Game()
-		# 		game_instance.player_1 = match_maker.players.all().first()
-		# 		match_maker.players.remove(game_instance.player_1)
-		# 		game_instance.player_2 = match_maker.players.all().first()
-		# 		match_maker.players.remove(game_instance.player_2)
-		# 		template = loader.get_template('pong.html')
-		# 		context = {
-		# 			'game': game_instance,
-		# 		}
-		# 		return HttpResponse(template.render(context, request))
-		# 	else:
-		# 		return render(request, 'no_players.html')
-		# else:
-		# 	if request.method == 'POST':
-		# 		data = json.loads(request.body)
-		# 		match_record_instance = match_record()
-		# 		match_record_instance.match_winner = user_profile.objects.filter(login=data['match_winner']).first()
-		# 		match_record_instance.match_loser = user_profile.objects.filter(login=data['match_loser']).first()
-		# 		match_record_instance.winner_score = data['winner_score']
-		# 		match_record_instance.loser_score = data['loser_score']
-		# 		match_record_instance.save()
-		# 		# return JsonResponse({'status': 'success'})
-		# 	return redirect('home')
 
 def authorize(request):
-    client_id = "client_id=u-s4t2ud-53a3167e09d6ecdd47402154ef121f68ea10b4ec95f2cb099cf3d92e56a0c822"
+    client_id = os.environ.get('CLIENT_ID2')
     redirect_uri = f"https://{request.get_host()}/callback"
 
     authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri=https://127.0.0.1:8000/callback&response_type=code"
@@ -166,48 +118,6 @@ def logout_view(request):
 @permission_classes([IsAuthenticated])
 def tournament(request):
 	return render(request, 'tournament.html')
-
-@authenticated_user
-@permission_classes([IsAuthenticated])
-def friends(request):
-	is_home_page = False
-	user = user_profile.objects.filter(login=request.session['user_info'].get('login')).first()
-	friends = user_friends.objects.filter(user=user).select_related('friend')
-	if request.method == 'POST':
-		if 'delete_friend_id' in request.POST:
-			friend_id = request.POST.get('delete_friend_id')
-			friend_to_delete = user_friends.objects.filter(id=friend_id, user=user).first()
-			if friend_to_delete:
-				friend_to_delete.delete()
-				messages.success(request, f"{friend_to_delete.friend.login} has been removed from friends.")
-			else:
-				messages.error(request, "Friend could not be found.")
-			return redirect('friends')
-		search_query = request.POST.get('search_query', '').strip()
-		if search_query:
-			potential_friend = user_profile.objects.filter(login=search_query).first()
-			if user.login == search_query:
-				messages.error(request, 'You cannot add yourself as a friend.')
-			elif potential_friend and potential_friend != user:
-				if not user_friends.objects.filter(user=user, friend=potential_friend).exists():
-					user_friends.objects.create(user=user, friend=potential_friend)
-					messages.success(request, f"{potential_friend.login} added as friend.")
-				else:
-					messages.warning(request, "Already friends.")
-			else:
-				messages.error(request, "User not found.")
-	temp = organizer(request)
-	context = {
-		'friends': friends,
-		'user': user,
-		'form': temp['form'],
-		'matches': temp['matches'],
-		'match_count': temp['match_count'],
-		'total_wins': temp['total_wins'],
-		'total_losses': temp['total_losses'],
-		'success_ratio': temp['success_ratio'],
-	}
-	return render(request, 'base.html', context)
 
 
 @authenticated_user

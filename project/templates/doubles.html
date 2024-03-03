@@ -106,44 +106,43 @@
 		var animationFrameID;
 		localStorage.setItem('gamesFlag', 'true')
       window.onload = function () {
-      // Access the game field from the document
       const canvas = document.getElementById("game");
-      // Make the field two-dimensional
+      
       const context = canvas.getContext("2d");
-      // Size of the game grid
+      
       const grid = 15;
-      // Height of the paddle
-      const paddleHeight = grid * 5; // 80
-      // Set the maximum distance the paddles can move downwards
+      
+      const paddleHeight = grid * 5; 
+      
       const TopLeftmaxPaddleY = canvas.height / 2 - paddleHeight ;
       const BottomLeftmaxPaddleY = canvas.height - grid - paddleHeight ;
 
       const TopRightmaxPaddleY = canvas.height / 2  - paddleHeight ; 
       const BottomRightmaxPaddleY = canvas.height - grid - paddleHeight ; 
 
-      // // set the maximum distance the paddles can move upwards need to define for the lower paddles
+    	
       const BottomLeftminPaddleY = canvas.height / 2  ;
       const BottomRightminPaddleY = canvas.height / 2  ;
 
-      // Paddle  and ball speed
+      
       var paddleSpeed = 6;  
       var ballSpeed = 4;
 
-      // Score
+      
       var left_score = 0;
 	  var right_score = 0;
 
-      // Activate secret level
+      
       var secret = false;
-      // Number of bounces in secret mode
+      
       var secret_count = 0;
-      // Ball color, initially white
+      
       ballColor = "white";
       
 	  const paddleSpeedInput = document.getElementById('paddleSpeed');
 		const ballSpeedInput = document.getElementById('ballSpeed');
 	  
-		// Apply customization options
+		
 		paddleSpeedInput.addEventListener('input', function () {
 		  paddleSpeed = parseInt(paddleSpeedInput.value);
 		});
@@ -160,7 +159,7 @@
 
 
 
-		  // Get the additional buttons
+		  
 		const leftTopButton2 = document.getElementById('leftTopButton2');
 		const leftDownButton2 = document.getElementById('leftDownButton2');
 		const rightTopButton2 = document.getElementById('rightTopButton2');
@@ -170,52 +169,52 @@
 		const rightTopButton = document.getElementById('rightTopButton');
 		const rightDownButton = document.getElementById('rightDownButton');
 
-		// Functions for the second set of buttons
+		
 		function startMovingLeft2() {
-		// Adjust this function based on your requirements
-		// You may want to control a different paddle, e.g., bottom left
+		
+		
 		bottomLeftPaddle.dy = -paddleSpeed;
 		}
 
 		function startMovingRight2() {
-		// Adjust this function based on your requirements
-		// You may want to control a different paddle, e.g., bottom left
+		
+		
 		bottomLeftPaddle.dy = paddleSpeed;
 		}
 
 		function startMovingUp2() {
-		// Adjust this function based on your requirements
-		// You may want to control a different paddle, e.g., bottom right
+		
+		
 		bottomRightPaddle.dy = -paddleSpeed;
 		}
 
 		function startMovingDown2() {
-			// Adjust this function based on your requirements
-			// You may want to control a different paddle, e.g., bottom right
+			
+			
 			bottomRightPaddle.dy = paddleSpeed;
 		}
 
 		function startMovingLeft() {
-			// Adjust this function based on your requirements
-			// You may want to control a different paddle, e.g., top left
+			
+			
 			topLeftPaddle.dy = -paddleSpeed;
 		}
 
 		function startMovingRight() {
-			// Adjust this function based on your requirements
-			// You may want to control a different paddle, e.g., top left
+			
+			
 			topLeftPaddle.dy = paddleSpeed;
 		}
 
 		function startMovingUp() {
-			// Adjust this function based on your requirements
-			// You may want to control a different paddle, e.g., top right
+			
+			
 			topRightPaddle.dy = -paddleSpeed;
 		}
 
 		function startMovingDown() {
-			// Adjust this function based on your requirements
-			// You may want to control a different paddle, e.g., top right
+			
+			
 			topRightPaddle.dy = paddleSpeed;
 		}
 
@@ -226,7 +225,7 @@
 			bottomRightPaddle.dy = 0;
 		}
 
-		// Add event listeners for the second set of buttons
+		
 		leftTopButton2.addEventListener('mousedown', startMovingLeft2);
 		leftTopButton2.addEventListener('touchstart', startMovingLeft2);
 
@@ -256,16 +255,16 @@
 		document.addEventListener('touchend', stopMoving);
 
       
-      // Describe the left paddles
+      
       const topLeftPaddle = {
-        // Place it in the center
+        
         x: grid * 2,
         y: (canvas.height / 4 )- paddleHeight / 2,
-        // Width - one grid cell
+        
         width: grid,
-        // Take the height from the constant
+        
         height: paddleHeight,
-        // The paddle doesn't move at the start
+        
         dy: 0,
       };
 
@@ -278,7 +277,7 @@
       };
 
 
-      // Describe the right paddles
+      
 
       const topRightPaddle = {
         x: canvas.width - grid * 3,
@@ -296,22 +295,22 @@
         dy: 0,
       };
 
-      // Describe the ball
+      
       const ball = {
-        // It appears in the center of the field
+        
         x: canvas.width / 2,
         y: canvas.height / 2,
-        // Square, the size of a grid cell
+        
         width: grid,
         height: grid,
-        // At the start, the ball isn't scored, so remove the flag indicating that the ball needs to be reintroduced to the game
+        
         resetting: false,
-        // Serve the ball to the top right corner
+        
         dx: ballSpeed,
         dy: -ballSpeed,
       };
-      // Check whether two objects with known coordinates intersect or not
-      // More details here: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+      
+      
       function collides(obj1, obj2) {
         return (
           obj1.x < obj2.x + obj2.width &&
@@ -321,17 +320,17 @@
         );
       }
 
-	//   function boundary_check(paddle, top, bottom) {
-    //     if (paddle.y < top) {
-    //       paddle.y = top;
-    //     } else if (paddle.y > bottom) {
-    //       paddle.y = bottom;
-    //     }    
-    //   }
+	
+    
+    
+    
+    
+    
+    
 
-      // Main game loop
+      
       function loop() {
-        // Clear the game field
+        
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		if (left_score == 11 || right_score == 11){
 			cancelAnimationFrame(animationFrameID);
@@ -350,12 +349,12 @@
         topRightPaddle.y += topRightPaddle.dy;
         bottomRightPaddle.y += bottomRightPaddle.dy;
 		
-        // If the left paddle tries to go beyond the game field ,
+        
         if (topLeftPaddle.y < grid) {
-          // then keep it in place
+          
           topLeftPaddle.y = grid;
         }
-        // Check the same for bottom
+        
         else if (topLeftPaddle.y > TopLeftmaxPaddleY) {
           topLeftPaddle.y = TopLeftmaxPaddleY;
         }
@@ -364,12 +363,12 @@
         else if (bottomLeftPaddle.y > BottomLeftmaxPaddleY) 
             bottomLeftPaddle.y = BottomLeftmaxPaddleY;
 
-        // If the right paddle tries to go beyond the game field       
+        
 
         if (topRightPaddle.y < grid) {
-          topRightPaddle.y = grid;                              // then keep it in place
+          topRightPaddle.y = grid;                              
         }
-        else if (topRightPaddle.y > TopRightmaxPaddleY) {       // Check the same for bottom
+        else if (topRightPaddle.y > TopRightmaxPaddleY) {       
           topRightPaddle.y = TopRightmaxPaddleY;
         }
         if (bottomRightPaddle.y < BottomRightminPaddleY) 
@@ -377,9 +376,9 @@
         else if (bottomRightPaddle.y > BottomRightmaxPaddleY) 
             bottomRightPaddle.y = BottomRightmaxPaddleY;
        
-        // Draw the paddles in white
+        
         context.fillStyle = "white";
-        // Each paddle is a rectangle
+        
         context.fillRect(
           topLeftPaddle.x,
           topLeftPaddle.y,
@@ -408,22 +407,22 @@
           bottomRightPaddle.height
         );
 
-        // If the ball was moving on the previous step, let it continue moving
+        
         ball.x += ball.dx;
         ball.y += ball.dy;
-        // // If the ball touches the bottom wall, change its direction on the Y axis
+        
         if (ball.y < grid) {
           ball.y = grid;
           ball.dy *= -1;
         }
-        // Do the same if the ball touches the top wall
+        
         else if (ball.y + grid > canvas.height - grid) {
           ball.y = canvas.height - grid * 2;
           ball.dy *= -1;
         }
-        // If the ball goes off the game field to the left or right, restart it
+        
         if ((ball.x < 0 || ball.x > canvas.width) && !ball.resetting) {
-          // Mark that the ball is restarted to avoid looping
+          
           ball.resetting = true;
 		  if (ball.x < 0){
 			right_score += 1;
@@ -433,23 +432,23 @@
 		  }          
           
           setTimeout(() => {
-            // Ball is back in the game
+            
             ball.resetting = false;
-            // Start it again from the center
+            
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
           }, 1000);
         }
-        // If the ball touches the left paddle,
+        
         if (collides(ball, topLeftPaddle) || collides(ball, bottomLeftPaddle)) {
-          // send it in the opposite direction
+          
           ball.dx *= -1;
           if (collides(ball, topLeftPaddle))
             ball.x = topLeftPaddle.x + topLeftPaddle.width;
           else
             ball.x = bottomLeftPaddle.x + bottomLeftPaddle.width;         
         }
-        // Check and do the same for the right paddle
+        
         else if (collides(ball, topRightPaddle) || collides(ball, bottomRightPaddle)) {
           ball.dx *= -1;
           if (collides(ball, topRightPaddle))
@@ -457,17 +456,17 @@
           else
             ball.x = bottomRightPaddle.x - ball.width;
          
-          // if it reaches 10 - activate the secret level
+          
           if (left_score >= 5 || right_score >= 5) {
             secret = true;
           }
-          // here's the secret level
+          
           if (secret) {
-            // increase new bounces
+            
             secret_count += 1;
-            // if this number is divisible by 3...
+            
             if (secret_count % 3 == 0) {
-              // increase the ball speed by one
+              
               if (ball.dx > 0) {
                 ball.dx += 1;
               } else {
@@ -478,7 +477,7 @@
               } else {
                 ball.dy -= 1;
               }
-              // randomly color the ball
+              
               ballColor =
                 "#" +
                 (Math.random().toString(16) + "000000")
@@ -487,54 +486,54 @@
             }
           }
         }
-        // Draw the ball with the appropriate color
+        
         context.fillStyle = ballColor;
         context.fillRect(ball.x, ball.y, ball.width, ball.height);
-        // Draw the walls
+        
         context.fillStyle = "white";
         context.fillRect(0, 0, canvas.width, grid);
         context.fillRect(0, canvas.height - grid, canvas.width, canvas.height);
-        // Draw the grid in the middle
+        
         for (let i = grid; i < canvas.height - grid; i += grid * 2) {
           context.fillRect(canvas.width / 2 - grid / 2, i, grid, grid);
         }
-        // Track key presses
+        
         
         
         document.addEventListener("keydown", function (e) {
             switch(e.which){
-                case 87: // key 'w'
+                case 87: 
                     topLeftPaddle.dy = -paddleSpeed;
                     break;
-                case 83: // key 's'
+                case 83: 
                     topLeftPaddle.dy = paddleSpeed;
                     break;
-                case 84: // key 't'
+                case 84: 
                     bottomLeftPaddle.dy = -paddleSpeed;
                     break;
-                case 71: // key 'g'
+                case 71: 
                     bottomLeftPaddle.dy = paddleSpeed;
                     break;
-                case 73: // key 'i'
+                case 73: 
                     topRightPaddle.dy = -paddleSpeed;
                     break;
-                case 75: // key 'k'
+                case 75: 
                     topRightPaddle.dy = paddleSpeed;
                     break;
-                case 38: // key 'up'
+                case 38: 
                     bottomRightPaddle.dy = -paddleSpeed;
                     break;
-                case 40: // key 'down'
+                case 40: 
                     bottomRightPaddle.dy = paddleSpeed;
                     break;
             }
         });   
 
-      // And now, listen for when someone releases a key to stop the paddle's movement
+      
         document.addEventListener("keyup", function (e) {
-        // If it's the up or down arrow or 'w' or 's',
+        
             if (e.which === 87 || e.which === 83) {
-                // stop the right paddle
+                
                 topLeftPaddle.dy = 0;
             }
             else if (e.which === 71 || e.which === 84) {
@@ -547,16 +546,16 @@
                 bottomRightPaddle.dy = 0;
             }
         });
-        // Track mouse movements  
-        // Text color
+        
+        
         context.fillStyle = "#ff00ff";
-        // Set the size and font
+        
         context.font = "bold 20pt Courier";
-        // First, display the record
+        
         context.fillText(left_score, canvas.width /4, 50);
         context.fillText(right_score, canvas.width *3/4, 50);
       }
-      // Start the game
+      
       requestAnimationFrame(loop);
     };
 

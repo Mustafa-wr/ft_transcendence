@@ -19,9 +19,8 @@
         <br><br>
     </div>
 		<script> 
-			// Check if the URL contains a code and redirect to the home page without query parameters
 		if (window.location.href.includes("?code=")) {
-			window.history.replaceState({}, document.title, "/home"); // Remove query parameters
+			window.history.replaceState({}, document.title, "/home");
 		}
 		const refreshFlag = document.getElementById('refreshFlag');
 		if(!refreshFlag){
@@ -31,37 +30,3 @@
 		</script>
 	{% endblock %}
 {% endwith %}
-
-
-{% comment %} <script>
-    // Function to load content dynamically
-    function loadContent(url) {
-        fetch(url)
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('contents').innerHTML = data;
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    // Event listeners for the links
-    document.getElementById('playVsComputer').addEventListener('click', function(event) {
-        event.preventDefault();
-        loadContent("{% url 'game' %}");
-    });
-
-    document.getElementById('playTournament').addEventListener('click', function(event) {
-        event.preventDefault();
-        loadContent("{% url 'game' %}");
-    });
-
-    document.getElementById('playVsOnlinePlayer').addEventListener('click', function(event) {
-        event.preventDefault();
-        loadContent("{% url 'game' %}");
-    });
-
-    // Check for query parameters and remove them
-    if (window.location.href.includes("?code=")) {
-        window.history.replaceState({}, document.title, "/");
-    }
-</script> {% endcomment %}
