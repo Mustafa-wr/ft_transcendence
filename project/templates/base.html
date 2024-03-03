@@ -62,11 +62,14 @@
 				var edit_content = `{% include 'edit.html' %}`;
 				contentContainer.innerHTML = edit_content;
 				optionContent = document.getElementById('2faForm');
-				console.log(val);
 				if(val != null)
 					optionContent.value = val;
-				else
-					optionContent.value = 'enable';
+				else {
+					if("{{user.is_2fa_enabled}}" == true)
+						optionContent.value = 'enable';
+					else
+						optionContent.value = 'disable';
+				}
 				return;
 			} else if (lastPart === 'stats') {
 				const stats_content = `{% include 'stats.html' %}`;
@@ -146,11 +149,14 @@
 			var edit_content = `{% include 'edit.html' %}`;
 			contentContainer.innerHTML = edit_content;
 			optionContent = document.getElementById('2faForm');
-			console.log(val);
 			if(val != null)
 				optionContent.value = val;
-			else
-				optionContent.value = 'enable';
+			else {
+				if("{{user.is_2fa_enabled}}" == true)
+					optionContent.value = 'enable';
+				else
+					optionContent.value = 'disable';
+			}
 		} else if (initialUrl.endsWith('/stats/') || initialUrl.endsWith('/stats')) {
 			const stats_content = `{% include 'stats.html' %}`;
 			contentContainer.innerHTML = stats_content;
