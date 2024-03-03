@@ -58,8 +58,12 @@
 				contentContainer.innerHTML = homeContent;
 				return;
 			} else if (lastPart === 'edit') {
-				const edit_content = `{% include 'edit.html' %}`;
+				const val = localStorage.getItem('selected_2fa_value');
+				var edit_content = `{% include 'edit.html' %}`;
 				contentContainer.innerHTML = edit_content;
+				optionContent = document.getElementById('2faForm');
+				console.log(val);
+				optionContent.value = val;
 				return;
 			} else if (lastPart === 'stats') {
 				const stats_content = `{% include 'stats.html' %}`;
@@ -135,8 +139,12 @@
 			const homeContent = `{% include 'home_spa.html' %}`;
 			contentContainer.innerHTML = homeContent;
 		} else if (initialUrl.endsWith('/edit/') || initialUrl.endsWith('/edit')) {
-			const edit_content = `{% include 'edit.html' %}`;
+			const val = localStorage.getItem('selected_2fa_value');
+			var edit_content = `{% include 'edit.html' %}`;
 			contentContainer.innerHTML = edit_content;
+			optionContent = document.getElementById('2faForm');
+			console.log(val);
+			optionContent.value = val;
 		} else if (initialUrl.endsWith('/stats/') || initialUrl.endsWith('/stats')) {
 			const stats_content = `{% include 'stats.html' %}`;
 			contentContainer.innerHTML = stats_content;
@@ -187,6 +195,10 @@
 	function saveFormData() {
 		var form = document.getElementById('the_form');
 		var formData = new FormData(form);
+
+		var selectElement = document.getElementById('2faForm');
+
+		localStorage.setItem('selected_2fa_value', selectElement.value);
 	
 		fetch(form.action, {
 			method: form.method,
