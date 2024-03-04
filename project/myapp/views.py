@@ -51,7 +51,9 @@ def login(request):
 	if user_info and is_2fa_verified:
 		return redirect('home')
 	print("Login view rendering login.html")
-	return render(request, 'login.html', {'user_info': user_info, 'otp_required': False})
+	url = os.environ.get('URL')
+	print(f"URL is {url}")
+	return render(request, 'login.html', {'user_info': user_info, 'otp_required': False, 'url': url})
 
 @authenticated_user
 @permission_classes([IsAuthenticated])
@@ -98,7 +100,7 @@ def authorize(request):
     client_id = os.environ.get('CLIENT_ID2')
     redirect_uri = f"https://{request.get_host()}/callback"
 
-    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri=https://127.0.0.1:8000/callback&response_type=code"
+    authorization_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri=https://10.13.1.14:8000/callback&response_type=code"
 
     return redirect('/home/')
 

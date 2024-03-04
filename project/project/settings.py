@@ -82,8 +82,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "https://127.0.0.1:8000",
-    "http://127.0.0.1:8000",
-	"http://localhost:8000",
+	"http://10.13.1.14:8000"
 ]
 
 CORS_ALLOWED_HEADERS = [

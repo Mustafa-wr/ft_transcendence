@@ -41,7 +41,17 @@
             <h3>Welcome to ft_transcendence!</h4><br><br>
             <h5>To play Pong you need to register with your 42 account.</h5><br><br>
                 <button class="btn btn-light auto-btn" onclick="authorize()">&nbsp&nbsp&nbsp Authorize &nbsp&nbsp&nbsp</button>
-            <script src="{% static 'app.js' %}"></script>
+            <script>
+				let autoBtn = document.querySelector(".auto-btn");
+				console.log("{{url}}");
+				function authorize() {
+				var authorizationUrl =
+					"{{url}}";
+
+				window.location.href = authorizationUrl;
+				}
+				autoBtn.addEventListener("click", authorize); 
+			</script>
             {% endif %}
             <div class="p-5">
                 <img src="{% static '42logo.svg' %}" alt="42logo" width="100px" height="100px" id="42logo_img">
@@ -69,6 +79,7 @@
                 otpForm.submit();
             }
         }
+
     </script>
 </body>
 </html>
