@@ -16,11 +16,8 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 cp localhost.crt /code/project/certs/localhost.crt
 cp localhost.key /code/project/certs/localhost.key
 
-
-# Collect static files
 python project/manage.py collectstatic --noinput
 
-# Start the server with SSL support
 python project/manage.py runsslserver 0.0.0.0:8000 --cert /code/localhost.crt --key /code/localhost.key
 
 echo "SSL enabled. Starting the server..."

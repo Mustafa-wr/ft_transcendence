@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
-from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -57,7 +56,6 @@ MIDDLEWARE = [
 	'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -167,10 +165,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-LANGUAGES = [
-    ('en', _('English')),
-]
-
 # SECURE_SSL_REDIRECT = True
 
 
@@ -187,12 +181,6 @@ EMAIL_USE_TLS = True  # Use TLS (for Gmail)
 # Your Gmail account credentials
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-
-
-LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'myapp', 'locale'),  # Adjust the path accordingly
-]
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

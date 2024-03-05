@@ -1,21 +1,16 @@
-from django.shortcuts import render #http://157.245.40.149:30655
+from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse
 from django.http import HttpResponseServerError, HttpResponseRedirect
 from django.template import loader
-from .models import user_profile, match_record, user_friends, Create_match_record
-from .models import user_profile, match_record, Game, Match_maker
+from .models import user_profile
 from . import forms
-from django.utils.translation import gettext as _, gettext_lazy as _
-from django.utils.translation import get_language, activate, gettext
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import UserProfileForm
 from django.contrib import messages
 from django.utils import translation
 from django.views.i18n import set_language
 from django.contrib.auth import logout
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User

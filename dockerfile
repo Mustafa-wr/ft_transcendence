@@ -21,28 +21,10 @@ RUN pip install --upgrade pip \
     && pip install rest_framework_simplejwt \
     && pip install djangorestframework-simplejwt[crypto]
 
-
-
-# Copy the migrate.sh script into the container
 COPY migrate.sh /code/migrate.sh
 
-# Make the script executable
 RUN chmod +x /code/migrate.sh
 
-# Copy the SSL key and certificate into the container
-
-# Run migrations before starting the server
-# RUN /code/migrate.sh
-
-# RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-#     -keyout /code/localhost.key \
-#     -out /code/localhost.crt \
-#     -subj "/C=US/ST=YourState/L=YourCity/O=YourOrganization/CN=localhost"
-
-
-# COPY localhost.crt /code/localhost.crt
-# COPY localhost.key /code/localhost.key
-# Copy the rest of your project files
 COPY . /code/
 COPY .env /code/.env
 
